@@ -134,7 +134,7 @@ const SpinWheel = () => {
             width={wheelSize}
             height={wheelSize}
             viewBox={`0 0 ${wheelSize} ${wheelSize}`}
-            className="relative z-10 w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[380px] md:h-[380px]"
+            className="relative z-10 w-[320px] h-[320px] sm:w-[420px] sm:h-[420px] md:w-[500px] md:h-[500px]"
             style={{
               transform: `rotate(${rotation}deg)`,
               transition: spinning
