@@ -190,19 +190,22 @@ const SpinWheel = () => {
             })}
 
             {/* Center circle */}
-            <circle cx={center} cy={center} r="24" fill="hsl(230, 25%, 10%)" stroke="hsl(270, 80%, 60%)" strokeWidth="3" />
-            <text
-              x={center}
-              y={center}
-              fill="hsl(270, 80%, 60%)"
-              fontSize="11"
-              fontFamily="var(--font-display)"
-              fontWeight="800"
-              textAnchor="middle"
-              dominantBaseline="middle"
-            >
-              SPIN
-            </text>
+            <g onClick={spin} className="cursor-pointer">
+              <circle cx={center} cy={center} r="24" fill="hsl(230, 25%, 10%)" stroke="hsl(270, 80%, 60%)" strokeWidth="3" />
+              <text
+                x={center}
+                y={center}
+                fill="hsl(270, 80%, 60%)"
+                fontSize="11"
+                fontFamily="var(--font-display)"
+                fontWeight="800"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                style={{ pointerEvents: "none" }}
+              >
+                SPIN
+              </text>
+            </g>
           </svg>
         </div>
 
