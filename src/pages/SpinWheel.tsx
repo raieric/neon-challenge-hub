@@ -9,8 +9,8 @@ const SEGMENTS = [
   { label: "Make a dance move", color: "hsl(320, 80%, 55%)" },
   { label: "Write the code", color: "hsl(220, 90%, 55%)" },
   { label: "Write the code", color: "hsl(150, 80%, 45%)" },
-  { label: "Do 10 push ups", color: "hsl(30, 90%, 55%)" },
-  { label: "Will be ready by next class", color: "hsl(350, 80%, 55%)" },
+  { label: "Do 5 push ups", color: "hsl(30, 90%, 55%)" },
+  { label: "Introduce yourself in American accent", color: "hsl(350, 80%, 55%)" },
 ];
 
 const SEGMENT_ANGLE = 360 / SEGMENTS.length;
