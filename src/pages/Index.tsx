@@ -1,5 +1,6 @@
 import ParticleBackground from "@/components/ParticleBackground";
 import GameCard from "@/components/GameCard";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const games = [
   {
@@ -41,6 +42,11 @@ const Index = () => {
       </div>
 
       <div className="relative z-10 flex flex-col items-center px-4 sm:px-6 py-12 sm:py-20">
+        {/* Theme Toggle */}
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+          <ThemeToggle />
+        </div>
+
         {/* Hero Section */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20 animate-fade-in">
           <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-black tracking-tight text-foreground mb-4 text-glow-purple animate-float">
