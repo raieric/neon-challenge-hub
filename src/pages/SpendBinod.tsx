@@ -210,22 +210,21 @@ const SpendBinod = () => {
           <p className="text-muted-foreground text-sm">Try to spend $2,000,000,000</p>
         </div>
 
-        {/* Money Counter */}
-        <div className="mb-8">
-          <div className="rounded-2xl p-4 sm:p-6 text-center bg-gradient-to-r from-green-600/20 via-emerald-500/20 to-green-600/20 border border-green-500/30 shadow-[0_0_40px_hsl(140_60%_40%/0.15)]">
+        {/* Money Counter - Sticky */}
+        <div className="sticky top-0 z-20 mb-8 -mx-4 px-4 pt-2 pb-2 bg-background/80 backdrop-blur-md">
+          <div className="rounded-2xl p-3 sm:p-4 text-center bg-gradient-to-r from-green-600/20 via-emerald-500/20 to-green-600/20 border border-green-500/30 shadow-[0_0_40px_hsl(140_60%_40%/0.15)]">
             <p className="text-xs text-muted-foreground mb-1 font-display tracking-wider uppercase">Remaining Balance</p>
-            <div className="font-display text-3xl sm:text-5xl font-black text-green-400 tracking-tight">
+            <div className="font-display text-2xl sm:text-4xl font-black text-green-400 tracking-tight">
               <AnimatedMoney value={balance} />
             </div>
-            {/* Progress bar */}
-            <div className="mt-3 h-2 rounded-full bg-muted/30 overflow-hidden max-w-md mx-auto">
+            <div className="mt-2 h-2 rounded-full bg-muted/30 overflow-hidden max-w-md mx-auto">
               <motion.div
                 className="h-full rounded-full bg-gradient-to-r from-green-400 to-emerald-500"
                 animate={{ width: `${100 - spentPercent}%` }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
               />
             </div>
-            <p className="text-xs text-muted-foreground mt-2">Spent: {formatMoney(totalSpent)} • Items: {totalItems}</p>
+            <p className="text-xs text-muted-foreground mt-1">Spent: {formatMoney(totalSpent)} • Items: {totalItems}</p>
           </div>
         </div>
 
