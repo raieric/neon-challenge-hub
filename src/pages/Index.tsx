@@ -70,6 +70,12 @@ const games = [
     to: "/alive",
   },
   {
+    icon: "⭕",
+    title: "Draw a Perfect Circle",
+    description: "Steady hands. Pure geometry.",
+    to: "/circle",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
