@@ -14,20 +14,22 @@ interface Level {
   rightVictims: number;
   note?: string;
   debatable?: "left" | "right" | "both";
+  leftIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment";
+  rightIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment";
 }
 
 const levels: Level[] = [
   { name: "The Original", scenario: "Oh no! A trolley is heading toward five people on the main track. You can pull the lever to divert it to a side track, where one person is tied down.", leftLabel: "Five Unnamed People", rightLabel: "One Unnamed Person", leftCount: "5 die", rightCount: "1 dies", leftVictims: 5, rightVictims: 1 },
   { name: "Four People", scenario: "Oh no! A trolley is heading toward five people. You can divert it, but four people are on the other track.", leftLabel: "Five Unnamed People", rightLabel: "Four Unnamed People", leftCount: "5 die", rightCount: "4 die", leftVictims: 5, rightVictims: 4 },
-  { name: "Life Savings", scenario: "Oh no! A trolley is heading toward five people. You can divert it onto a track that destroys your entire life savings.", leftLabel: "Five Unnamed People", rightLabel: "Your Life Savings Destroyed", leftCount: "5 die", rightCount: "💸 Gone", leftVictims: 5, rightVictims: 0 },
+  { name: "Life Savings", scenario: "Oh no! A trolley is heading toward five people. You can divert it onto a track that destroys your entire life savings.", leftLabel: "Five Unnamed People", rightLabel: "Your Life Savings Destroyed", leftCount: "5 die", rightCount: "💸 Gone", leftVictims: 5, rightVictims: 0, rightIcon: "money" },
   { name: "You", scenario: "Oh no! A trolley is heading toward five people. You can divert it, but the other track leads directly to you.", leftLabel: "Five Unnamed People", rightLabel: "You", leftCount: "5 die", rightCount: "You die", leftVictims: 5, rightVictims: 1 },
-  { name: "Priceless Painting", scenario: "Oh no! A trolley is heading toward five people. You can divert it, but a priceless painting will be destroyed.", leftLabel: "Five Unnamed People", rightLabel: "Priceless Painting", leftCount: "5 die", rightCount: "🎨 Destroyed", leftVictims: 5, rightVictims: 0 },
+  { name: "Priceless Painting", scenario: "Oh no! A trolley is heading toward five people. You can divert it, but a priceless painting will be destroyed.", leftLabel: "Five Unnamed People", rightLabel: "Priceless Painting", leftCount: "5 die", rightCount: "🎨 Destroyed", leftVictims: 5, rightVictims: 0, rightIcon: "painting" },
   { name: "Bribes", scenario: "Oh no! A trolley is heading toward a rich man who offered you a bribe. The other track has an unnamed person.", leftLabel: "Unnamed Rich Man", rightLabel: "Unnamed Person", leftCount: "1 dies", rightCount: "1 dies", leftVictims: 1, rightVictims: 1 },
   { name: "Levels of Sentience", scenario: "Oh no! A trolley is heading toward five lobsters. You can divert it toward one cat.", leftLabel: "Five Lobsters", rightLabel: "One Cat", leftCount: "5 🦞", rightCount: "1 🐱", leftVictims: 5, rightVictims: 1 },
   { name: "Sleeping", scenario: "Oh no! A trolley is heading toward five sleeping people. You can divert it toward one awake person.", leftLabel: "Five Sleeping People", rightLabel: "One Awake Person", leftCount: "5 😴", rightCount: "1 👀", leftVictims: 5, rightVictims: 1 },
   { name: "Personal Choices", scenario: "Oh no! A trolley is heading toward one person. You can divert it toward five people who tied themselves to the track voluntarily.", leftLabel: "One Person", rightLabel: "Five People (Tied Themselves)", leftCount: "1 dies", rightCount: "5 die", leftVictims: 1, rightVictims: 5 },
   { name: "Mercy", scenario: "Oh no! A trolley is heading toward five people. You can divert it toward one person, but they will be run over painfully slowly.", leftLabel: "Five People", rightLabel: "One Person (Painfully Slow)", leftCount: "5 die", rightCount: "1 dies slowly", leftVictims: 5, rightVictims: 1 },
-  { name: "Minor Inconvenience", scenario: "Oh no! A trolley is heading toward one man. You can divert it to an empty track, but you'll suffer a minor embarrassment.", leftLabel: "One Man", rightLabel: "Nobody Dies (Minor Embarrassment)", leftCount: "1 dies", rightCount: "😳", leftVictims: 1, rightVictims: 0 },
+  { name: "Minor Inconvenience", scenario: "Oh no! A trolley is heading toward one man. You can divert it to an empty track, but you'll suffer a minor embarrassment.", leftLabel: "One Man", rightLabel: "Nobody Dies (Minor Embarrassment)", leftCount: "1 dies", rightCount: "😳", leftVictims: 1, rightVictims: 0, rightIcon: "embarrassment" },
   { name: "Best Friend", scenario: "Oh no! A trolley is heading toward your best friend. You can divert it toward five unnamed people.", leftLabel: "Your Best Friend", rightLabel: "Five Unnamed People", leftCount: "1 💔", rightCount: "5 die", leftVictims: 1, rightVictims: 5 },
   { name: "Can't See", scenario: "Oh no! A trolley is heading toward people, but visibility is poor. There seem to be five people on one track and one on the other… maybe.", leftLabel: "Five People", rightLabel: "One Person", leftCount: "5?", rightCount: "1?", leftVictims: 5, rightVictims: 1, debatable: "both" },
   { name: "Cousins", scenario: "Oh no! A trolley is heading toward your first cousin. You can divert it toward three of your second cousins.", leftLabel: "Your First Cousin", rightLabel: "Three Second Cousins", leftCount: "1 dies", rightCount: "3 die", leftVictims: 1, rightVictims: 3 },
@@ -35,10 +37,10 @@ const levels: Level[] = [
   { name: "Clones", scenario: "Oh no! A trolley is heading toward you. You can divert it toward five of your clones.", leftLabel: "You", rightLabel: "Five of Your Clones", leftCount: "1 (you)", rightCount: "5 (also you?)", leftVictims: 1, rightVictims: 5 },
   { name: "Mystery Box", scenario: "Oh no! A trolley is heading toward either two or zero people (90% chance it's zero). The other track has either ten or zero people (50% chance it's zero).", leftLabel: "Two People (Maybe)", rightLabel: "Ten People (Maybe)", leftCount: "2?", rightCount: "10?", leftVictims: 2, rightVictims: 3, note: "Left: 90% chance nobody is there. Right: 50% chance nobody is there." },
   { name: "I Am Robot", scenario: "Oh no! A trolley is heading toward five robots. You can divert it toward one human.", leftLabel: "Five Robots", rightLabel: "One Human", leftCount: "5 🤖", rightCount: "1 🧑", leftVictims: 5, rightVictims: 1 },
-  { name: "Economic Damage", scenario: "Oh no! A trolley is heading toward a critical infrastructure point. If it hits, massive economic collapse follows. The other track has one person.", leftLabel: "Massive Economic Collapse", rightLabel: "One Person", leftCount: "📉💥", rightCount: "1 dies", leftVictims: 0, rightVictims: 1 },
+  { name: "Economic Damage", scenario: "Oh no! A trolley is heading toward a critical infrastructure point. If it hits, massive economic collapse follows. The other track has one person.", leftLabel: "Massive Economic Collapse", rightLabel: "One Person", leftCount: "📉💥", rightCount: "1 dies", leftVictims: 0, rightVictims: 1, leftIcon: "infrastructure" },
   { name: "External Costs", scenario: "Oh no! A trolley's CO₂ emissions will eventually kill five people over decades. You can stop it now, but nobody is immediately harmed either way.", leftLabel: "Five People Die (CO₂ Over Time)", rightLabel: "Nobody Immediately Harmed", leftCount: "5 (eventually)", rightCount: "0", leftVictims: 5, rightVictims: 0 },
   { name: "Reincarnation", scenario: "Oh no! A trolley is heading toward one reincarnated version of you. You can divert it toward five reincarnated versions of you.", leftLabel: "One Reincarnated You", rightLabel: "Five Reincarnated Yous", leftCount: "1 past you", rightCount: "5 past yous", leftVictims: 1, rightVictims: 5 },
-  { name: "Harmless Prank?", scenario: "Oh no! A trolley is heading toward an empty track, but the sound will cause lifelong psychological trauma to a bystander. The other track is also empty.", leftLabel: "Nobody Dies", rightLabel: "Psychological Trauma", leftCount: "0 (trauma-free)", rightCount: "0 (but 😰)", leftVictims: 0, rightVictims: 0 },
+  { name: "Harmless Prank?", scenario: "Oh no! A trolley is heading toward an empty track, but the sound will cause lifelong psychological trauma to a bystander. The other track is also empty.", leftLabel: "Nobody Dies", rightLabel: "Psychological Trauma", leftCount: "0 (trauma-free)", rightCount: "0 (but 😰)", leftVictims: 0, rightVictims: 0, rightIcon: "trauma" },
   { name: "Citizens", scenario: "Oh no! A trolley is heading toward a known bad citizen. You can divert it toward a known good citizen.", leftLabel: "Bad Citizen", rightLabel: "Good Citizen", leftCount: "1 😈", rightCount: "1 😇", leftVictims: 1, rightVictims: 1 },
   { name: "Eternity", scenario: "Oh no! A runaway trolley's brakes have failed. The driver will be blown up, or you can divert it to blow up eight passengers.", leftLabel: "Trolley Driver Blown Up", rightLabel: "Eight Passengers Blown Up", leftCount: "1", rightCount: "8", leftVictims: 1, rightVictims: 5, debatable: "both" },
   { name: "Enemy", scenario: "Oh no! A trolley is heading toward your worst enemy. The other track is completely empty. Nobody else is in danger.", leftLabel: "Your Worst Enemy", rightLabel: "Nobody", leftCount: "1 😠", rightCount: "0", leftVictims: 1, rightVictims: 0 },
@@ -85,6 +87,75 @@ const VictimGroup = ({
       ))}
     </motion.g>
   );
+};
+
+/** SVG icons for non-person track items */
+const TrackIconSVG = ({ type, x, y }: { type: string; x: number; y: number }) => {
+  switch (type) {
+    case "money":
+      return (
+        <g transform={`translate(${x}, ${y})`}>
+          {/* Money bag */}
+          <path d="M-10,8 Q-12,-2 -6,-8 Q0,-14 6,-8 Q12,-2 10,8 Q8,14 0,14 Q-8,14 -10,8Z" fill="#f0d060" stroke="#333" strokeWidth="1.5" strokeLinejoin="round" />
+          <text x="0" y="7" fontSize="11" fontWeight="900" fill="#333" textAnchor="middle" style={{ fontFamily: "serif" }}>$</text>
+          {/* Scattered coins */}
+          <ellipse cx="14" cy="10" rx="4" ry="3" fill="#e6c430" stroke="#333" strokeWidth="1" />
+          <ellipse cx="-14" cy="12" rx="3.5" ry="2.5" fill="#e6c430" stroke="#333" strokeWidth="1" />
+        </g>
+      );
+    case "painting":
+      return (
+        <g transform={`translate(${x}, ${y})`}>
+          <rect x="-12" y="-14" width="24" height="20" rx="1" fill="#f5e6c8" stroke="#333" strokeWidth="1.5" />
+          <rect x="-10" y="-12" width="20" height="16" fill="#d4a574" stroke="#8B6914" strokeWidth="0.5" />
+          {/* Simple landscape inside */}
+          <circle cx="-2" cy="-6" r="3" fill="#fdcb6e" />
+          <path d="M-10,2 L-4,-4 L2,0 L6,-6 L10,2 L10,4 L-10,4Z" fill="#27ae60" stroke="none" />
+        </g>
+      );
+    case "infrastructure":
+      return (
+        <g transform={`translate(${x}, ${y})`}>
+          {/* Building */}
+          <rect x="-8" y="-14" width="16" height="22" fill="#95a5a6" stroke="#333" strokeWidth="1.5" />
+          <rect x="-5" y="-10" width="4" height="4" fill="#3498db" stroke="#333" strokeWidth="0.5" />
+          <rect x="1" y="-10" width="4" height="4" fill="#3498db" stroke="#333" strokeWidth="0.5" />
+          <rect x="-5" y="-3" width="4" height="4" fill="#3498db" stroke="#333" strokeWidth="0.5" />
+          <rect x="1" y="-3" width="4" height="4" fill="#3498db" stroke="#333" strokeWidth="0.5" />
+          {/* Chart arrow going down */}
+          <path d="M12,-8 L16,-2 L20,-10" stroke="#e74c3c" strokeWidth="2" fill="none" strokeLinecap="round" />
+        </g>
+      );
+    case "trauma":
+      return (
+        <g transform={`translate(${x}, ${y})`}>
+          {/* Worried face */}
+          <circle cx="0" cy="-4" r="10" fill="#ffeaa7" stroke="#333" strokeWidth="1.5" />
+          <circle cx="-4" cy="-6" r="1.5" fill="#333" />
+          <circle cx="4" cy="-6" r="1.5" fill="#333" />
+          <path d="M-4,2 Q0,-1 4,2" stroke="#333" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+          {/* Sweat drop */}
+          <path d="M10,-8 Q12,-12 11,-6Z" fill="#74b9ff" stroke="#333" strokeWidth="0.5" />
+        </g>
+      );
+    case "embarrassment":
+      return (
+        <g transform={`translate(${x}, ${y})`}>
+          {/* Blushing face */}
+          <circle cx="0" cy="-4" r="10" fill="#ffeaa7" stroke="#333" strokeWidth="1.5" />
+          <line x1="-5" y1="-6" x2="-3" y2="-5" stroke="#333" strokeWidth="1.2" strokeLinecap="round" />
+          <line x1="-5" y1="-5" x2="-3" y2="-6" stroke="#333" strokeWidth="1.2" strokeLinecap="round" />
+          <line x1="3" y1="-6" x2="5" y2="-5" stroke="#333" strokeWidth="1.2" strokeLinecap="round" />
+          <line x1="3" y1="-5" x2="5" y2="-6" stroke="#333" strokeWidth="1.2" strokeLinecap="round" />
+          {/* Blush circles */}
+          <circle cx="-6" cy="0" r="2.5" fill="#fab1a0" opacity="0.6" />
+          <circle cx="6" cy="0" r="2.5" fill="#fab1a0" opacity="0.6" />
+          <path d="M-3,3 Q0,5 3,3" stroke="#333" strokeWidth="1" fill="none" strokeLinecap="round" />
+        </g>
+      );
+    default:
+      return null;
+  }
 };
 
 /** The trolley — grouped rect body, path roof, circle wheels, circle headlight */
@@ -276,11 +347,15 @@ const TrolleyIllustration = ({
   pulled,
   leftVictimCount,
   rightVictimCount,
+  leftIcon,
+  rightIcon,
 }: {
   phase: AnimPhase;
   pulled: boolean | null;
   leftVictimCount: number;
   rightVictimCount: number;
+  leftIcon?: string;
+  rightIcon?: string;
 }) => {
   const isMoving = ["travel", "freeze", "splat"].includes(phase);
   const showSplat = ["splat", "fadeout"].includes(phase);
@@ -341,6 +416,18 @@ const TrolleyIllustration = ({
         spacing={14}
         visible={!(showSplat && !!pulled)}
       />
+
+      {/* Track icons for non-person items */}
+      {leftIcon && (
+        <motion.g animate={{ opacity: !(showSplat && !pulled) ? 1 : 0 }} transition={{ duration: 0.15 }}>
+          <TrackIconSVG type={leftIcon} x={330} y={175} />
+        </motion.g>
+      )}
+      {rightIcon && (
+        <motion.g animate={{ opacity: !(showSplat && !!pulled) ? 1 : 0 }} transition={{ duration: 0.15 }}>
+          <TrackIconSVG type={rightIcon} x={330} y={58} />
+        </motion.g>
+      )}
 
       {/* Trolley group */}
       <motion.g
@@ -494,6 +581,8 @@ const TrolleySimulator = () => {
             pulled={pulled}
             leftVictimCount={level.leftVictims}
             rightVictimCount={level.rightVictims}
+            leftIcon={level.leftIcon}
+            rightIcon={level.rightIcon}
           />
 
           {/* Track labels */}
