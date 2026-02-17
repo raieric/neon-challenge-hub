@@ -94,6 +94,12 @@ const games = [
     to: "/life-progress",
   },
   {
+    icon: "🌌",
+    title: "Universe Forecast",
+    description: "The future of everything.",
+    to: "/universe-forecast",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
