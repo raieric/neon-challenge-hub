@@ -70,6 +70,12 @@ const games = [
     to: "/alive",
   },
   {
+    icon: "💰",
+    title: "Spend Binod's Money",
+    description: "Can you spend $2 billion?",
+    to: "/spend-binod",
+  },
+  {
     icon: "⭕",
     title: "Draw a Perfect Circle",
     description: "Steady hands. Pure geometry.",
