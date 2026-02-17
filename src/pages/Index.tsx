@@ -22,6 +22,12 @@ const games = [
     to: "/spin2",
   },
   {
+    icon: "🎯",
+    title: "Social Arena – Group Dynamics",
+    description: "Collaboration. Pressure. Interaction.",
+    to: "/social",
+  },
+  {
     icon: "🎲",
     title: "Lucky Draw",
     description: "One click. Pure randomness.",
