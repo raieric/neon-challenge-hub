@@ -10,6 +10,12 @@ const games = [
     to: "/spin",
   },
   {
+    icon: "✊",
+    title: "Rock Paper Scissors",
+    description: "Play against the computer with animated battle effects!",
+    to: "/rps",
+  },
+  {
     icon: "🎲",
     title: "Lucky Draw",
     description: "One click. Pure randomness.",
