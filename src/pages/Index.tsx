@@ -58,6 +58,12 @@ const games = [
     to: "/settle",
   },
   {
+    icon: "💰",
+    title: "Auction Challenge",
+    description: "How much is it really worth?",
+    to: "/auction",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
