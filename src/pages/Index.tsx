@@ -40,6 +40,12 @@ const games = [
     comingSoon: true,
   },
   {
+    icon: "🚂",
+    title: "Trolley Simulator",
+    description: "25 moral dilemmas. No right answers.",
+    to: "/trolley",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
