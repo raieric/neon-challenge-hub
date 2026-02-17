@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { QuizQuestion } from "../data/cQuestions";
 import { X } from "lucide-react";
@@ -10,6 +10,44 @@ interface Props {
   onAnswer: (tileIndex: number, selected: number) => boolean;
   onClose: () => void;
 }
+
+const playCorrectSound = () => {
+  try {
+    const ctx = new AudioContext();
+    const now = ctx.currentTime;
+    // Happy ascending arpeggio
+    [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.15, now + i * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.3);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + i * 0.1);
+      osc.stop(now + i * 0.1 + 0.3);
+    });
+  } catch {}
+};
+
+const playSadSound = () => {
+  try {
+    const ctx = new AudioContext();
+    const now = ctx.currentTime;
+    // Sad descending tones
+    [400, 350, 300, 250].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "triangle";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.12, now + i * 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.35);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + i * 0.15);
+      osc.stop(now + i * 0.15 + 0.35);
+    });
+  } catch {}
+};
 
 const QuestionModal = ({ question, tileIndex, onAnswer, onClose }: Props) => {
   const [selected, setSelected] = useState<number | null>(null);
@@ -23,7 +61,10 @@ const QuestionModal = ({ question, tileIndex, onAnswer, onClose }: Props) => {
     setIsCorrect(correct);
     if (correct) {
       setShowConfetti(true);
+      playCorrectSound();
       setTimeout(() => onClose(), 2000);
+    } else {
+      playSadSound();
     }
   }, [selected, onAnswer, tileIndex, onClose]);
 
