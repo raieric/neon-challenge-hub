@@ -45,6 +45,7 @@ const debates: Debate[] = [
   { question: "iPhone or Android?", left: { title: "iPhone", description: "It just works" }, right: { title: "Android", description: "Freedom to customize" } },
   { question: "Does a straw have one hole or two?", left: { title: "One", description: "It's one continuous hole" }, right: { title: "Two", description: "Top and bottom = two holes" } },
   { question: "Smooth or chunky peanut butter?", left: { title: "Smooth", description: "Creamy perfection" }, right: { title: "Chunky", description: "Texture is everything" } },
+  { question: "What came first, the chicken or the egg?", left: { title: "Chicken", description: "Something had to lay it" }, right: { title: "Egg", description: "Evolution says egg first" } },
 ];
 
 // ─── SVG Characters ───────────────────────────────────────────
