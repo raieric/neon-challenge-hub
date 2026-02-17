@@ -38,7 +38,7 @@ const items: Item[] = [
   { id: 19, name: "Hydropower Plant", price: 25000000, image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=200&h=200&fit=crop", category: "Large" },
   { id: 20, name: "5-Star Hotel", price: 50000000, image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=200&h=200&fit=crop", category: "Large" },
   { id: 21, name: "Football Stadium", price: 150000000, image: "https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=200&h=200&fit=crop", category: "Large" },
-  { id: 22, name: "Airline Company", price: 300000000, image: "https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=200&h=200&fit=crop", category: "Large" },
+  { id: 22, name: "Airline Company", price: 300000000, image: "https://images.unsplash.com/photo-1556388158-158ea5ccacbd?w=200&h=200&fit=crop", category: "Large" },
   { id: 23, name: "Skyscraper Tower", price: 400000000, image: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=200&h=200&fit=crop", category: "Large" },
   { id: 24, name: "Noodle Factory", price: 15000000, image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=200&h=200&fit=crop", category: "Large" },
   { id: 25, name: "Private Jet", price: 65000000, image: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=200&h=200&fit=crop", category: "Large" },
