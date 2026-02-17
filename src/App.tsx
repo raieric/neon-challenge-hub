@@ -24,6 +24,7 @@ import CQuizPage from "./quiz/CQuizPage";
 import JavaQuizPage from "./quiz/JavaQuizPage";
 import PythonQuizPage from "./quiz/PythonQuizPage";
 import ImposterClassroom from "./pages/ImposterClassroom";
+import WordBingo from "./pages/word-bingo/WordBingo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const App = () => (
           <Route path="/quiz/java" element={<JavaQuizPage />} />
           <Route path="/quiz/python" element={<PythonQuizPage />} />
           <Route path="/imposter" element={<ImposterClassroom />} />
+          <Route path="/word-bingo" element={<WordBingo />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

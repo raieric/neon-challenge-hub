@@ -112,6 +112,12 @@ const games = [
     to: "/imposter",
   },
   {
+    icon: "🔤",
+    title: "Word Bingo",
+    description: "Match words and complete a winning line.",
+    to: "/word-bingo",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
