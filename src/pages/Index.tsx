@@ -76,6 +76,12 @@ const games = [
     to: "/circle",
   },
   {
+    icon: "🧩",
+    title: "Memory Match",
+    description: "Match programming concepts with definitions.",
+    to: "/memory-match",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
