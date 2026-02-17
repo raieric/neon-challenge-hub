@@ -106,11 +106,34 @@ const TrackIconSVG = ({ type, x, y }: { type: string; x: number; y: number }) =>
     case "painting":
       return (
         <g transform={`translate(${x}, ${y})`}>
-          <rect x="-12" y="-14" width="24" height="20" rx="1" fill="#f5e6c8" stroke="#333" strokeWidth="1.5" />
-          <rect x="-10" y="-12" width="20" height="16" fill="#d4a574" stroke="#8B6914" strokeWidth="0.5" />
-          {/* Simple landscape inside */}
-          <circle cx="-2" cy="-6" r="3" fill="#fdcb6e" />
-          <path d="M-10,2 L-4,-4 L2,0 L6,-6 L10,2 L10,4 L-10,4Z" fill="#27ae60" stroke="none" />
+          {/* Gold ornate frame */}
+          <rect x="-14" y="-18" width="28" height="32" rx="2" fill="#c8a84e" stroke="#8B6914" strokeWidth="2" />
+          <rect x="-12" y="-16" width="24" height="28" rx="1" fill="#2c1810" stroke="#8B6914" strokeWidth="0.5" />
+          {/* Mona Lisa - simplified SVG portrait */}
+          {/* Background landscape */}
+          <rect x="-11" y="-15" width="22" height="26" fill="#6b7c4e" />
+          <path d="M-11,4 Q-4,-2 0,2 Q4,-1 11,5 L11,11 L-11,11Z" fill="#4a5c2e" />
+          {/* Sky */}
+          <rect x="-11" y="-15" width="22" height="14" fill="#8faaac" />
+          {/* Winding path */}
+          <path d="M2,6 Q6,2 4,-2 Q3,-6 8,-10" stroke="#9b8c6e" strokeWidth="1.5" fill="none" opacity="0.5" />
+          {/* Body / dress */}
+          <path d="M-5,2 Q-6,-2 -4,-6 Q0,-8 4,-6 Q6,-2 5,2 Q4,8 3,11 L-3,11 Q-4,8 -5,2Z" fill="#3d2b1f" stroke="#2a1a0f" strokeWidth="0.5" />
+          {/* Neck */}
+          <rect x="-1.5" y="-8" width="3" height="3" fill="#d4a574" rx="0.5" />
+          {/* Face */}
+          <ellipse cx="0" cy="-11" rx="3.5" ry="4" fill="#d4a574" stroke="#b8956a" strokeWidth="0.3" />
+          {/* Hair */}
+          <path d="M-3.5,-13 Q-4,-16 -2,-15 Q0,-17 2,-15 Q4,-16 3.5,-13 Q4,-11 3.8,-9 Q4,-8 3,-7" fill="#2a1a0f" stroke="none" />
+          <path d="M-3.5,-13 Q-4,-11 -3.8,-9 Q-4,-8 -3,-7" fill="#2a1a0f" stroke="none" />
+          {/* Eyes */}
+          <ellipse cx="-1.2" cy="-11.5" rx="0.8" ry="0.4" fill="#333" />
+          <ellipse cx="1.2" cy="-11.5" rx="0.8" ry="0.4" fill="#333" />
+          {/* Famous subtle smile */}
+          <path d="M-1.5,-9.2 Q0,-8.5 1.5,-9.2" stroke="#8B6914" strokeWidth="0.4" fill="none" strokeLinecap="round" />
+          {/* Hands folded */}
+          <ellipse cx="-1" cy="1" rx="2" ry="1.2" fill="#d4a574" stroke="#b8956a" strokeWidth="0.3" />
+          <ellipse cx="1.5" cy="0.5" rx="1.8" ry="1" fill="#d4a574" stroke="#b8956a" strokeWidth="0.3" />
         </g>
       );
     case "infrastructure":
