@@ -14,8 +14,8 @@ interface Level {
   rightVictims: number;
   note?: string;
   debatable?: "left" | "right" | "both";
-  leftIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you" | "richman" | "lobsters" | "cat";
-  rightIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you" | "richman" | "lobsters" | "cat";
+  leftIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you" | "richman" | "lobsters" | "cat" | "sleeping";
+  rightIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you" | "richman" | "lobsters" | "cat" | "sleeping";
 }
 
 const levels: Level[] = [
@@ -26,7 +26,7 @@ const levels: Level[] = [
   { name: "Priceless Painting", scenario: "Oh no! A trolley is heading toward five people. You can divert it, but a priceless painting will be destroyed.", leftLabel: "Five Unnamed People", rightLabel: "Priceless Painting", leftCount: "5 die", rightCount: "🎨 Destroyed", leftVictims: 5, rightVictims: 0, rightIcon: "painting" },
   { name: "Bribes", scenario: "Oh no! A trolley is heading toward a rich man who offered you a bribe. The other track has an unnamed person.", leftLabel: "Unnamed Rich Man", rightLabel: "Unnamed Person", leftCount: "1 dies", rightCount: "1 dies", leftVictims: 0, rightVictims: 1, leftIcon: "richman" },
   { name: "Levels of Sentience", scenario: "Oh no! A trolley is heading toward five lobsters. You can divert it toward one cat.", leftLabel: "Five Lobsters", rightLabel: "One Cat", leftCount: "5 🦞", rightCount: "1 🐱", leftVictims: 0, rightVictims: 0, leftIcon: "lobsters", rightIcon: "cat" },
-  { name: "Sleeping", scenario: "Oh no! A trolley is heading toward five sleeping people. You can divert it toward one awake person.", leftLabel: "Five Sleeping People", rightLabel: "One Awake Person", leftCount: "5 😴", rightCount: "1 👀", leftVictims: 5, rightVictims: 1 },
+  { name: "Sleeping", scenario: "Oh no! A trolley is heading toward five sleeping people. You can divert it toward one awake person.", leftLabel: "Five Sleeping People", rightLabel: "One Awake Person", leftCount: "5 😴", rightCount: "1 👀", leftVictims: 0, rightVictims: 1, leftIcon: "sleeping" },
   { name: "Personal Choices", scenario: "Oh no! A trolley is heading toward one person. You can divert it toward five people who tied themselves to the track voluntarily.", leftLabel: "One Person", rightLabel: "Five People (Tied Themselves)", leftCount: "1 dies", rightCount: "5 die", leftVictims: 1, rightVictims: 5 },
   { name: "Mercy", scenario: "Oh no! A trolley is heading toward five people. You can divert it toward one person, but they will be run over painfully slowly.", leftLabel: "Five People", rightLabel: "One Person (Painfully Slow)", leftCount: "5 die", rightCount: "1 dies slowly", leftVictims: 5, rightVictims: 1 },
   { name: "Minor Inconvenience", scenario: "Oh no! A trolley is heading toward one man. You can divert it to an empty track, but you'll suffer a minor embarrassment.", leftLabel: "One Man", rightLabel: "Nobody Dies (Minor Embarrassment)", leftCount: "1 dies", rightCount: "😳", leftVictims: 1, rightVictims: 0, rightIcon: "embarrassment" },
@@ -286,6 +286,32 @@ const TrackIconSVG = ({ type, x, y }: { type: string; x: number; y: number }) =>
           {/* Tail */}
           <path d="M-8,2 Q-14,-2 -12,-8 Q-10,-12 -8,-10" stroke="#f39c12" strokeWidth="2.5" fill="none" strokeLinecap="round" />
           <path d="M-8,2 Q-14,-2 -12,-8 Q-10,-12 -8,-10" stroke="#333" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+        </g>
+      );
+    case "sleeping":
+      return (
+        <g transform={`translate(${x}, ${y})`}>
+          {Array.from({ length: 5 }, (_, i) => (
+            <g key={i} transform={`translate(${(i - 2) * 16}, 0)`}>
+              {/* Lying down body */}
+              <line x1="-6" y1="4" x2="6" y2="4" stroke="#555" strokeWidth="1.5" strokeLinecap="round" />
+              {/* Head on pillow */}
+              <rect x="-8" y="0" width="5" height="3" rx="1" fill="#aaa" stroke="#888" strokeWidth="0.5" />
+              <circle cx="-6" cy="-1" r="3.5" fill="none" stroke="#555" strokeWidth="1.2" strokeLinecap="round" />
+              {/* Closed eyes (lines) */}
+              <line x1="-7.5" y1="-1.5" x2="-5.5" y2="-1.5" stroke="#333" strokeWidth="0.6" strokeLinecap="round" />
+              {/* Sleeping mouth */}
+              <ellipse cx="-6" cy="1" rx="1" ry="0.6" fill="#333" opacity="0.4" />
+              {/* Arms */}
+              <line x1="-3" y1="2" x2="-2" y2="6" stroke="#555" strokeWidth="1" strokeLinecap="round" />
+              {/* Legs */}
+              <line x1="4" y1="4" x2="5" y2="7" stroke="#555" strokeWidth="1" strokeLinecap="round" />
+              <line x1="6" y1="4" x2="7" y2="7" stroke="#555" strokeWidth="1" strokeLinecap="round" />
+              {/* ZZZ */}
+              <text x="-3" y="-5" fontSize="4" fill="#888" fontWeight="bold" opacity="0.7">z</text>
+              <text x="-1" y="-8" fontSize="3" fill="#888" fontWeight="bold" opacity="0.5">z</text>
+            </g>
+          ))}
         </g>
       );
     default:
