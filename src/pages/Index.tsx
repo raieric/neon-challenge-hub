@@ -118,6 +118,12 @@ const games = [
     to: "/word-bingo",
   },
   {
+    icon: "🎱",
+    title: "Lucky Number Bingo",
+    description: "Mark your numbers before someone shouts BINGO!",
+    to: "/number-bingo",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
