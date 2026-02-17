@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ShoppingCart, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import binodPhoto from "@/assets/binod-chaudhary.jpg";
 import Confetti from "@/components/Confetti";
 
 const STARTING_BALANCE = 2_000_000_000;
@@ -178,7 +179,7 @@ const SpendBinod = () => {
         <div className="text-center mb-6">
           <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-4 border-neon-cyan/40 shadow-[0_0_30px_hsl(185_80%_50%/0.3)]">
             <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Binod_Chaudhary.jpg/220px-Binod_Chaudhary.jpg"
+              src={binodPhoto}
               alt="Binod Chaudhary"
               className="w-full h-full object-cover"
             />
