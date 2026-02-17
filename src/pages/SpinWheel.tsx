@@ -230,21 +230,54 @@ const SpinWheel = () => {
         {result && !spinning && (
           <div className="mt-8 sm:mt-12 text-center" style={{ animation: "result-appear 0.6s ease-out forwards" }}>
             <p className="font-body text-sm text-muted-foreground uppercase tracking-widest mb-2">
-              The wheel has spoken:
+              {result === "Rick Roll 🕺" ? "You've been chosen..." : "The wheel has spoken:"}
             </p>
-            <div className="glass-panel px-8 sm:px-12 py-5 sm:py-6 neon-glow-purple">
-              <h2 className="font-display text-2xl sm:text-4xl md:text-5xl font-black text-foreground text-glow-cyan">
-                {result}
+            <div
+              className={`glass-panel px-8 sm:px-12 py-5 sm:py-6 ${result === "Rick Roll 🕺" ? "" : "neon-glow-purple"}`}
+              style={
+                result === "Rick Roll 🕺"
+                  ? {
+                      animation: "rickroll-shake 0.4s ease-in-out infinite, rickroll-rainbow 2s linear infinite",
+                      border: "2px solid",
+                    }
+                  : undefined
+              }
+            >
+              <h2
+                className="font-display text-2xl sm:text-4xl md:text-5xl font-black text-foreground"
+                style={
+                  result === "Rick Roll 🕺"
+                    ? { animation: "rickroll-rainbow-text 1.5s linear infinite" }
+                    : undefined
+                }
+              >
+                {result === "Rick Roll 🕺" ? "🕺 RICK ROLLED! 🕺" : result}
               </h2>
               {result === "Rick Roll 🕺" && (
-                <a
-                  href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 inline-block font-display text-sm sm:text-base font-bold text-neon-cyan underline hover:text-neon-purple transition-colors"
-                >
-                  🎵 Click here to get Rick Rolled!
-                </a>
+                <>
+                  <p className="mt-2 text-lg sm:text-xl animate-pulse">
+                    🎵 Never gonna give you up! 🎵
+                  </p>
+                  <a
+                    href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-block font-display text-sm sm:text-base font-bold text-neon-cyan underline hover:text-neon-purple transition-colors"
+                  >
+                    🎶 Watch the Rick Roll →
+                  </a>
+                  <div className="mt-4 rounded-xl overflow-hidden">
+                    <iframe
+                      width="320"
+                      height="180"
+                      src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&start=0"
+                      title="Rick Roll"
+                      allow="autoplay; encrypted-media"
+                      allowFullScreen
+                      className="w-full max-w-[400px] aspect-video rounded-xl"
+                    />
+                  </div>
+                </>
               )}
             </div>
           </div>

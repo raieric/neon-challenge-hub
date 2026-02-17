@@ -166,3 +166,29 @@
   50% { transform: scale(1.1); }
   100% { transform: scale(1); opacity: 1; filter: blur(0); }
 }
+
+@keyframes rickroll-shake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-5px) rotate(-2deg); }
+  75% { transform: translateX(5px) rotate(2deg); }
+}
+
+@keyframes rickroll-rainbow {
+  0% { border-color: hsl(0, 100%, 60%); box-shadow: 0 0 20px hsl(0, 100%, 60%, 0.5); }
+  16% { border-color: hsl(60, 100%, 60%); box-shadow: 0 0 20px hsl(60, 100%, 60%, 0.5); }
+  33% { border-color: hsl(120, 100%, 60%); box-shadow: 0 0 20px hsl(120, 100%, 60%, 0.5); }
+  50% { border-color: hsl(180, 100%, 60%); box-shadow: 0 0 20px hsl(180, 100%, 60%, 0.5); }
+  66% { border-color: hsl(240, 100%, 60%); box-shadow: 0 0 20px hsl(240, 100%, 60%, 0.5); }
+  83% { border-color: hsl(300, 100%, 60%); box-shadow: 0 0 20px hsl(300, 100%, 60%, 0.5); }
+  100% { border-color: hsl(360, 100%, 60%); box-shadow: 0 0 20px hsl(360, 100%, 60%, 0.5); }
+}
+
+@keyframes rickroll-rainbow-text {
+  0% { color: hsl(0, 100%, 70%); }
+  16% { color: hsl(60, 100%, 70%); }
+  33% { color: hsl(120, 100%, 70%); }
+  50% { color: hsl(180, 100%, 70%); }
+  66% { color: hsl(240, 100%, 70%); }
+  83% { color: hsl(300, 100%, 70%); }
+  100% { color: hsl(360, 100%, 70%); }
+}
