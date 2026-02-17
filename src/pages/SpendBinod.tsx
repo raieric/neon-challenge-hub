@@ -70,9 +70,9 @@ const items: Item[] = [
   { id: 51, name: "Satellite Launch", price: 50000000, image: "https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?w=200&h=200&fit=crop", category: "Large" },
   { id: 52, name: "Thamel Night Club", price: 500000, image: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=200&h=200&fit=crop", category: "Medium" },
   { id: 53, name: "Nepali Film Production", price: 2000000, image: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200&h=200&fit=crop", category: "Large" },
-  { id: 54, name: "Cargo Ship", price: 35000000, image: "https://images.unsplash.com/photo-1494412574643-ff11b0a5eb19?w=200&h=200&fit=crop", category: "Large" },
+  { id: 54, name: "Cargo Ship", price: 35000000, image: "https://images.unsplash.com/photo-1567899482105-e167e02b101d?w=200&h=200&fit=crop", category: "Large" },
   { id: 55, name: "PlayStation 5 Bundle", price: 600, image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=200&h=200&fit=crop", category: "Small" },
-];
+].sort((a, b) => a.price - b.price);
 
 const formatMoney = (amount: number): string => {
   if (Number.isInteger(amount)) return "$" + amount.toLocaleString("en-US");
