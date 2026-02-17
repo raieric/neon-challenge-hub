@@ -46,6 +46,12 @@ const games = [
     to: "/trolley",
   },
   {
+    icon: "💻",
+    title: "Programming Quiz Portal",
+    description: "Test your programming fundamentals.",
+    to: "/quiz",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",

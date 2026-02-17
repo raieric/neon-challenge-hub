@@ -10,6 +10,10 @@ import SpinWheel2 from "./pages/SpinWheel2";
 import SocialArena from "./pages/SocialArena";
 import VisionaryArena from "./pages/VisionaryArena";
 import TrolleySimulator from "./pages/TrolleySimulator";
+import QuizHome from "./quiz/QuizHome";
+import CQuizPage from "./quiz/CQuizPage";
+import JavaQuizPage from "./quiz/JavaQuizPage";
+import PythonQuizPage from "./quiz/PythonQuizPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +32,10 @@ const App = () => (
           <Route path="/social" element={<SocialArena />} />
           <Route path="/visionary" element={<VisionaryArena />} />
           <Route path="/trolley" element={<TrolleySimulator />} />
+          <Route path="/quiz" element={<QuizHome />} />
+          <Route path="/quiz/c" element={<CQuizPage />} />
+          <Route path="/quiz/java" element={<JavaQuizPage />} />
+          <Route path="/quiz/python" element={<PythonQuizPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
