@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import SpinWheel from "./pages/SpinWheel";
 import RockPaperScissors from "./pages/RockPaperScissors";
+import SpinWheel2 from "./pages/SpinWheel2";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/spin" element={<SpinWheel />} />
           <Route path="/rps" element={<RockPaperScissors />} />
+          <Route path="/spin2" element={<SpinWheel2 />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

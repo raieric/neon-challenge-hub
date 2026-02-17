@@ -16,6 +16,12 @@ const games = [
     to: "/rps",
   },
   {
+    icon: "🎤",
+    title: "Personality Arena",
+    description: "Step into the spotlight. Express, perform, and impress.",
+    to: "/spin2",
+  },
+  {
     icon: "🎲",
     title: "Lucky Draw",
     description: "One click. Pure randomness.",
