@@ -106,6 +106,12 @@ const games = [
     to: "/password-challenge",
   },
   {
+    icon: "🎭",
+    title: "Imposter Classroom",
+    description: "Find the imposter before it's too late.",
+    to: "/imposter",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
