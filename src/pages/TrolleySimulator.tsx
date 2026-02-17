@@ -14,15 +14,15 @@ interface Level {
   rightVictims: number;
   note?: string;
   debatable?: "left" | "right" | "both";
-  leftIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment";
-  rightIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment";
+  leftIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you";
+  rightIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you";
 }
 
 const levels: Level[] = [
   { name: "The Original", scenario: "Oh no! A trolley is heading toward five people on the main track. You can pull the lever to divert it to a side track, where one person is tied down.", leftLabel: "Five Unnamed People", rightLabel: "One Unnamed Person", leftCount: "5 die", rightCount: "1 dies", leftVictims: 5, rightVictims: 1 },
   { name: "Four People", scenario: "Oh no! A trolley is heading toward five people. You can divert it, but four people are on the other track.", leftLabel: "Five Unnamed People", rightLabel: "Four Unnamed People", leftCount: "5 die", rightCount: "4 die", leftVictims: 5, rightVictims: 4 },
   { name: "Life Savings", scenario: "Oh no! A trolley is heading toward five people. You can divert it onto a track that destroys your entire life savings.", leftLabel: "Five Unnamed People", rightLabel: "Your Life Savings Destroyed", leftCount: "5 die", rightCount: "💸 Gone", leftVictims: 5, rightVictims: 0, rightIcon: "money" },
-  { name: "You", scenario: "Oh no! A trolley is heading toward five people. You can divert it, but the other track leads directly to you.", leftLabel: "Five Unnamed People", rightLabel: "You", leftCount: "5 die", rightCount: "You die", leftVictims: 5, rightVictims: 1 },
+  { name: "You", scenario: "Oh no! A trolley is heading toward five people. You can divert it, but the other track leads directly to you.", leftLabel: "Five Unnamed People", rightLabel: "You", leftCount: "5 die", rightCount: "You die", leftVictims: 5, rightVictims: 0, rightIcon: "you" },
   { name: "Priceless Painting", scenario: "Oh no! A trolley is heading toward five people. You can divert it, but a priceless painting will be destroyed.", leftLabel: "Five Unnamed People", rightLabel: "Priceless Painting", leftCount: "5 die", rightCount: "🎨 Destroyed", leftVictims: 5, rightVictims: 0, rightIcon: "painting" },
   { name: "Bribes", scenario: "Oh no! A trolley is heading toward a rich man who offered you a bribe. The other track has an unnamed person.", leftLabel: "Unnamed Rich Man", rightLabel: "Unnamed Person", leftCount: "1 dies", rightCount: "1 dies", leftVictims: 1, rightVictims: 1 },
   { name: "Levels of Sentience", scenario: "Oh no! A trolley is heading toward five lobsters. You can divert it toward one cat.", leftLabel: "Five Lobsters", rightLabel: "One Cat", leftCount: "5 🦞", rightCount: "1 🐱", leftVictims: 5, rightVictims: 1 },
@@ -151,6 +151,21 @@ const TrackIconSVG = ({ type, x, y }: { type: string; x: number; y: number }) =>
           <circle cx="-6" cy="0" r="2.5" fill="#fab1a0" opacity="0.6" />
           <circle cx="6" cy="0" r="2.5" fill="#fab1a0" opacity="0.6" />
           <path d="M-3,3 Q0,5 3,3" stroke="#333" strokeWidth="1" fill="none" strokeLinecap="round" />
+        </g>
+      );
+    case "you":
+      return (
+        <g transform={`translate(${x}, ${y})`}>
+          {/* "You" stick figure with arrow pointing at it */}
+          <circle cx="0" cy="-12" r="5" fill="none" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" />
+          <line x1="0" y1="-7" x2="0" y2="6" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" />
+          <line x1="-6" y1="-1" x2="6" y2="-1" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" />
+          <line x1="0" y1="6" x2="-5" y2="14" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" />
+          <line x1="0" y1="6" x2="5" y2="14" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" />
+          {/* Arrow pointing down at figure */}
+          <line x1="0" y1="-28" x2="0" y2="-20" stroke="#e74c3c" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M-3,-22 L0,-18 L3,-22" stroke="#e74c3c" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+          <text x="0" y="-30" fontSize="7" fontWeight="bold" fill="#e74c3c" textAnchor="middle" style={{ fontFamily: "'Comic Sans MS', cursive" }}>YOU</text>
         </g>
       );
     default:
