@@ -88,6 +88,12 @@ const games = [
     to: "/memory-match",
   },
   {
+    icon: "⏳",
+    title: "Life & Universe Progress",
+    description: "How long until…?",
+    to: "/life-progress",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",

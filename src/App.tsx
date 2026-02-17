@@ -16,6 +16,7 @@ import WhoWasAlive from "./pages/WhoWasAlive";
 import DrawCircle from "./pages/DrawCircle";
 import MemoryMatch from "./pages/MemoryMatch";
 import SpendBinod from "./pages/SpendBinod";
+import LifeProgress from "./pages/LifeProgress";
 import QuizHome from "./quiz/QuizHome";
 import CQuizPage from "./quiz/CQuizPage";
 import JavaQuizPage from "./quiz/JavaQuizPage";
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/circle" element={<DrawCircle />} />
           <Route path="/memory-match" element={<MemoryMatch />} />
           <Route path="/spend-binod" element={<SpendBinod />} />
+          <Route path="/life-progress" element={<LifeProgress />} />
           <Route path="/quiz" element={<QuizHome />} />
           <Route path="/quiz/c" element={<CQuizPage />} />
           <Route path="/quiz/java" element={<JavaQuizPage />} />
