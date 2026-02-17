@@ -17,7 +17,7 @@ const games = [
   },
   {
     icon: "🎤",
-    title: "Personality Arena",
+    title: "Spin The Wheel 2 – Personality Arena",
     description: "Step into the spotlight. Express, perform, and impress.",
     to: "/spin2",
   },
