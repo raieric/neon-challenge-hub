@@ -53,7 +53,7 @@ const items: Item[] = [
   { id: 34, name: "Nepali Dal Bhat Set", price: 3, image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=200&h=200&fit=crop", category: "Small" },
   { id: 35, name: "Rolex Watch", price: 40000, image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=200&h=200&fit=crop", category: "Medium" },
   { id: 36, name: "Pashmina Shawl", price: 250, image: "https://images.unsplash.com/photo-1601924921557-45e6dea0f10d?w=200&h=200&fit=crop", category: "Small" },
-  { id: 37, name: "Helicopter", price: 2000000, image: "https://images.unsplash.com/photo-1534790566855-4cb788d389ec?w=200&h=200&fit=crop", category: "Large" },
+  { id: 37, name: "Helicopter", price: 2000000, image: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=200&h=200&fit=crop", category: "Large" },
   { id: 38, name: "Cinema Hall", price: 8000000, image: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=200&h=200&fit=crop", category: "Large" },
   { id: 39, name: "Nepali Thangka Painting", price: 5000, image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=200&h=200&fit=crop", category: "Small" },
   { id: 40, name: "Electric Bus Fleet (10)", price: 3000000, image: "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=200&h=200&fit=crop", category: "Large" },
@@ -70,7 +70,7 @@ const items: Item[] = [
   { id: 51, name: "Satellite Launch", price: 50000000, image: "https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?w=200&h=200&fit=crop", category: "Large" },
   { id: 52, name: "Thamel Night Club", price: 500000, image: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=200&h=200&fit=crop", category: "Medium" },
   { id: 53, name: "Nepali Film Production", price: 2000000, image: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200&h=200&fit=crop", category: "Large" },
-  { id: 54, name: "Cargo Ship", price: 35000000, image: "https://images.unsplash.com/photo-1577993055873-ff3e1dcea716?w=200&h=200&fit=crop", category: "Large" },
+  { id: 54, name: "Cargo Ship", price: 35000000, image: "https://images.unsplash.com/photo-1494412574643-ff11b0a5eb19?w=200&h=200&fit=crop", category: "Large" },
   { id: 55, name: "PlayStation 5 Bundle", price: 600, image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=200&h=200&fit=crop", category: "Small" },
 ];
 
