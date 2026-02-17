@@ -8,7 +8,7 @@ const SEGMENTS = [
   { label: "Sing a song", color: "hsl(185, 80%, 45%)" },
   { label: "Make a dance move", color: "hsl(320, 80%, 55%)" },
   { label: "Write the code", color: "hsl(220, 90%, 55%)" },
-  { label: "Write the code", color: "hsl(150, 80%, 45%)" },
+  { label: "Rick Roll 🕺", color: "hsl(150, 80%, 45%)" },
   { label: "Do 5 push ups", color: "hsl(30, 90%, 55%)" },
   { label: "Introduce yourself in American accent", color: "hsl(350, 80%, 55%)" },
 ];
@@ -236,6 +236,16 @@ const SpinWheel = () => {
               <h2 className="font-display text-2xl sm:text-4xl md:text-5xl font-black text-foreground text-glow-cyan">
                 {result}
               </h2>
+              {result === "Rick Roll 🕺" && (
+                <a
+                  href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-block font-display text-sm sm:text-base font-bold text-neon-cyan underline hover:text-neon-purple transition-colors"
+                >
+                  🎵 Click here to get Rick Rolled!
+                </a>
+              )}
             </div>
           </div>
         )}
