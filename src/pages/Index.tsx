@@ -52,6 +52,12 @@ const games = [
     to: "/quiz",
   },
   {
+    icon: "⚖️",
+    title: "Let's Settle This",
+    description: "Choose your side. The class decides.",
+    to: "/settle",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
