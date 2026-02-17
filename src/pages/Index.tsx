@@ -64,6 +64,12 @@ const games = [
     to: "/auction",
   },
   {
+    icon: "📜",
+    title: "Who Was Alive?",
+    description: "Enter a year. Discover history.",
+    to: "/alive",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",

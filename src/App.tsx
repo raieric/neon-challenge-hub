@@ -12,6 +12,7 @@ import VisionaryArena from "./pages/VisionaryArena";
 import TrolleySimulator from "./pages/TrolleySimulator";
 import SettleThis from "./pages/SettleThis";
 import AuctionChallenge from "./pages/AuctionChallenge";
+import WhoWasAlive from "./pages/WhoWasAlive";
 import QuizHome from "./quiz/QuizHome";
 import CQuizPage from "./quiz/CQuizPage";
 import JavaQuizPage from "./quiz/JavaQuizPage";
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/trolley" element={<TrolleySimulator />} />
           <Route path="/settle" element={<SettleThis />} />
           <Route path="/auction" element={<AuctionChallenge />} />
+          <Route path="/alive" element={<WhoWasAlive />} />
           <Route path="/quiz" element={<QuizHome />} />
           <Route path="/quiz/c" element={<CQuizPage />} />
           <Route path="/quiz/java" element={<JavaQuizPage />} />
