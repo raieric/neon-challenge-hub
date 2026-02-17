@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ParticleBackground from "@/components/ParticleBackground";
 import Confetti from "@/components/Confetti";
 import ThemeToggle from "@/components/ThemeToggle";
+import PerformanceTimer from "@/components/PerformanceTimer";
 
 const SEGMENTS = [
   { label: "Tell a joke", color: "hsl(270, 80%, 55%)" },
@@ -23,6 +24,7 @@ const SpinWheel = () => {
   const [spinCount, setSpinCount] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [phase, setPhase] = useState<"wheel" | "performance">("wheel");
   const wheelRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -108,165 +110,190 @@ const SpinWheel = () => {
           🎡 Spin The Wheel
         </h1>
 
-        {/* Wheel Container */}
-        <div className="relative animate-scale-in">
-          {/* Arrow pointer */}
-          <div className="absolute top-[-18px] left-1/2 -translate-x-1/2 z-20">
-            <div
-              className="w-0 h-0 border-l-[14px] border-r-[14px] border-t-[28px] border-l-transparent border-r-transparent"
-              style={{
-                borderTopColor: "hsl(185, 80%, 50%)",
-                filter: "drop-shadow(0 0 8px hsl(185, 80%, 50%))",
-              }}
-            />
-          </div>
+        {phase === "wheel" && (
+          <>
+            {/* Wheel Container */}
+            <div className="relative animate-scale-in">
+              {/* Arrow pointer */}
+              <div className="absolute top-[-18px] left-1/2 -translate-x-1/2 z-20">
+                <div
+                  className="w-0 h-0 border-l-[14px] border-r-[14px] border-t-[28px] border-l-transparent border-r-transparent"
+                  style={{
+                    borderTopColor: "hsl(185, 80%, 50%)",
+                    filter: "drop-shadow(0 0 8px hsl(185, 80%, 50%))",
+                  }}
+                />
+              </div>
 
-          {/* Outer glow ring */}
-          <div
-            className={`absolute inset-[-20px] rounded-full transition-all duration-1000 ${spinning ? "opacity-80" : "opacity-30"}`}
-            style={{
-              background: "conic-gradient(from 0deg, hsl(270,80%,60%), hsl(185,80%,50%), hsl(320,80%,58%), hsl(270,80%,60%))",
-              filter: "blur(20px)",
-            }}
-          />
+              {/* Outer glow ring */}
+              <div
+                className={`absolute inset-[-20px] rounded-full transition-all duration-1000 ${spinning ? "opacity-80" : "opacity-30"}`}
+                style={{
+                  background: "conic-gradient(from 0deg, hsl(270,80%,60%), hsl(185,80%,50%), hsl(320,80%,58%), hsl(270,80%,60%))",
+                  filter: "blur(20px)",
+                }}
+              />
 
-          {/* Wheel SVG */}
-          <svg
-            ref={wheelRef}
-            width={wheelSize}
-            height={wheelSize}
-            viewBox={`0 0 ${wheelSize} ${wheelSize}`}
-            className="relative z-10 w-[320px] h-[320px] sm:w-[420px] sm:h-[420px] md:w-[500px] md:h-[500px]"
-            style={{
-              transform: `rotate(${rotation}deg)`,
-              transition: spinning
-                ? "transform 4.5s cubic-bezier(0.17, 0.67, 0.12, 0.99)"
-                : "none",
-            }}
-          >
-            {SEGMENTS.map((seg, i) => {
-              const startAngle = i * SEGMENT_ANGLE - 90;
-              const endAngle = startAngle + SEGMENT_ANGLE;
-              const startRad = (startAngle * Math.PI) / 180;
-              const endRad = (endAngle * Math.PI) / 180;
+              {/* Wheel SVG */}
+              <svg
+                ref={wheelRef}
+                width={wheelSize}
+                height={wheelSize}
+                viewBox={`0 0 ${wheelSize} ${wheelSize}`}
+                className="relative z-10 w-[320px] h-[320px] sm:w-[420px] sm:h-[420px] md:w-[500px] md:h-[500px]"
+                style={{
+                  transform: `rotate(${rotation}deg)`,
+                  transition: spinning
+                    ? "transform 4.5s cubic-bezier(0.17, 0.67, 0.12, 0.99)"
+                    : "none",
+                }}
+              >
+                {SEGMENTS.map((seg, i) => {
+                  const startAngle = i * SEGMENT_ANGLE - 90;
+                  const endAngle = startAngle + SEGMENT_ANGLE;
+                  const startRad = (startAngle * Math.PI) / 180;
+                  const endRad = (endAngle * Math.PI) / 180;
 
-              const x1 = center + radius * Math.cos(startRad);
-              const y1 = center + radius * Math.sin(startRad);
-              const x2 = center + radius * Math.cos(endRad);
-              const y2 = center + radius * Math.sin(endRad);
+                  const x1 = center + radius * Math.cos(startRad);
+                  const y1 = center + radius * Math.sin(startRad);
+                  const x2 = center + radius * Math.cos(endRad);
+                  const y2 = center + radius * Math.sin(endRad);
 
-              const largeArc = SEGMENT_ANGLE > 180 ? 1 : 0;
+                  const largeArc = SEGMENT_ANGLE > 180 ? 1 : 0;
 
-              const midAngle = ((startAngle + endAngle) / 2) * (Math.PI / 180);
-              const textRadius = radius * 0.65;
-              const textX = center + textRadius * Math.cos(midAngle);
-              const textY = center + textRadius * Math.sin(midAngle);
-              const textRotation = (startAngle + endAngle) / 2;
+                  const midAngle = ((startAngle + endAngle) / 2) * (Math.PI / 180);
+                  const textRadius = radius * 0.65;
+                  const textX = center + textRadius * Math.cos(midAngle);
+                  const textY = center + textRadius * Math.sin(midAngle);
+                  const textRotation = (startAngle + endAngle) / 2;
 
-              return (
-                <g key={i}>
-                  <path
-                    d={`M ${center} ${center} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`}
-                    fill={seg.color}
-                    stroke="hsl(230, 25%, 7%)"
-                    strokeWidth="2"
-                  />
+                  return (
+                    <g key={i}>
+                      <path
+                        d={`M ${center} ${center} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                        fill={seg.color}
+                        stroke="hsl(230, 25%, 7%)"
+                        strokeWidth="2"
+                      />
+                      <text
+                        x={textX}
+                        y={textY}
+                        fill="white"
+                        fontSize="9"
+                        fontFamily="var(--font-display)"
+                        fontWeight="700"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        transform={`rotate(${textRotation}, ${textX}, ${textY})`}
+                        style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}
+                      >
+                        {seg.label.length > 16
+                          ? seg.label.slice(0, 14) + "…"
+                          : seg.label}
+                      </text>
+                    </g>
+                  );
+                })}
+
+                {/* Center circle */}
+                <g onClick={spin} className="cursor-pointer">
+                  <circle cx={center} cy={center} r="24" fill="hsl(230, 25%, 10%)" stroke="hsl(270, 80%, 60%)" strokeWidth="3" />
                   <text
-                    x={textX}
-                    y={textY}
-                    fill="white"
-                    fontSize="9"
+                    x={center}
+                    y={center}
+                    fill="hsl(270, 80%, 60%)"
+                    fontSize="11"
                     fontFamily="var(--font-display)"
-                    fontWeight="700"
+                    fontWeight="800"
                     textAnchor="middle"
                     dominantBaseline="middle"
-                    transform={`rotate(${textRotation}, ${textX}, ${textY})`}
-                    style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}
+                    style={{ pointerEvents: "none" }}
                   >
-                    {seg.label.length > 16
-                      ? seg.label.slice(0, 14) + "…"
-                      : seg.label}
+                    SPIN
                   </text>
                 </g>
-              );
-            })}
-
-            {/* Center circle */}
-            <g onClick={spin} className="cursor-pointer">
-              <circle cx={center} cy={center} r="24" fill="hsl(230, 25%, 10%)" stroke="hsl(270, 80%, 60%)" strokeWidth="3" />
-              <text
-                x={center}
-                y={center}
-                fill="hsl(270, 80%, 60%)"
-                fontSize="11"
-                fontFamily="var(--font-display)"
-                fontWeight="800"
-                textAnchor="middle"
-                dominantBaseline="middle"
-                style={{ pointerEvents: "none" }}
-              >
-                SPIN
-              </text>
-            </g>
-          </svg>
-        </div>
-
-
-        {/* Result display */}
-        {result && !spinning && (
-          <div className="mt-8 sm:mt-12 text-center" style={{ animation: "result-appear 0.6s ease-out forwards" }}>
-            <p className="font-body text-sm text-muted-foreground uppercase tracking-widest mb-2">
-              {result === "Rick Roll 🕺" ? "You've been chosen..." : "The wheel has spoken:"}
-            </p>
-            <div
-              className={`glass-panel px-8 sm:px-12 py-5 sm:py-6 ${result === "Rick Roll 🕺" ? "" : "neon-glow-purple"}`}
-              style={
-                result === "Rick Roll 🕺"
-                  ? {
-                      animation: "rickroll-shake 0.4s ease-in-out infinite, rickroll-rainbow 2s linear infinite",
-                      border: "2px solid",
-                    }
-                  : undefined
-              }
-            >
-              <h2
-                className="font-display text-2xl sm:text-4xl md:text-5xl font-black text-foreground"
-                style={
-                  result === "Rick Roll 🕺"
-                    ? { animation: "rickroll-rainbow-text 1.5s linear infinite" }
-                    : undefined
-                }
-              >
-                {result === "Rick Roll 🕺" ? "🕺 RICK ROLLED! 🕺" : result}
-              </h2>
-              {result === "Rick Roll 🕺" && (
-                <>
-                  <p className="mt-2 text-lg sm:text-xl animate-pulse">
-                    🎵 Never gonna give you up! 🎵
-                  </p>
-                  <a
-                    href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 inline-block font-display text-sm sm:text-base font-bold text-neon-cyan underline hover:text-neon-purple transition-colors"
-                  >
-                    🎶 Watch the Rick Roll →
-                  </a>
-                  <div className="mt-4 rounded-xl overflow-hidden">
-                    <iframe
-                      width="320"
-                      height="180"
-                      src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&start=0"
-                      title="Rick Roll"
-                      allow="autoplay; encrypted-media"
-                      allowFullScreen
-                      className="w-full max-w-[400px] aspect-video rounded-xl"
-                    />
-                  </div>
-                </>
-              )}
+              </svg>
             </div>
-          </div>
+
+            {/* Result display */}
+            {result && !spinning && (
+              <div className="mt-8 sm:mt-12 text-center" style={{ animation: "result-appear 0.6s ease-out forwards" }}>
+                <p className="font-body text-sm text-muted-foreground uppercase tracking-widest mb-2">
+                  {result === "Rick Roll 🕺" ? "You've been chosen..." : "The wheel has spoken:"}
+                </p>
+                <div
+                  className={`glass-panel px-8 sm:px-12 py-5 sm:py-6 ${result === "Rick Roll 🕺" ? "" : "neon-glow-purple"}`}
+                  style={
+                    result === "Rick Roll 🕺"
+                      ? {
+                          animation: "rickroll-shake 0.4s ease-in-out infinite, rickroll-rainbow 2s linear infinite",
+                          border: "2px solid",
+                        }
+                      : undefined
+                  }
+                >
+                  <h2
+                    className="font-display text-2xl sm:text-4xl md:text-5xl font-black text-foreground"
+                    style={
+                      result === "Rick Roll 🕺"
+                        ? { animation: "rickroll-rainbow-text 1.5s linear infinite" }
+                        : undefined
+                    }
+                  >
+                    {result === "Rick Roll 🕺" ? "🕺 RICK ROLLED! 🕺" : result}
+                  </h2>
+                  {result === "Rick Roll 🕺" && (
+                    <>
+                      <p className="mt-2 text-lg sm:text-xl animate-pulse">
+                        🎵 Never gonna give you up! 🎵
+                      </p>
+                      <a
+                        href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-4 inline-block font-display text-sm sm:text-base font-bold text-neon-cyan underline hover:text-neon-purple transition-colors"
+                      >
+                        🎶 Watch the Rick Roll →
+                      </a>
+                      <div className="mt-4 rounded-xl overflow-hidden">
+                        <iframe
+                          width="320"
+                          height="180"
+                          src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&start=0"
+                          title="Rick Roll"
+                          allow="autoplay; encrypted-media"
+                          allowFullScreen
+                          className="w-full max-w-[400px] aspect-video rounded-xl"
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Start Challenge button */}
+                {result !== "Rick Roll 🕺" && (
+                  <button
+                    onClick={() => setPhase("performance")}
+                    className="mt-6 px-8 py-3 font-display text-sm font-bold tracking-widest uppercase rounded-lg bg-neon-purple/20 border border-neon-purple/60 text-neon-purple hover:bg-neon-purple/30 transition-all neon-glow-purple"
+                  >
+                    🎤 Start Challenge Timer
+                  </button>
+                )}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Performance Timer Phase */}
+        {phase === "performance" && result && (
+          <PerformanceTimer
+            challenge={result}
+            onBack={() => {
+              setPhase("wheel");
+              setResult(null);
+              setShowConfetti(false);
+            }}
+          />
         )}
       </div>
     </div>
