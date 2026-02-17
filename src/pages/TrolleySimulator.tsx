@@ -14,8 +14,8 @@ interface Level {
   rightVictims: number;
   note?: string;
   debatable?: "left" | "right" | "both";
-  leftIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you" | "richman";
-  rightIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you" | "richman";
+  leftIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you" | "richman" | "lobsters" | "cat";
+  rightIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you" | "richman" | "lobsters" | "cat";
 }
 
 const levels: Level[] = [
@@ -25,7 +25,7 @@ const levels: Level[] = [
   { name: "You", scenario: "Oh no! A trolley is heading toward five people. You can divert it, but the other track leads directly to you.", leftLabel: "Five Unnamed People", rightLabel: "You", leftCount: "5 die", rightCount: "You die", leftVictims: 5, rightVictims: 0, rightIcon: "you" },
   { name: "Priceless Painting", scenario: "Oh no! A trolley is heading toward five people. You can divert it, but a priceless painting will be destroyed.", leftLabel: "Five Unnamed People", rightLabel: "Priceless Painting", leftCount: "5 die", rightCount: "🎨 Destroyed", leftVictims: 5, rightVictims: 0, rightIcon: "painting" },
   { name: "Bribes", scenario: "Oh no! A trolley is heading toward a rich man who offered you a bribe. The other track has an unnamed person.", leftLabel: "Unnamed Rich Man", rightLabel: "Unnamed Person", leftCount: "1 dies", rightCount: "1 dies", leftVictims: 0, rightVictims: 1, leftIcon: "richman" },
-  { name: "Levels of Sentience", scenario: "Oh no! A trolley is heading toward five lobsters. You can divert it toward one cat.", leftLabel: "Five Lobsters", rightLabel: "One Cat", leftCount: "5 🦞", rightCount: "1 🐱", leftVictims: 5, rightVictims: 1 },
+  { name: "Levels of Sentience", scenario: "Oh no! A trolley is heading toward five lobsters. You can divert it toward one cat.", leftLabel: "Five Lobsters", rightLabel: "One Cat", leftCount: "5 🦞", rightCount: "1 🐱", leftVictims: 0, rightVictims: 0, leftIcon: "lobsters", rightIcon: "cat" },
   { name: "Sleeping", scenario: "Oh no! A trolley is heading toward five sleeping people. You can divert it toward one awake person.", leftLabel: "Five Sleeping People", rightLabel: "One Awake Person", leftCount: "5 😴", rightCount: "1 👀", leftVictims: 5, rightVictims: 1 },
   { name: "Personal Choices", scenario: "Oh no! A trolley is heading toward one person. You can divert it toward five people who tied themselves to the track voluntarily.", leftLabel: "One Person", rightLabel: "Five People (Tied Themselves)", leftCount: "1 dies", rightCount: "5 die", leftVictims: 1, rightVictims: 5 },
   { name: "Mercy", scenario: "Oh no! A trolley is heading toward five people. You can divert it toward one person, but they will be run over painfully slowly.", leftLabel: "Five People", rightLabel: "One Person (Painfully Slow)", leftCount: "5 die", rightCount: "1 dies slowly", leftVictims: 5, rightVictims: 1 },
@@ -225,6 +225,67 @@ const TrackIconSVG = ({ type, x, y }: { type: string; x: number; y: number }) =>
           {/* Floating dollar signs */}
           <text x="14" y="-6" fontSize="6" fill="#27ae60" fontWeight="bold" opacity="0.7">$</text>
           <text x="-14" y="-8" fontSize="5" fill="#27ae60" fontWeight="bold" opacity="0.5">$</text>
+        </g>
+      );
+    case "lobsters":
+      return (
+        <g transform={`translate(${x}, ${y})`}>
+          {Array.from({ length: 5 }, (_, i) => (
+            <g key={i} transform={`translate(${(i - 2) * 14}, 0)`}>
+              {/* Lobster body */}
+              <ellipse cx="0" cy="0" rx="5" ry="3" fill="#e74c3c" stroke="#c0392b" strokeWidth="0.8" />
+              {/* Tail */}
+              <path d={`M-5,0 Q-7,${i % 2 === 0 ? -2 : 2} -9,0`} stroke="#c0392b" strokeWidth="1" fill="none" strokeLinecap="round" />
+              <ellipse cx="-9" cy="0" rx="2" ry="1.5" fill="#e74c3c" stroke="#c0392b" strokeWidth="0.5" />
+              {/* Claws */}
+              <path d="M5,-1 L8,-3 L7,-1 L9,-1Z" fill="#e74c3c" stroke="#c0392b" strokeWidth="0.5" />
+              <path d="M5,1 L8,3 L7,1 L9,1Z" fill="#e74c3c" stroke="#c0392b" strokeWidth="0.5" />
+              {/* Eyes */}
+              <line x1="2" y1="-3" x2="3" y2="-5" stroke="#c0392b" strokeWidth="0.5" />
+              <circle cx="3" cy="-5.5" r="0.8" fill="#333" />
+              <line x1="-1" y1="-3" x2="-2" y2="-5" stroke="#c0392b" strokeWidth="0.5" />
+              <circle cx="-2" cy="-5.5" r="0.8" fill="#333" />
+              {/* Legs */}
+              <line x1="-2" y1="3" x2="-3" y2="6" stroke="#c0392b" strokeWidth="0.5" />
+              <line x1="0" y1="3" x2="0" y2="6" stroke="#c0392b" strokeWidth="0.5" />
+              <line x1="2" y1="3" x2="3" y2="6" stroke="#c0392b" strokeWidth="0.5" />
+            </g>
+          ))}
+        </g>
+      );
+    case "cat":
+      return (
+        <g transform={`translate(${x}, ${y})`}>
+          {/* Body */}
+          <ellipse cx="0" cy="4" rx="8" ry="6" fill="#f39c12" stroke="#333" strokeWidth="1.2" />
+          {/* Head */}
+          <circle cx="8" cy="-4" r="6" fill="#f39c12" stroke="#333" strokeWidth="1.2" />
+          {/* Ears */}
+          <polygon points="4,-9 6,-15 8,-9" fill="#f39c12" stroke="#333" strokeWidth="1" />
+          <polygon points="8,-9 10,-15 12,-9" fill="#f39c12" stroke="#333" strokeWidth="1" />
+          {/* Inner ears */}
+          <polygon points="5,-9 6,-13 7,-9" fill="#e8a0a0" stroke="none" />
+          <polygon points="9,-9 10,-13 11,-9" fill="#e8a0a0" stroke="none" />
+          {/* Eyes */}
+          <ellipse cx="6" cy="-5" rx="1.2" ry="1.5" fill="#2ecc71" stroke="#333" strokeWidth="0.5" />
+          <ellipse cx="10" cy="-5" rx="1.2" ry="1.5" fill="#2ecc71" stroke="#333" strokeWidth="0.5" />
+          <ellipse cx="6" cy="-5" rx="0.5" ry="1.3" fill="#333" />
+          <ellipse cx="10" cy="-5" rx="0.5" ry="1.3" fill="#333" />
+          {/* Nose */}
+          <polygon points="7.5,-2 8,-1 8.5,-2" fill="#e8a0a0" />
+          {/* Whiskers */}
+          <line x1="2" y1="-2" x2="-3" y2="-3" stroke="#333" strokeWidth="0.4" />
+          <line x1="2" y1="-1" x2="-3" y2="0" stroke="#333" strokeWidth="0.4" />
+          <line x1="14" y1="-2" x2="19" y2="-3" stroke="#333" strokeWidth="0.4" />
+          <line x1="14" y1="-1" x2="19" y2="0" stroke="#333" strokeWidth="0.4" />
+          {/* Legs */}
+          <line x1="-5" y1="9" x2="-5" y2="14" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="-2" y1="9" x2="-2" y2="14" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="2" y1="9" x2="2" y2="14" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="5" y1="9" x2="5" y2="14" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Tail */}
+          <path d="M-8,2 Q-14,-2 -12,-8 Q-10,-12 -8,-10" stroke="#f39c12" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+          <path d="M-8,2 Q-14,-2 -12,-8 Q-10,-12 -8,-10" stroke="#333" strokeWidth="1.2" fill="none" strokeLinecap="round" />
         </g>
       );
     default:
