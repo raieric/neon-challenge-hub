@@ -209,22 +209,6 @@ const SpinWheel = () => {
           </svg>
         </div>
 
-        {/* Spin Button */}
-        <button
-          onClick={spin}
-          disabled={spinning}
-          className={`
-            mt-8 sm:mt-12 px-8 sm:px-12 py-3 sm:py-4 font-display text-base sm:text-lg font-black tracking-widest uppercase
-            rounded-xl border transition-all duration-300
-            ${
-              spinning
-                ? "bg-muted text-muted-foreground border-border cursor-not-allowed"
-                : "bg-gradient-to-r from-neon-purple to-neon-cyan text-primary-foreground border-neon-purple/50 hover:shadow-[0_0_30px_hsl(270_80%_60%/0.4)] hover:scale-105 active:scale-95"
-            }
-          `}
-        >
-          {spinning ? "SPINNING..." : result ? "🔁 SPIN AGAIN" : "🎰 SPIN NOW"}
-        </button>
 
         {/* Result display */}
         {result && !spinning && (
