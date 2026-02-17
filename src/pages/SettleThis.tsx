@@ -198,7 +198,18 @@ const SettleThis = () => {
     if (selected) return;
     setSelected(side);
     setTimeout(() => setShowResults(true), 500);
-  }, [selected]);
+
+    // Easter egg: choosing "Dark Mode" or "Light Mode" toggles the site theme
+    const currentDebate = debates[debateOrder[currentIndex]];
+    const chosenTitle = currentDebate[side].title;
+    if (chosenTitle === "Dark Mode") {
+      document.documentElement.classList.remove("light");
+      localStorage.setItem("theme", "dark");
+    } else if (chosenTitle === "Light Mode") {
+      document.documentElement.classList.add("light");
+      localStorage.setItem("theme", "light");
+    }
+  }, [selected, debateOrder, currentIndex]);
 
   const handleNext = useCallback(() => {
     if (currentIndex >= debates.length - 1) {
