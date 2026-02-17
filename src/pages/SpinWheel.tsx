@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import ParticleBackground from "@/components/ParticleBackground";
 import Confetti from "@/components/Confetti";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const SEGMENTS = [
   { label: "Tell a joke", color: "hsl(270, 80%, 55%)" },
@@ -98,6 +99,7 @@ const SpinWheel = () => {
             >
               {isFullscreen ? "EXIT FS" : "⛶ FULLSCREEN"}
             </button>
+            <ThemeToggle />
           </div>
         </div>
 
