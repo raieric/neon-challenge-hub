@@ -9,6 +9,7 @@ import RockPaperScissors from "./pages/RockPaperScissors";
 import SpinWheel2 from "./pages/SpinWheel2";
 import SocialArena from "./pages/SocialArena";
 import VisionaryArena from "./pages/VisionaryArena";
+import TrolleySimulator from "./pages/TrolleySimulator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/spin2" element={<SpinWheel2 />} />
           <Route path="/social" element={<SocialArena />} />
           <Route path="/visionary" element={<VisionaryArena />} />
+          <Route path="/trolley" element={<TrolleySimulator />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
