@@ -28,6 +28,12 @@ const games = [
     to: "/social",
   },
   {
+    icon: "🚀",
+    title: "Visionary Arena – Big Ideas Lab",
+    description: "Think beyond code. Lead the future.",
+    to: "/visionary",
+  },
+  {
     icon: "🎲",
     title: "Lucky Draw",
     description: "One click. Pure randomness.",
