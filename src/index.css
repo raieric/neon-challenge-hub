@@ -156,6 +156,10 @@
     text-shadow: 0 0 10px hsl(185 80% 50% / 0.6), 0 0 40px hsl(185 80% 50% / 0.3);
   }
 
+  .text-glow-pink {
+    text-shadow: 0 0 10px hsl(320 80% 58% / 0.6), 0 0 40px hsl(320 80% 58% / 0.3);
+  }
+
   .gradient-border {
     position: relative;
   }
