@@ -100,6 +100,12 @@ const games = [
     to: "/universe-forecast",
   },
   {
+    icon: "🔐",
+    title: "Infinite Password Challenge",
+    description: "Strong enough yet?",
+    to: "/password-challenge",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
