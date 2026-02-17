@@ -9,36 +9,37 @@ interface TimelineEvent {
   title: string;
   description: string;
   section: string;
+  image: string;
 }
 
 const timelineEvents: TimelineEvent[] = [
   // SECTION 1 – NEAR FUTURE
-  { year: "2060", icon: "📜", title: "Newton's Theological Forecast", description: "Sir Isaac Newton calculated that 2060 may mark the beginning of a new religious era based on biblical prophecy. He did not predict Earth's destruction — only a transformation of human civilization.", section: "Near Future" },
-  { year: "2061", icon: "☄️", title: "Halley's Comet Returns", description: "Halley's Comet completes its 76-year orbit and becomes visible from Earth once again — a celestial clock ticking since antiquity.", section: "Near Future" },
-  { year: "2178", icon: "🪐", title: "Pluto Completes One Full Orbit", description: "Since its discovery in 1930, Pluto finally completes one full trip around the Sun — a 248-year journey through the outer solar system.", section: "Near Future" },
-  { year: "2300", icon: "🚀", title: "Voyager 1 Reaches the Oort Cloud", description: "After traveling billions of kilometers, Voyager 1 reaches the outer shell of our solar system — the vast, icy Oort Cloud.", section: "Near Future" },
+  { year: "2060", icon: "📜", title: "Newton's Theological Forecast", description: "Sir Isaac Newton calculated that 2060 may mark the beginning of a new religious era based on biblical prophecy. He did not predict Earth's destruction — only a transformation of human civilization.", section: "Near Future", image: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Portrait_of_Sir_Isaac_Newton%2C_1689.jpg" },
+  { year: "2061", icon: "☄️", title: "Halley's Comet Returns", description: "Halley's Comet completes its 76-year orbit and becomes visible from Earth once again — a celestial clock ticking since antiquity.", section: "Near Future", image: "https://images.unsplash.com/photo-1506443432602-ac2fcd6f54e0?w=600&h=300&fit=crop" },
+  { year: "2178", icon: "🪐", title: "Pluto Completes One Full Orbit", description: "Since its discovery in 1930, Pluto finally completes one full trip around the Sun — a 248-year journey through the outer solar system.", section: "Near Future", image: "https://images.unsplash.com/photo-1614732414444-096e5f1122d5?w=600&h=300&fit=crop" },
+  { year: "2300", icon: "🚀", title: "Voyager 1 Reaches the Oort Cloud", description: "After traveling billions of kilometers, Voyager 1 reaches the outer shell of our solar system — the vast, icy Oort Cloud.", section: "Near Future", image: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=600&h=300&fit=crop" },
 
   // SECTION 2 – STELLAR TIMESCALES
-  { year: "50,000", icon: "💥", title: "VY Canis Majoris Supernova", description: "One of the largest known stars explodes in a cataclysmic supernova, briefly outshining entire galaxies. The shockwave reshapes nearby nebulae.", section: "Stellar Timescales" },
-  { year: "75,000", icon: "🌋", title: "New Hawaiian Island Forms", description: "The Lōʻihi seamount breaches the ocean surface, adding a new island to the Hawaiian chain — built by millions of years of volcanic activity.", section: "Stellar Timescales" },
-  { year: "100,000", icon: "🌌", title: "Constellations Become Unrecognizable", description: "Stellar drift reshapes the night sky. Orion, the Big Dipper, and every constellation humanity named will be unrecognizable to future observers.", section: "Stellar Timescales" },
+  { year: "50,000", icon: "💥", title: "VY Canis Majoris Supernova", description: "One of the largest known stars explodes in a cataclysmic supernova, briefly outshining entire galaxies. The shockwave reshapes nearby nebulae.", section: "Stellar Timescales", image: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=600&h=300&fit=crop" },
+  { year: "75,000", icon: "🌋", title: "New Hawaiian Island Forms", description: "The Lōʻihi seamount breaches the ocean surface, adding a new island to the Hawaiian chain — built by millions of years of volcanic activity.", section: "Stellar Timescales", image: "https://images.unsplash.com/photo-1547234935-80c7145ec969?w=600&h=300&fit=crop" },
+  { year: "100,000", icon: "🌌", title: "Constellations Become Unrecognizable", description: "Stellar drift reshapes the night sky. Orion, the Big Dipper, and every constellation humanity named will be unrecognizable to future observers.", section: "Stellar Timescales", image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600&h=300&fit=crop" },
 
   // PLANETARY FUTURE
-  { year: "600 Million", icon: "🌙", title: "Last Total Solar Eclipse", description: "The Moon drifts too far from Earth for its shadow to fully cover the Sun. Total solar eclipses become a thing of the past — forever.", section: "Planetary Future" },
-  { year: "800 Million", icon: "🌱", title: "Photosynthesis Ends", description: "Rising solar luminosity causes CO₂ levels to drop below the threshold for photosynthesis. Plants die. The oxygen-rich atmosphere begins to fade.", section: "Planetary Future" },
-  { year: "1.1 Billion", icon: "🔥", title: "Earth's Oceans Evaporate", description: "The Sun's increasing energy output boils away Earth's oceans. The planet becomes a barren, scorched world — inhospitable to all known life.", section: "Planetary Future" },
+  { year: "600 Million", icon: "🌙", title: "Last Total Solar Eclipse", description: "The Moon drifts too far from Earth for its shadow to fully cover the Sun. Total solar eclipses become a thing of the past — forever.", section: "Planetary Future", image: "https://images.unsplash.com/photo-1503862510641-bf1b3ca2e56a?w=600&h=300&fit=crop" },
+  { year: "800 Million", icon: "🌱", title: "Photosynthesis Ends", description: "Rising solar luminosity causes CO₂ levels to drop below the threshold for photosynthesis. Plants die. The oxygen-rich atmosphere begins to fade.", section: "Planetary Future", image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=300&fit=crop" },
+  { year: "1.1 Billion", icon: "🔥", title: "Earth's Oceans Evaporate", description: "The Sun's increasing energy output boils away Earth's oceans. The planet becomes a barren, scorched world — inhospitable to all known life.", section: "Planetary Future", image: "https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=600&h=300&fit=crop" },
 
   // GALACTIC ERA
-  { year: "5 Billion", icon: "🌠", title: "Milky Way–Andromeda Collision", description: "Our galaxy collides with the Andromeda Galaxy. Stars interweave in a cosmic dance spanning millions of years, forming a new galaxy: Milkdromeda.", section: "Galactic Era" },
-  { year: "7 Billion", icon: "☀️", title: "The Sun Becomes a Red Giant", description: "The Sun exhausts its hydrogen fuel and expands enormously, engulfing Mercury, Venus, and possibly Earth in its bloated outer layers.", section: "Galactic Era" },
-  { year: "8 Billion", icon: "⭐", title: "The Sun Becomes a White Dwarf", description: "After shedding its outer layers, the Sun collapses into a dense white dwarf — a fading ember the size of Earth, slowly cooling for eternity.", section: "Galactic Era" },
+  { year: "5 Billion", icon: "🌠", title: "Milky Way–Andromeda Collision", description: "Our galaxy collides with the Andromeda Galaxy. Stars interweave in a cosmic dance spanning millions of years, forming a new galaxy: Milkdromeda.", section: "Galactic Era", image: "https://images.unsplash.com/photo-1543722530-d2c3201371e7?w=600&h=300&fit=crop" },
+  { year: "7 Billion", icon: "☀️", title: "The Sun Becomes a Red Giant", description: "The Sun exhausts its hydrogen fuel and expands enormously, engulfing Mercury, Venus, and possibly Earth in its bloated outer layers.", section: "Galactic Era", image: "https://images.unsplash.com/photo-1532693322450-2cb5c511067d?w=600&h=300&fit=crop" },
+  { year: "8 Billion", icon: "⭐", title: "The Sun Becomes a White Dwarf", description: "After shedding its outer layers, the Sun collapses into a dense white dwarf — a fading ember the size of Earth, slowly cooling for eternity.", section: "Galactic Era", image: "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=600&h=300&fit=crop" },
 
   // COSMIC LONG TERM
-  { year: "450 Billion", icon: "🌠", title: "Local Group Merges Into One Galaxy", description: "All galaxies gravitationally bound to us merge into a single super-galaxy. Beyond it, the expanding universe carries everything else beyond reach.", section: "Deep Time" },
-  { year: "1 Trillion", icon: "🌌", title: "Big Bang Radiation Becomes Undetectable", description: "The cosmic microwave background — the afterglow of creation — redshifts beyond detection. Evidence of the Big Bang vanishes from observable reality.", section: "Deep Time" },
-  { year: "10¹⁵", icon: "🌑", title: "The Dark Era Begins", description: "All stars have burned out. The universe is populated only by white dwarfs, neutron stars, and black holes drifting through absolute darkness.", section: "Deep Time" },
-  { year: "10³⁰", icon: "🕳", title: "Black Holes Slowly Evaporate", description: "Through Hawking radiation, even the most massive black holes begin to lose mass — particle by particle — over inconceivable stretches of time.", section: "Deep Time" },
-  { year: "10¹⁰⁰", icon: "❄️", title: "Heat Death of the Universe", description: "The final black hole evaporates in a whisper of radiation. Maximum entropy is reached. No energy gradients remain. Nothing interesting ever happens again.", section: "Deep Time" },
+  { year: "450 Billion", icon: "🌠", title: "Local Group Merges Into One Galaxy", description: "All galaxies gravitationally bound to us merge into a single super-galaxy. Beyond it, the expanding universe carries everything else beyond reach.", section: "Deep Time", image: "https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=600&h=300&fit=crop" },
+  { year: "1 Trillion", icon: "🌌", title: "Big Bang Radiation Becomes Undetectable", description: "The cosmic microwave background — the afterglow of creation — redshifts beyond detection. Evidence of the Big Bang vanishes from observable reality.", section: "Deep Time", image: "https://images.unsplash.com/photo-1464802686167-b939a6910659?w=600&h=300&fit=crop" },
+  { year: "10¹⁵", icon: "🌑", title: "The Dark Era Begins", description: "All stars have burned out. The universe is populated only by white dwarfs, neutron stars, and black holes drifting through absolute darkness.", section: "Deep Time", image: "https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=600&h=300&fit=crop" },
+  { year: "10³⁰", icon: "🕳", title: "Black Holes Slowly Evaporate", description: "Through Hawking radiation, even the most massive black holes begin to lose mass — particle by particle — over inconceivable stretches of time.", section: "Deep Time", image: "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=600&h=300&fit=crop" },
+  { year: "10¹⁰⁰", icon: "❄️", title: "Heat Death of the Universe", description: "The final black hole evaporates in a whisper of radiation. Maximum entropy is reached. No energy gradients remain. Nothing interesting ever happens again.", section: "Deep Time", image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=300&fit=crop" },
 ];
 
 const sections = ["Near Future", "Stellar Timescales", "Planetary Future", "Galactic Era", "Deep Time"];
@@ -135,25 +136,37 @@ function TimelineCard({ event, index }: { event: TimelineEvent; index: number })
           ${isLeft ? "md:mr-auto md:pr-12" : "md:ml-auto md:pl-12"}
         `}
       >
-        <div className="group relative rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-6 md:p-8 hover:border-white/20 transition-all duration-500 hover:bg-white/[0.06]">
+        <div className="group relative rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md overflow-hidden hover:border-white/20 transition-all duration-500 hover:bg-white/[0.06]">
           {/* Glow accent */}
           <div className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br ${sectionColors[event.section]} blur-xl -z-10`} style={{ opacity: 0.05 }} />
 
-          {/* Year */}
-          <div className={`text-sm font-bold tracking-[0.3em] uppercase bg-gradient-to-r ${sectionColors[event.section]} bg-clip-text text-transparent mb-3`}>
-            {event.year} {event.year.match(/^\d+$/) && Number(event.year) < 100000 ? "AD" : "Years"}
+          {/* Image */}
+          <div className="relative w-full h-40 md:h-48 overflow-hidden">
+            <img
+              src={event.image}
+              alt={event.title}
+              loading="lazy"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            {/* Year overlay on image */}
+            <div className={`absolute bottom-3 left-4 text-xs font-bold tracking-[0.3em] uppercase bg-gradient-to-r ${sectionColors[event.section]} bg-clip-text text-transparent`}>
+              {event.year} {event.year.match(/^\d+$/) && Number(event.year) < 100000 ? "AD" : "Years"}
+            </div>
           </div>
 
-          {/* Icon + Title */}
-          <h3 className="text-xl md:text-2xl font-display font-bold text-white/90 mb-3 leading-tight">
-            <span className="mr-2">{event.icon}</span>
-            {event.title}
-          </h3>
+          <div className="p-6 md:p-8">
+            {/* Icon + Title */}
+            <h3 className="text-xl md:text-2xl font-display font-bold text-white/90 mb-3 leading-tight">
+              <span className="mr-2">{event.icon}</span>
+              {event.title}
+            </h3>
 
-          {/* Description */}
-          <p className="text-white/50 leading-relaxed text-sm md:text-base font-body">
-            {event.description}
-          </p>
+            {/* Description */}
+            <p className="text-white/50 leading-relaxed text-sm md:text-base font-body">
+              {event.description}
+            </p>
+          </div>
         </div>
       </motion.div>
     </div>
