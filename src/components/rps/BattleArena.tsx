@@ -22,40 +22,99 @@ const getMatchup = (winner: Choice, loser: Choice): Matchup => {
 const CrushDebris = ({ originX }: { originX: "left" | "right" }) => {
   const base = originX === "left" ? -20 : 20;
   return (
-    <div className="absolute inset-0 pointer-events-none z-30">
-      {Array.from({ length: 14 }).map((_, i) => (
+    <div className="absolute inset-0 pointer-events-none z-30 overflow-visible">
+      {/* Large scissor blade shards */}
+      {Array.from({ length: 6 }).map((_, i) => (
         <motion.div
-          key={i}
-          className="absolute rounded-sm"
+          key={`blade-${i}`}
+          className="absolute"
           style={{
             left: "50%",
-            top: "40%",
-            width: 3 + Math.random() * 8,
-            height: 3 + Math.random() * 6,
-            background: `hsl(320, ${50 + Math.random() * 30}%, ${40 + Math.random() * 25}%)`,
-            boxShadow: `0 0 4px hsl(320, 80%, 58%)`,
+            top: "35%",
+            width: 12 + Math.random() * 20,
+            height: 4 + Math.random() * 10,
+            background: `linear-gradient(135deg, hsl(320, 70%, ${45 + Math.random() * 20}%), hsl(320, 80%, 30%))`,
+            boxShadow: `0 0 10px hsl(320, 80%, 58%), 0 0 20px hsl(320, 80%, 58%, 0.3)`,
+            borderRadius: "2px",
           }}
           initial={{ x: base, y: 0, opacity: 1, scale: 1, rotate: 0 }}
           animate={{
-            x: base + (Math.random() - 0.5) * 200,
-            y: 60 + Math.random() * 120,
+            x: base + (Math.random() - 0.5) * 350,
+            y: 80 + Math.random() * 200,
             opacity: 0,
-            scale: 0.3,
-            rotate: Math.random() * 720 - 360,
+            scale: 0.2,
+            rotate: Math.random() * 1080 - 540,
           }}
-          transition={{ duration: 0.6 + Math.random() * 0.4, delay: 0.25 + Math.random() * 0.15, ease: "easeOut" as const }}
+          transition={{ duration: 0.8 + Math.random() * 0.5, delay: 0.2 + Math.random() * 0.15, ease: "easeOut" as const }}
         />
       ))}
-      {/* Impact flash */}
+      {/* Small metal fragments */}
+      {Array.from({ length: 20 }).map((_, i) => (
+        <motion.div
+          key={`frag-${i}`}
+          className="absolute"
+          style={{
+            left: "50%",
+            top: "38%",
+            width: 3 + Math.random() * 8,
+            height: 3 + Math.random() * 6,
+            background: `hsl(320, ${50 + Math.random() * 30}%, ${40 + Math.random() * 25}%)`,
+            boxShadow: `0 0 6px hsl(320, 80%, 58%)`,
+            borderRadius: Math.random() > 0.5 ? "50%" : "1px",
+          }}
+          initial={{ x: base, y: 0, opacity: 1, scale: 1, rotate: 0 }}
+          animate={{
+            x: base + (Math.random() - 0.5) * 300,
+            y: 40 + Math.random() * 180,
+            opacity: 0,
+            scale: 0.2,
+            rotate: Math.random() * 720 - 360,
+          }}
+          transition={{ duration: 0.6 + Math.random() * 0.5, delay: 0.2 + Math.random() * 0.2, ease: "easeOut" as const }}
+        />
+      ))}
+      {/* Sparks */}
+      {Array.from({ length: 10 }).map((_, i) => (
+        <motion.div
+          key={`spark-${i}`}
+          className="absolute"
+          style={{
+            left: "50%",
+            top: "38%",
+            width: 3,
+            height: 3,
+            borderRadius: "50%",
+            background: "hsl(45, 100%, 70%)",
+            boxShadow: "0 0 8px hsl(45, 100%, 60%), 0 0 16px hsl(30, 100%, 50%)",
+          }}
+          initial={{ x: base, y: 0, opacity: 1, scale: 1 }}
+          animate={{
+            x: base + (Math.random() - 0.5) * 250,
+            y: (Math.random() - 0.5) * 200,
+            opacity: 0,
+            scale: 0,
+          }}
+          transition={{ duration: 0.4 + Math.random() * 0.3, delay: 0.15 + Math.random() * 0.1, ease: "easeOut" as const }}
+        />
+      ))}
+      {/* Large impact flash */}
       <motion.div
         className="absolute rounded-full"
-        style={{ left: "50%", top: "40%", transform: "translate(-50%, -50%)" }}
-        initial={{ width: 0, height: 0, opacity: 0.9 }}
-        animate={{ width: 80, height: 80, opacity: 0 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
+        style={{ left: "50%", top: "38%", transform: "translate(-50%, -50%)" }}
+        initial={{ width: 0, height: 0, opacity: 1 }}
+        animate={{ width: 160, height: 160, opacity: 0 }}
+        transition={{ duration: 0.5, delay: 0.15 }}
       >
-        <div className="w-full h-full rounded-full bg-neon-purple/60 blur-md" />
+        <div className="w-full h-full rounded-full bg-neon-purple/70 blur-xl" />
       </motion.div>
+      {/* Secondary shockwave ring */}
+      <motion.div
+        className="absolute rounded-full border-2 border-neon-purple/60"
+        style={{ left: "50%", top: "38%", transform: "translate(-50%, -50%)" }}
+        initial={{ width: 0, height: 0, opacity: 0.8 }}
+        animate={{ width: 220, height: 220, opacity: 0 }}
+        transition={{ duration: 0.6, delay: 0.25 }}
+      />
     </div>
   );
 };
