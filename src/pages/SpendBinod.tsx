@@ -244,7 +244,7 @@ const SpendBinod = () => {
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                    className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg object-cover flex-shrink-0"
                     loading="lazy"
                   />
                   <div className="flex-1 min-w-0">
