@@ -63,7 +63,7 @@ const items: Item[] = [
   { id: 44, name: "Nepali Tea Garden", price: 1000000, image: "https://images.unsplash.com/photo-1556881286-fc6915169721?w=200&h=200&fit=crop", category: "Medium" },
   { id: 45, name: "Diamond Ring", price: 75000, image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=200&h=200&fit=crop", category: "Medium" },
   { id: 46, name: "Kathmandu Restaurant", price: 350000, image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&h=200&fit=crop", category: "Medium" },
-  { id: 47, name: "Solar Farm", price: 30000000, image: "https://images.unsplash.com/photo-1509391111056-a823e693caaf?w=200&h=200&fit=crop", category: "Large" },
+  { id: 47, name: "Solar Farm", price: 30000000, image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=200&h=200&fit=crop", category: "Large" },
   { id: 48, name: "University Campus", price: 75000000, image: "https://images.unsplash.com/photo-1562774053-701939374585?w=200&h=200&fit=crop", category: "Large" },
   { id: 49, name: "Bugatti Chiron", price: 3000000, image: "https://images.unsplash.com/photo-1600712242805-5f78671b24da?w=200&h=200&fit=crop", category: "Large" },
   { id: 50, name: "Pokhara Coffee Shop", price: 50000, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=200&h=200&fit=crop", category: "Medium" },
