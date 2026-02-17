@@ -52,4 +52,19 @@ export const wordSets: WordSet[] = [
       "pip", "venv", "module", "package", "f-string", "format", "split", "join",
     ],
   },
+  {
+    name: "Random Words",
+    icon: "🎲",
+    words: [
+      "sunshine", "mountain", "elephant", "whisper", "tornado", "cactus", "galaxy",
+      "umbrella", "dolphin", "volcano", "crystal", "horizon", "penguin", "thunder",
+      "lantern", "compass", "rainbow", "feather", "island", "breeze", "canyon",
+      "marble", "firefly", "anchor", "balloon", "puzzle", "shadow", "meadow",
+      "telescope", "blizzard", "hammock", "dragon", "fortress", "harvest", "mirage",
+      "orchid", "phantom", "quicksand", "riddle", "sapphire", "trampoline", "velvet",
+      "waterfall", "zenith", "avalanche", "blossom", "cobalt", "driftwood", "eclipse",
+      "flamingo", "glacier", "labyrinth", "mosaic", "nebula", "oasis", "paradox",
+      "quartz", "ripple", "starfish", "twilight", "vortex", "wildfire", "zeppelin",
+    ],
+  },
 ];
