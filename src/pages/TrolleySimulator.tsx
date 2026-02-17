@@ -14,8 +14,8 @@ interface Level {
   rightVictims: number;
   note?: string;
   debatable?: "left" | "right" | "both";
-  leftIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you";
-  rightIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you";
+  leftIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you" | "richman";
+  rightIcon?: "money" | "painting" | "infrastructure" | "trauma" | "embarrassment" | "you" | "richman";
 }
 
 const levels: Level[] = [
@@ -24,7 +24,7 @@ const levels: Level[] = [
   { name: "Life Savings", scenario: "Oh no! A trolley is heading toward five people. You can divert it onto a track that destroys your entire life savings.", leftLabel: "Five Unnamed People", rightLabel: "Your Life Savings Destroyed", leftCount: "5 die", rightCount: "💸 Gone", leftVictims: 5, rightVictims: 0, rightIcon: "money" },
   { name: "You", scenario: "Oh no! A trolley is heading toward five people. You can divert it, but the other track leads directly to you.", leftLabel: "Five Unnamed People", rightLabel: "You", leftCount: "5 die", rightCount: "You die", leftVictims: 5, rightVictims: 0, rightIcon: "you" },
   { name: "Priceless Painting", scenario: "Oh no! A trolley is heading toward five people. You can divert it, but a priceless painting will be destroyed.", leftLabel: "Five Unnamed People", rightLabel: "Priceless Painting", leftCount: "5 die", rightCount: "🎨 Destroyed", leftVictims: 5, rightVictims: 0, rightIcon: "painting" },
-  { name: "Bribes", scenario: "Oh no! A trolley is heading toward a rich man who offered you a bribe. The other track has an unnamed person.", leftLabel: "Unnamed Rich Man", rightLabel: "Unnamed Person", leftCount: "1 dies", rightCount: "1 dies", leftVictims: 1, rightVictims: 1 },
+  { name: "Bribes", scenario: "Oh no! A trolley is heading toward a rich man who offered you a bribe. The other track has an unnamed person.", leftLabel: "Unnamed Rich Man", rightLabel: "Unnamed Person", leftCount: "1 dies", rightCount: "1 dies", leftVictims: 0, rightVictims: 1, leftIcon: "richman" },
   { name: "Levels of Sentience", scenario: "Oh no! A trolley is heading toward five lobsters. You can divert it toward one cat.", leftLabel: "Five Lobsters", rightLabel: "One Cat", leftCount: "5 🦞", rightCount: "1 🐱", leftVictims: 5, rightVictims: 1 },
   { name: "Sleeping", scenario: "Oh no! A trolley is heading toward five sleeping people. You can divert it toward one awake person.", leftLabel: "Five Sleeping People", rightLabel: "One Awake Person", leftCount: "5 😴", rightCount: "1 👀", leftVictims: 5, rightVictims: 1 },
   { name: "Personal Choices", scenario: "Oh no! A trolley is heading toward one person. You can divert it toward five people who tied themselves to the track voluntarily.", leftLabel: "One Person", rightLabel: "Five People (Tied Themselves)", leftCount: "1 dies", rightCount: "5 die", leftVictims: 1, rightVictims: 5 },
@@ -189,6 +189,42 @@ const TrackIconSVG = ({ type, x, y }: { type: string; x: number; y: number }) =>
           <line x1="0" y1="-28" x2="0" y2="-20" stroke="#e74c3c" strokeWidth="1.5" strokeLinecap="round" />
           <path d="M-3,-22 L0,-18 L3,-22" stroke="#e74c3c" strokeWidth="1.5" fill="none" strokeLinecap="round" />
           <text x="0" y="-30" fontSize="7" fontWeight="bold" fill="#e74c3c" textAnchor="middle" style={{ fontFamily: "'Comic Sans MS', cursive" }}>YOU</text>
+        </g>
+      );
+    case "richman":
+      return (
+        <g transform={`translate(${x}, ${y})`}>
+          {/* Fat body */}
+          <ellipse cx="0" cy="2" rx="8" ry="10" fill="#2c3e50" stroke="#333" strokeWidth="1.5" />
+          {/* Head */}
+          <circle cx="0" cy="-14" r="6" fill="#d4a574" stroke="#333" strokeWidth="1.2" />
+          {/* Top hat */}
+          <rect x="-5" y="-25" width="10" height="10" rx="1" fill="#1a1a2e" stroke="#333" strokeWidth="1" />
+          <rect x="-7" y="-16" width="14" height="2.5" rx="1" fill="#1a1a2e" stroke="#333" strokeWidth="1" />
+          {/* Hat band */}
+          <rect x="-5" y="-19" width="10" height="1.5" fill="#c8a84e" />
+          {/* Eyes */}
+          <circle cx="-2" cy="-14" r="0.8" fill="#333" />
+          <circle cx="2" cy="-14" r="0.8" fill="#333" />
+          {/* Monocle */}
+          <circle cx="3" cy="-14" r="2.5" fill="none" stroke="#c8a84e" strokeWidth="0.6" />
+          <line x1="5.2" y1="-13" x2="7" y2="-8" stroke="#c8a84e" strokeWidth="0.5" />
+          {/* Smug smile */}
+          <path d="M-2,-11 Q0,-9.5 2,-11" stroke="#333" strokeWidth="0.6" fill="none" strokeLinecap="round" />
+          {/* Arms (short stubby) */}
+          <line x1="-8" y1="0" x2="-12" y2="-3" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="8" y1="0" x2="12" y2="-3" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Legs */}
+          <line x1="-3" y1="11" x2="-4" y2="18" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="3" y1="11" x2="4" y2="18" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Money sticking out of pocket */}
+          <rect x="5" y="2" width="6" height="3" rx="0.5" fill="#27ae60" stroke="#1e8449" strokeWidth="0.5" />
+          <text x="8" y="4.5" fontSize="2.5" fill="#fff" textAnchor="middle" fontWeight="bold">$</text>
+          <rect x="-11" y="0" width="5" height="3" rx="0.5" fill="#27ae60" stroke="#1e8449" strokeWidth="0.5" />
+          <text x="-8.5" y="2.5" fontSize="2.5" fill="#fff" textAnchor="middle" fontWeight="bold">$</text>
+          {/* Floating dollar signs */}
+          <text x="14" y="-6" fontSize="6" fill="#27ae60" fontWeight="bold" opacity="0.7">$</text>
+          <text x="-14" y="-8" fontSize="5" fill="#27ae60" fontWeight="bold" opacity="0.5">$</text>
         </g>
       );
     default:
