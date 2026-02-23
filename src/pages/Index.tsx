@@ -124,6 +124,12 @@ const games = [
     to: "/number-bingo",
   },
   {
+    icon: "🎙️",
+    title: "Impromptu Speaking",
+    description: "Get a random topic. Speak for 60 seconds. Improve daily.",
+    to: "/impromptu",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
