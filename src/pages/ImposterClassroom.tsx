@@ -206,15 +206,17 @@ const Lobby = ({ onStart }: { onStart: (names: string[]) => void }) => {
   );
 };
 
-// ─── COMBINED ROLE + WORD REVEAL (single pass) ───────────
+// ─── COMBINED ROLE + WORD REVEAL (single pass, hold to reveal) ───────────
 const RoleReveal = ({ players, topic, onDone }: { players: Player[]; topic: typeof TOPICS[0]; onDone: () => void }) => {
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [revealed, setRevealed] = useState(false);
+  const [holding, setHolding] = useState(false);
+  const [seen, setSeen] = useState(false);
   const activePlayers = players.filter((p) => !p.isEliminated);
   const current = activePlayers[currentIdx];
 
   const next = () => {
-    setRevealed(false);
+    setHolding(false);
+    setSeen(false);
     if (currentIdx + 1 >= activePlayers.length) {
       onDone();
     } else {
@@ -222,8 +224,17 @@ const RoleReveal = ({ players, topic, onDone }: { players: Player[]; topic: type
     }
   };
 
+  const startHold = () => {
+    setHolding(true);
+    setSeen(true);
+  };
+  const endHold = () => setHolding(false);
+
+  // Prevent context menu on long press (mobile)
+  const preventContext = (e: React.MouseEvent | React.TouchEvent) => e.preventDefault();
+
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-md mx-auto text-center space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-md mx-auto text-center space-y-6 select-none">
       <p className="font-body text-muted-foreground text-sm">Pass the device to:</p>
       <div className="flex items-center justify-center gap-3">
         <div className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold text-background" style={{ backgroundColor: current.color }}>
@@ -232,35 +243,67 @@ const RoleReveal = ({ players, topic, onDone }: { players: Player[]; topic: type
         <h2 className="font-display text-3xl font-black text-foreground">{current.name}</h2>
       </div>
 
-      {!revealed ? (
-        <button
-          onClick={() => setRevealed(true)}
-          className="mx-auto block px-8 py-4 rounded-xl border-2 border-primary/50 text-primary font-display font-bold text-lg tracking-wider uppercase hover:bg-primary/10 transition-all"
-        >
-          🔍 Tap to Reveal Your Role
-        </button>
-      ) : (
-        <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="space-y-4">
-          {current.isImposter ? (
-            <div className="p-8 rounded-2xl border-2 border-destructive bg-destructive/10 space-y-3">
-              <span className="text-5xl block">🎭</span>
-              <h3 className="font-display text-2xl font-black text-destructive">You are the IMPOSTER</h3>
-              <div className="mt-4 p-4 rounded-xl bg-background/50 border border-destructive/20">
-                <p className="font-body text-muted-foreground text-xs uppercase tracking-widest mb-2">Your hint</p>
-                <p className="font-display text-lg font-bold text-foreground italic">"{topic.hint}"</p>
-              </div>
-              <p className="font-body text-muted-foreground text-xs">Figure out the word from the hint. Blend in.</p>
-            </div>
-          ) : (
-            <div className="p-8 rounded-2xl border-2 border-primary bg-primary/10 space-y-3">
-              <span className="text-5xl block">✅</span>
-              <h3 className="font-display text-2xl font-black text-primary">You are INNOCENT</h3>
-              <div className="mt-4 p-4 rounded-xl bg-background/50 border border-primary/20">
-                <p className="font-body text-muted-foreground text-xs uppercase tracking-widest mb-2">Your word</p>
-                <p className="font-display text-4xl font-black text-foreground">"{topic.real}"</p>
-              </div>
-            </div>
-          )}
+      {/* Hold-to-reveal area */}
+      <div
+        onMouseDown={startHold}
+        onMouseUp={endHold}
+        onMouseLeave={endHold}
+        onTouchStart={startHold}
+        onTouchEnd={endHold}
+        onTouchCancel={endHold}
+        onContextMenu={preventContext}
+        className={`relative cursor-pointer rounded-2xl border-2 transition-all duration-200 overflow-hidden ${
+          holding
+            ? current.isImposter
+              ? "border-destructive bg-destructive/10 scale-[1.02]"
+              : "border-primary bg-primary/10 scale-[1.02]"
+            : "border-muted-foreground/20 bg-card"
+        }`}
+        style={{ minHeight: "220px", touchAction: "none" }}
+      >
+        {holding ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.15 }}
+            className="p-8 space-y-3"
+          >
+            {current.isImposter ? (
+              <>
+                <span className="text-5xl block">🎭</span>
+                <h3 className="font-display text-2xl font-black text-destructive">You are the IMPOSTER</h3>
+                <div className="mt-3 p-4 rounded-xl bg-background/50 border border-destructive/20">
+                  <p className="font-body text-muted-foreground text-xs uppercase tracking-widest mb-2">Your hint</p>
+                  <p className="font-display text-lg font-bold text-foreground italic">"{topic.hint}"</p>
+                </div>
+                <p className="font-body text-muted-foreground text-xs">Figure out the word. Blend in.</p>
+              </>
+            ) : (
+              <>
+                <span className="text-5xl block">✅</span>
+                <h3 className="font-display text-2xl font-black text-primary">You are INNOCENT</h3>
+                <div className="mt-3 p-4 rounded-xl bg-background/50 border border-primary/20">
+                  <p className="font-body text-muted-foreground text-xs uppercase tracking-widest mb-2">Your word</p>
+                  <p className="font-display text-4xl font-black text-foreground">"{topic.real}"</p>
+                </div>
+              </>
+            )}
+          </motion.div>
+        ) : (
+          <div className="p-8 flex flex-col items-center justify-center h-full" style={{ minHeight: "220px" }}>
+            <span className="text-5xl block mb-4">👆</span>
+            <p className="font-display text-lg font-bold text-muted-foreground">
+              Hold to Reveal
+            </p>
+            <p className="font-body text-xs text-muted-foreground/60 mt-2">
+              Press & hold the screen to see your role
+            </p>
+          </div>
+        )}
+      </div>
+
+      {seen && !holding && (
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
           <p className="font-body text-xs text-muted-foreground/60">Memorize it. Don't show anyone.</p>
           <button onClick={next} className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-display font-bold text-sm tracking-wider uppercase hover:bg-primary/90 transition-colors">
             {currentIdx + 1 >= activePlayers.length ? "Start Discussion →" : "Pass Device →"}
