@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Confetti from "@/components/Confetti";
 
 // ─── TYPES ────────────────────────────────────────────────
-type Phase = "lobby" | "roleReveal" | "topic" | "discussion" | "voting" | "results" | "gameOver";
+type Phase = "lobby" | "roleReveal" | "discussion" | "voting" | "results" | "gameOver";
 
 interface Player {
   id: number;
@@ -110,8 +110,8 @@ const Lobby = ({ onStart }: { onStart: (names: string[]) => void }) => {
   );
 };
 
-// ─── ROLE REVEAL (pass device) ───────────────────────────
-const RoleReveal = ({ players, onDone }: { players: Player[]; onDone: () => void }) => {
+// ─── COMBINED ROLE + WORD REVEAL (single pass) ───────────
+const RoleReveal = ({ players, topic, onDone }: { players: Player[]; topic: typeof TOPICS[0]; onDone: () => void }) => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const activePlayers = players.filter((p) => !p.isEliminated);
@@ -145,77 +145,24 @@ const RoleReveal = ({ players, onDone }: { players: Player[]; onDone: () => void
         </button>
       ) : (
         <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="space-y-4">
-          <div className={`p-8 rounded-2xl border-2 ${current.isImposter ? "border-destructive bg-destructive/10" : "border-primary bg-primary/10"}`}>
-            <span className="text-5xl block mb-3">{current.isImposter ? "🎭" : "✅"}</span>
-            <h3 className={`font-display text-2xl font-black ${current.isImposter ? "text-destructive" : "text-primary"}`}>
-              {current.isImposter ? "You are the IMPOSTER" : "You are INNOCENT"}
-            </h3>
-            {current.isImposter && (
-              <p className="font-body text-muted-foreground text-sm mt-2">Blend in. Don't get caught.</p>
-            )}
-          </div>
-          <button onClick={next} className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-display font-bold text-sm tracking-wider uppercase hover:bg-primary/90 transition-colors">
-            {currentIdx + 1 >= activePlayers.length ? "Continue →" : "Pass Device →"}
-          </button>
-        </motion.div>
-      )}
-
-      <div className="flex justify-center gap-2 mt-4">
-        {activePlayers.map((_, i) => (
-          <div key={i} className={`w-3 h-3 rounded-full transition-colors ${i === currentIdx ? "bg-primary" : i < currentIdx ? "bg-primary/30" : "bg-muted"}`} />
-        ))}
-      </div>
-    </motion.div>
-  );
-};
-
-// ─── TOPIC REVEAL (pass device) ──────────────────────────
-const TopicReveal = ({ players, topic, onDone }: { players: Player[]; topic: typeof TOPICS[0]; onDone: () => void }) => {
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [revealed, setRevealed] = useState(false);
-  const activePlayers = players.filter((p) => !p.isEliminated);
-  const current = activePlayers[currentIdx];
-
-  const next = () => {
-    setRevealed(false);
-    if (currentIdx + 1 >= activePlayers.length) {
-      onDone();
-    } else {
-      setCurrentIdx(currentIdx + 1);
-    }
-  };
-
-  return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-md mx-auto text-center space-y-6">
-      <p className="font-body text-muted-foreground text-sm">Pass the device to:</p>
-      <div className="flex items-center justify-center gap-3">
-        <div className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold text-background" style={{ backgroundColor: current.color }}>
-          {current.name[0].toUpperCase()}
-        </div>
-        <h2 className="font-display text-3xl font-black text-foreground">{current.name}</h2>
-      </div>
-
-      {!revealed ? (
-        <button
-          onClick={() => setRevealed(true)}
-          className="mx-auto block px-8 py-4 rounded-xl border-2 border-accent/50 text-accent-foreground font-display font-bold text-lg tracking-wider uppercase hover:bg-accent/10 transition-all"
-        >
-          📝 Tap to See Your Word
-        </button>
-      ) : (
-        <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="space-y-4">
           {current.isImposter ? (
-            <div className="p-8 rounded-2xl border-2 border-destructive/50 bg-destructive/5">
-              <p className="font-body text-muted-foreground text-xs uppercase tracking-widest mb-2">Your hint</p>
-              <h3 className="font-display text-xl font-bold text-foreground italic">"{topic.hint}"</h3>
-              <p className="font-body text-destructive text-sm font-semibold mt-3">You are the Imposter.</p>
-              <p className="font-body text-muted-foreground text-xs mt-1">Figure out the word from the hint. Blend in.</p>
+            <div className="p-8 rounded-2xl border-2 border-destructive bg-destructive/10 space-y-3">
+              <span className="text-5xl block">🎭</span>
+              <h3 className="font-display text-2xl font-black text-destructive">You are the IMPOSTER</h3>
+              <div className="mt-4 p-4 rounded-xl bg-background/50 border border-destructive/20">
+                <p className="font-body text-muted-foreground text-xs uppercase tracking-widest mb-2">Your hint</p>
+                <p className="font-display text-lg font-bold text-foreground italic">"{topic.hint}"</p>
+              </div>
+              <p className="font-body text-muted-foreground text-xs">Figure out the word from the hint. Blend in.</p>
             </div>
           ) : (
-            <div className="p-8 rounded-2xl border-2 border-primary bg-card">
-              <p className="font-body text-muted-foreground text-xs uppercase tracking-widest mb-2">Word: </p>
-              <h3 className="font-display text-4xl font-black text-foreground">"{topic.real}"</h3>
-              <p className="font-body text-primary text-sm font-semibold mt-3">You are Innocent.</p>
+            <div className="p-8 rounded-2xl border-2 border-primary bg-primary/10 space-y-3">
+              <span className="text-5xl block">✅</span>
+              <h3 className="font-display text-2xl font-black text-primary">You are INNOCENT</h3>
+              <div className="mt-4 p-4 rounded-xl bg-background/50 border border-primary/20">
+                <p className="font-body text-muted-foreground text-xs uppercase tracking-widest mb-2">Your word</p>
+                <p className="font-display text-4xl font-black text-foreground">"{topic.real}"</p>
+              </div>
             </div>
           )}
           <p className="font-body text-xs text-muted-foreground/60">Memorize it. Don't show anyone.</p>
@@ -522,7 +469,7 @@ const ImposterClassroom = () => {
         {/* Phase indicator */}
         {phase !== "lobby" && phase !== "gameOver" && (
           <div className="flex gap-1 mb-8">
-            {(["roleReveal", "topic", "discussion", "voting", "results"] as Phase[]).map((p) => (
+            {(["roleReveal", "discussion", "voting", "results"] as Phase[]).map((p) => (
               <div key={p} className={`h-1.5 w-12 rounded-full transition-colors ${p === phase ? "bg-primary" : "bg-muted"}`} />
             ))}
           </div>
@@ -531,8 +478,7 @@ const ImposterClassroom = () => {
         {/* Content */}
         <AnimatePresence mode="wait">
           {phase === "lobby" && <Lobby key="lobby" onStart={startGame} />}
-          {phase === "roleReveal" && <RoleReveal key="role" players={players} onDone={() => setPhase("topic")} />}
-          {phase === "topic" && <TopicReveal key="topic" players={players} topic={topic} onDone={() => setPhase("discussion")} />}
+          {phase === "roleReveal" && <RoleReveal key="role" players={players} topic={topic} onDone={() => setPhase("discussion")} />}
           {phase === "discussion" && <DiscussionPhase key="disc" topic={topic} timeLimit={discussionTime} onDone={() => setPhase("voting")} />}
           {phase === "voting" && <VotingPhase key="vote" players={players} onDone={(v) => { setVotes(v); setPhase("results"); }} />}
           {phase === "results" && <ResultsPhase key="res" players={players} votes={votes} onContinue={handleContinue} onGameOver={handleGameOver} />}
