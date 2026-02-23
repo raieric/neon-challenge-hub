@@ -16,18 +16,30 @@ interface Player {
 
 // ─── DATA ─────────────────────────────────────────────────
 const TOPICS = [
-  { real: "Pointer", fake: "Array", prompt: "Explain this concept in C programming." },
-  { real: "Recursion", fake: "Iteration", prompt: "How does this approach solve problems?" },
-  { real: "Inheritance", fake: "Encapsulation", prompt: "Describe this OOP principle." },
-  { real: "Stack", fake: "Queue", prompt: "When would you use this data structure?" },
-  { real: "Compiler", fake: "Interpreter", prompt: "How does this process code?" },
-  { real: "Binary Search", fake: "Linear Search", prompt: "Explain this search algorithm." },
-  { real: "TCP", fake: "UDP", prompt: "Describe this network protocol." },
-  { real: "Git Merge", fake: "Git Rebase", prompt: "When would you use this git strategy?" },
-  { real: "Mutex", fake: "Semaphore", prompt: "How does this handle concurrency?" },
-  { real: "REST API", fake: "GraphQL", prompt: "Explain this API architecture." },
-  { real: "SQL JOIN", fake: "SQL UNION", prompt: "When would you use this SQL operation?" },
-  { real: "Docker", fake: "Virtual Machine", prompt: "How does this run applications?" },
+  { real: "School", hint: "You probably spent years there without realizing how much it shaped you.", prompt: "Talk about this word naturally." },
+  { real: "Market", hint: "Some people go there more before festivals.", prompt: "Describe your experience with this." },
+  { real: "Coffee", hint: "For some people, mornings feel incomplete without it.", prompt: "Share your thoughts on this." },
+  { real: "Bus", hint: "You may not always get a seat.", prompt: "Talk about your experience with this." },
+  { real: "Teacher", hint: "You probably remember one from your childhood.", prompt: "Share a memory related to this." },
+  { real: "Family", hint: "Festivals feel different without them around.", prompt: "What does this mean to you?" },
+  { real: "Water", hint: "You don't think about it until it's not there.", prompt: "Describe the importance of this." },
+  { real: "Hospital", hint: "It's not usually part of a fun day.", prompt: "Share your thoughts on this." },
+  { real: "Park", hint: "Children seem to love it more than adults do.", prompt: "Talk about this naturally." },
+  { real: "Mobile", hint: "Most people check it first thing in the morning.", prompt: "How does this affect your life?" },
+  { real: "Book", hint: "Some people fall asleep with it.", prompt: "Share your relationship with this." },
+  { real: "House", hint: "Moving away from one can be emotional.", prompt: "What comes to mind?" },
+  { real: "Friend", hint: "You might have fewer real ones than you think.", prompt: "Talk about what this means to you." },
+  { real: "Food", hint: "Travelling somewhere new changes your experience of it.", prompt: "Share your thoughts." },
+  { real: "Rain", hint: "Some people love it, others cancel plans because of it.", prompt: "How do you feel about this?" },
+  { real: "Music", hint: "It can change your mood in seconds.", prompt: "What role does this play in your life?" },
+  { real: "Sleep", hint: "Students never seem to get enough of it.", prompt: "Talk about this honestly." },
+  { real: "Kitchen", hint: "The best memories at home often start here.", prompt: "Share something about this." },
+  { real: "Money", hint: "People say it doesn't buy happiness, but try living without it.", prompt: "What are your thoughts?" },
+  { real: "Festival", hint: "You dress differently for it.", prompt: "Talk about your experience." },
+  { real: "Mirror", hint: "Some people spend too long in front of it.", prompt: "What comes to mind?" },
+  { real: "Exam", hint: "The night before is always the longest.", prompt: "Share your experience." },
+  { real: "Wedding", hint: "The food is usually the highlight for guests.", prompt: "Talk about this." },
+  { real: "Bicycle", hint: "Learning it often involves falling.", prompt: "Share a memory." },
 ];
 
 const PLAYER_COLORS = [
@@ -173,8 +185,6 @@ const TopicReveal = ({ players, topic, onDone }: { players: Player[]; topic: typ
     }
   };
 
-  const word = current.isImposter ? topic.fake : topic.real;
-
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-md mx-auto text-center space-y-6">
       <p className="font-body text-muted-foreground text-sm">Pass the device to:</p>
@@ -194,11 +204,20 @@ const TopicReveal = ({ players, topic, onDone }: { players: Player[]; topic: typ
         </button>
       ) : (
         <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="space-y-4">
-          <div className="p-8 rounded-2xl border-2 border-primary bg-card">
-            <p className="font-body text-muted-foreground text-xs uppercase tracking-widest mb-2">Your secret word</p>
-            <h3 className="font-display text-4xl font-black text-foreground">{word}</h3>
-            <p className="font-body text-muted-foreground text-sm mt-3">{topic.prompt}</p>
-          </div>
+          {current.isImposter ? (
+            <div className="p-8 rounded-2xl border-2 border-destructive/50 bg-destructive/5">
+              <p className="font-body text-muted-foreground text-xs uppercase tracking-widest mb-2">Your hint</p>
+              <h3 className="font-display text-xl font-bold text-foreground italic">"{topic.hint}"</h3>
+              <p className="font-body text-destructive text-sm font-semibold mt-3">You are the Imposter.</p>
+              <p className="font-body text-muted-foreground text-xs mt-1">Figure out the word from the hint. Blend in.</p>
+            </div>
+          ) : (
+            <div className="p-8 rounded-2xl border-2 border-primary bg-card">
+              <p className="font-body text-muted-foreground text-xs uppercase tracking-widest mb-2">Word: </p>
+              <h3 className="font-display text-4xl font-black text-foreground">"{topic.real}"</h3>
+              <p className="font-body text-primary text-sm font-semibold mt-3">You are Innocent.</p>
+            </div>
+          )}
           <p className="font-body text-xs text-muted-foreground/60">Memorize it. Don't show anyone.</p>
           <button onClick={next} className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-display font-bold text-sm tracking-wider uppercase hover:bg-primary/90 transition-colors">
             {currentIdx + 1 >= activePlayers.length ? "Start Discussion →" : "Pass Device →"}
@@ -494,7 +513,7 @@ const ImposterClassroom = () => {
             ← Back
           </Link>
           <div className="text-center">
-            <h1 className="font-display text-2xl sm:text-3xl font-black text-foreground">🎭 Imposter Classroom</h1>
+            <h1 className="font-display text-2xl sm:text-3xl font-black text-foreground">🎭 Who is the Imposter?</h1>
             <p className="font-body text-xs text-muted-foreground tracking-wider uppercase">Find the imposter before it's too late</p>
           </div>
           <div className="w-12" />
