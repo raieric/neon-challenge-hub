@@ -107,7 +107,7 @@ const games = [
   },
   {
     icon: "🎭",
-    title: "Imposter Classroom",
+    title: "Who is the Imposter?",
     description: "Find the imposter before it's too late.",
     to: "/imposter",
   },
