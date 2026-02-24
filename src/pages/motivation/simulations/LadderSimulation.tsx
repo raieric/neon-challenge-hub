@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStreakStorage } from "../hooks/useStreakStorage";
+import Confetti from "@/components/Confetti";
 
 const MESSAGES_UP = ["XP gained.", "Progress compiled.", "Build > Excuses.", "Momentum++", "Stack overflow of wins."];
 const MESSAGES_SKIP = ["Warning: momentum decreasing.", "Entropy wins today.", "Runtime error: effort not found.", "Segfault in discipline."];
@@ -8,6 +9,31 @@ const MESSAGES_SKIP = ["Warning: momentum decreasing.", "Entropy wins today.", "
 const MAX_RUNGS = 12;
 const RUNG_HEIGHT = 12;
 const RUNG_GAP = 10;
+
+const playSound = (type: "success" | "warning") => {
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    if (type === "success") {
+      osc.frequency.value = 523;
+      gain.gain.value = 0.15;
+      osc.start();
+      setTimeout(() => { osc.frequency.value = 659; }, 150);
+      setTimeout(() => { osc.frequency.value = 784; }, 300);
+      setTimeout(() => { osc.stop(); ctx.close(); }, 600);
+    } else {
+      osc.type = "sawtooth";
+      osc.frequency.value = 220;
+      gain.gain.value = 0.12;
+      osc.start();
+      setTimeout(() => { osc.frequency.value = 180; }, 200);
+      setTimeout(() => { osc.stop(); ctx.close(); }, 400);
+    }
+  } catch {}
+};
 
 const LadderSimulation = () => {
   const { data, showUp, skip, reset } = useStreakStorage("ladder");
@@ -20,6 +46,44 @@ const LadderSimulation = () => {
     : "Start climbing.";
 
   const [brokenRungs, setBrokenRungs] = useState<Set<number>>(new Set());
+  const [showConfetti, setShowConfetti] = useState(false);
+  const lastSoundRef = useRef<string | null>(null);
+
+  // Check if any consecutive gap > 1 exists due to broken rungs
+  const hasLargeGap = useMemo(() => {
+    if (brokenRungs.size === 0 || rungs <= 1) return false;
+    const sorted = Array.from({ length: rungs }, (_, i) => i)
+      .filter((i) => !brokenRungs.has(i));
+    if (sorted.length === 0) return true;
+    // Check gap from bottom
+    if (sorted[0] > 1) return true;
+    for (let i = 1; i < sorted.length; i++) {
+      if (sorted[i] - sorted[i - 1] > 2) return true;
+    }
+    return false;
+  }, [brokenRungs, rungs]);
+
+  const isSuccess = rungs >= MAX_RUNGS && !hasLargeGap && !data.collapsed;
+  const isTryBetter = rungs >= MAX_RUNGS && hasLargeGap && !data.collapsed;
+
+  // Play sounds and confetti on state change
+  const prevStateRef = useRef({ isSuccess: false, isTryBetter: false });
+  if (isSuccess && !prevStateRef.current.isSuccess) {
+    if (lastSoundRef.current !== "success") {
+      playSound("success");
+      lastSoundRef.current = "success";
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 4000);
+    }
+  } else if (isTryBetter && !prevStateRef.current.isTryBetter) {
+    if (lastSoundRef.current !== "warning") {
+      playSound("warning");
+      lastSoundRef.current = "warning";
+    }
+  } else if (!isSuccess && !isTryBetter) {
+    lastSoundRef.current = null;
+  }
+  prevStateRef.current = { isSuccess, isTryBetter };
 
   const toggleRung = (index: number) => {
     setBrokenRungs((prev) => {
@@ -33,17 +97,36 @@ const LadderSimulation = () => {
     });
   };
 
+  const handleReset = useCallback(() => {
+    setBrokenRungs(new Set());
+    setShowConfetti(false);
+    reset();
+  }, [reset]);
+
   return (
     <div className="flex flex-col items-center gap-6">
+      {showConfetti && <Confetti />}
       {/* Ladder visual */}
       <div className="relative w-40 h-80 flex flex-col-reverse items-center justify-start">
-        {/* SUCCESS label at top */}
+        {/* Top label */}
         <motion.div
           className="absolute -top-8 font-display text-sm font-bold tracking-widest"
-          animate={{ opacity: rungs >= MAX_RUNGS ? 1 : 0.3, scale: rungs >= MAX_RUNGS ? 1.2 : 1 }}
-          style={{ textShadow: rungs >= MAX_RUNGS ? "0 0 20px hsl(150 80% 50% / 0.8)" : "none", color: "hsl(var(--neon-green))" }}
+          animate={{
+            opacity: rungs >= MAX_RUNGS ? 1 : 0.3,
+            scale: rungs >= MAX_RUNGS ? 1.2 : 1,
+          }}
+          style={{
+            textShadow: isTryBetter
+              ? "0 0 20px hsl(0 80% 50% / 0.8)"
+              : isSuccess
+              ? "0 0 20px hsl(150 80% 50% / 0.8)"
+              : "none",
+            color: isTryBetter
+              ? "hsl(var(--destructive))"
+              : "hsl(var(--neon-green))",
+          }}
         >
-          ✦ SUCCESS ✦
+          {isTryBetter ? "⚠️ TRY BETTER" : "✦ SUCCESS ✦"}
         </motion.div>
 
         {/* Side rails */}
@@ -120,7 +203,7 @@ const LadderSimulation = () => {
         <button onClick={skip} disabled={data.collapsed} className="px-5 py-2.5 rounded-lg font-display text-sm font-bold bg-destructive/20 text-destructive border border-destructive/30 hover:bg-destructive/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
           ❌ I Skipped Today
         </button>
-        <button onClick={reset} className="px-5 py-2.5 rounded-lg font-display text-sm font-bold bg-muted text-muted-foreground border border-border hover:bg-muted/80 transition-all">
+        <button onClick={handleReset} className="px-5 py-2.5 rounded-lg font-display text-sm font-bold bg-muted text-muted-foreground border border-border hover:bg-muted/80 transition-all">
           🔄 Reset
         </button>
       </div>
