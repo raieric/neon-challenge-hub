@@ -6,14 +6,14 @@ import Confetti from "@/components/Confetti";
 const COLS = 5;
 const MAX_ROWS = 4;
 const MAX_BRICKS = COLS * MAX_ROWS;
-const BRICK_W = 36;
-const BRICK_H = 14;
+const BRICK_W = 44;
+const BRICK_H = 18;
 const BRICK_GAP = 3;
 const MORTAR = 3;
 
-const SVG_W = 220;
-const SVG_H = 220;
-const WALL_BASE_Y = SVG_H - 16;
+const SVG_W = 280;
+const SVG_H = 280;
+const WALL_BASE_Y = SVG_H - 20;
 const ROW_H = BRICK_H + MORTAR;
 const TOTAL_WALL_W = COLS * (BRICK_W + BRICK_GAP) - BRICK_GAP;
 const WALL_LEFT = (SVG_W - TOTAL_WALL_W) / 2;
@@ -100,7 +100,7 @@ const WallSimulation = () => {
   }, [bricks]);
 
   const wallTopY = WALL_BASE_Y - totalRows * ROW_H;
-  const roofPeakY = wallTopY - 36;
+  const roofPeakY = wallTopY - 46;
 
   const message = useMemo(() => {
     if (isCollapsed) return "💥 House collapsed! Too many broken bricks.";
@@ -231,15 +231,40 @@ const WallSimulation = () => {
             })}
           </AnimatePresence>
 
+          {/* HOUSE OUTLINE BORDER */}
+          {totalRows >= 1 && !isCollapsed && (
+            <rect
+              x={WALL_LEFT - 4}
+              y={wallTopY - 2}
+              width={TOTAL_WALL_W + 8}
+              height={WALL_BASE_Y - wallTopY + 4}
+              rx={2}
+              fill="none"
+              stroke="hsl(25,50%,50%)"
+              strokeWidth={2.5}
+              opacity={0.7}
+            />
+          )}
+
           {/* DOOR */}
           {hasDoor && !isCollapsed && (
             <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-              <rect x={SVG_W / 2 - 10} y={WALL_BASE_Y - 2 * ROW_H + 3}
-                width={20} height={2 * ROW_H - 5} rx={1.5} fill="url(#hDoor)"
+              <rect x={SVG_W / 2 - 14} y={WALL_BASE_Y - 2.5 * ROW_H + 2}
+                width={28} height={2.5 * ROW_H - 4} rx={3} fill="url(#hDoor)"
               />
-              <circle cx={SVG_W / 2 + 5} cy={WALL_BASE_Y - ROW_H + 2} r={2} fill="hsl(40,70%,60%)" />
-              <rect x={SVG_W / 2 - 11} y={WALL_BASE_Y - 2 * ROW_H + 2}
-                width={22} height={2 * ROW_H - 4} rx={2} fill="none" stroke="hsl(25,40%,35%)" strokeWidth={1}
+              {/* Door panel lines */}
+              <rect x={SVG_W / 2 - 10} y={WALL_BASE_Y - 2.5 * ROW_H + 6}
+                width={8} height={2.5 * ROW_H - 16} rx={1} fill="none" stroke="hsl(25,35%,30%)" strokeWidth={0.8}
+              />
+              <rect x={SVG_W / 2 + 2} y={WALL_BASE_Y - 2.5 * ROW_H + 6}
+                width={8} height={2.5 * ROW_H - 16} rx={1} fill="none" stroke="hsl(25,35%,30%)" strokeWidth={0.8}
+              />
+              {/* Doorknob */}
+              <circle cx={SVG_W / 2 + 9} cy={WALL_BASE_Y - 1.2 * ROW_H} r={2.5} fill="hsl(45,80%,65%)" />
+              <circle cx={SVG_W / 2 + 9} cy={WALL_BASE_Y - 1.2 * ROW_H} r={1} fill="hsl(45,60%,45%)" />
+              {/* Door frame */}
+              <rect x={SVG_W / 2 - 15} y={WALL_BASE_Y - 2.5 * ROW_H + 1}
+                width={30} height={2.5 * ROW_H - 3} rx={3} fill="none" stroke="hsl(25,45%,40%)" strokeWidth={1.5}
               />
             </motion.g>
           )}
@@ -247,14 +272,23 @@ const WallSimulation = () => {
           {/* WINDOWS */}
           {hasWindow && !isCollapsed && (
             <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-              {[WALL_LEFT + 6, WALL_LEFT + TOTAL_WALL_W - 22].map((wx, idx) => {
-                const wy = wallTopY + ROW_H + 2;
+              {[WALL_LEFT + 8, WALL_LEFT + TOTAL_WALL_W - 36].map((wx, idx) => {
+                const wy = wallTopY + ROW_H * 0.5 + 2;
+                const winW = 28;
+                const winH = 24;
                 return (
                   <g key={`win-${idx}`}>
-                    <rect x={wx} y={wy} width={16} height={13} rx={1} fill="hsl(210,60%,75%)" opacity={0.8} />
-                    <line x1={wx + 8} y1={wy} x2={wx + 8} y2={wy + 13} stroke="hsl(25,40%,35%)" strokeWidth={0.8} />
-                    <line x1={wx} y1={wy + 6.5} x2={wx + 16} y2={wy + 6.5} stroke="hsl(25,40%,35%)" strokeWidth={0.8} />
-                    <rect x={wx - 0.5} y={wy - 0.5} width={17} height={14} rx={1.5} fill="none" stroke="hsl(25,45%,40%)" strokeWidth={1} />
+                    {/* Window glass */}
+                    <rect x={wx} y={wy} width={winW} height={winH} rx={2} fill="hsl(210,70%,80%)" opacity={0.85} />
+                    {/* Inner warm glow */}
+                    <rect x={wx + 2} y={wy + 2} width={winW - 4} height={winH - 4} rx={1} fill="hsl(45,70%,70%)" opacity={0.25} />
+                    {/* Cross bars */}
+                    <line x1={wx + winW / 2} y1={wy} x2={wx + winW / 2} y2={wy + winH} stroke="hsl(25,45%,38%)" strokeWidth={1.5} />
+                    <line x1={wx} y1={wy + winH / 2} x2={wx + winW} y2={wy + winH / 2} stroke="hsl(25,45%,38%)" strokeWidth={1.5} />
+                    {/* Window frame */}
+                    <rect x={wx - 1} y={wy - 1} width={winW + 2} height={winH + 2} rx={2.5} fill="none" stroke="hsl(25,50%,45%)" strokeWidth={2} />
+                    {/* Window sill */}
+                    <rect x={wx - 3} y={wy + winH} width={winW + 6} height={3} rx={1} fill="hsl(25,50%,45%)" />
                   </g>
                 );
               })}
@@ -265,15 +299,23 @@ const WallSimulation = () => {
           {hasRoof && !isCollapsed && (
             <motion.g initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
               <polygon
-                points={`${SVG_W / 2},${roofPeakY} ${WALL_LEFT - 12},${wallTopY} ${WALL_LEFT + TOTAL_WALL_W + 12},${wallTopY}`}
+                points={`${SVG_W / 2},${roofPeakY} ${WALL_LEFT - 18},${wallTopY - 2} ${WALL_LEFT + TOTAL_WALL_W + 18},${wallTopY - 2}`}
                 fill="url(#hRoof)"
               />
-              <line x1={WALL_LEFT - 12} y1={wallTopY} x2={WALL_LEFT + TOTAL_WALL_W + 12} y2={wallTopY}
-                stroke="hsl(20,45%,32%)" strokeWidth={1.5}
+              {/* Roof outline */}
+              <polygon
+                points={`${SVG_W / 2},${roofPeakY} ${WALL_LEFT - 18},${wallTopY - 2} ${WALL_LEFT + TOTAL_WALL_W + 18},${wallTopY - 2}`}
+                fill="none"
+                stroke="hsl(20,50%,38%)"
+                strokeWidth={2}
+              />
+              {/* Roof eave line */}
+              <line x1={WALL_LEFT - 18} y1={wallTopY - 2} x2={WALL_LEFT + TOTAL_WALL_W + 18} y2={wallTopY - 2}
+                stroke="hsl(20,50%,35%)" strokeWidth={2.5}
               />
               {/* Chimney */}
-              <rect x={SVG_W / 2 + 20} y={roofPeakY + 6} width={10} height={18} fill="hsl(12,55%,45%)" rx={1} />
-              <rect x={SVG_W / 2 + 18} y={roofPeakY + 4} width={14} height={4} fill="hsl(12,50%,40%)" rx={1} />
+              <rect x={SVG_W / 2 + 28} y={roofPeakY + 6} width={14} height={22} fill="hsl(12,55%,48%)" rx={1.5} />
+              <rect x={SVG_W / 2 + 26} y={roofPeakY + 4} width={18} height={4} fill="hsl(12,50%,42%)" rx={1.5} />
             </motion.g>
           )}
 
