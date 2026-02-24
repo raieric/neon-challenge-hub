@@ -164,7 +164,7 @@ const Index = () => {
         {/* Hero Section */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20 animate-fade-in">
           <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-black tracking-tight text-foreground mb-4 text-glow-purple animate-float">
-            🎮 Class Challenge Arena
+            🎮 nerd.fun
           </h1>
           <p className="font-body text-lg sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
             Where randomness meets responsibility.
