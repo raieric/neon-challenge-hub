@@ -27,6 +27,7 @@ import ImposterClassroom from "./pages/ImposterClassroom";
 import WordBingo from "./pages/word-bingo/WordBingo";
 import NumberBingo from "./pages/number-bingo/NumberBingo";
 import ImpromptuPage from "./pages/impromptu/ImpromptuPage";
+import MotivationHub from "./pages/motivation/MotivationHub";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -62,6 +63,7 @@ const App = () => (
           <Route path="/word-bingo" element={<WordBingo />} />
           <Route path="/number-bingo" element={<NumberBingo />} />
           <Route path="/impromptu" element={<ImpromptuPage />} />
+          <Route path="/motivation" element={<MotivationHub />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -131,6 +131,12 @@ const games = [
   },
   {
     icon: "⚡",
+    title: "Motivation Lab",
+    description: "Small actions. Massive consequences.",
+    to: "/motivation",
+  },
+  {
+    icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
     comingSoon: true,
