@@ -118,11 +118,12 @@ const WaterSimulation = () => {
 
   const totalActions = data.history.length;
   const positiveCount = data.history.filter((h) => h === "up").length;
+  const negativeCount = totalActions - positiveCount;
 
+  // Simple linear: start at 50, +1 per pour, -1 per negativity, clamped 0–100
   const clarity = useMemo(() => {
-    if (totalActions === 0) return 50;
-    return Math.max(0, Math.min(100, Math.round((positiveCount / totalActions) * 100)));
-  }, [positiveCount, totalActions]);
+    return Math.max(0, Math.min(100, 50 + positiveCount - negativeCount));
+  }, [positiveCount, negativeCount]);
 
   const negativity = 100 - clarity;
   const isFullClarity = clarity >= 100;
