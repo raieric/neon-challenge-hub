@@ -133,6 +133,7 @@ const WaterSimulation = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [message, setMessage] = useState("Pour positivity to clear your mind.");
   const [isPouringStream, setIsPouringStream] = useState(false);
+  const [isPouringDark, setIsPouringDark] = useState(false);
   const [spillDrops, setSpillDrops] = useState<SpillDrop[]>([]);
   const [ripples, setRipples] = useState<RippleRing[]>([]);
   const [waveIntensity, setWaveIntensity] = useState(0);
@@ -175,8 +176,10 @@ const WaterSimulation = () => {
 
   // Overflow: dirty water spills when clarity rises and glass is full
   const isOverflowing = totalFill >= 0.95 && clarity > 60;
+  // Clean water spills out when negativity is fed and glass is full
+  const isOverflowingClean = totalFill >= 0.95 && negativity > 60;
 
-  const triggerSpill = useCallback(() => {
+  const triggerSpill = useCallback((color: "dirty" | "clean") => {
     const drops: SpillDrop[] = [];
     for (let i = 0; i < 4; i++) {
       drops.push({
@@ -219,9 +222,9 @@ const WaterSimulation = () => {
       transition: { duration: 0.4 },
     });
 
-    // Spill if overflowing
+    // Spill dirty water out if glass is full
     if (totalFill >= 0.9 && clarity > 50) {
-      setTimeout(triggerSpill, 300);
+      setTimeout(() => triggerSpill("dirty"), 300);
     }
 
     // Floating tag
@@ -236,20 +239,33 @@ const WaterSimulation = () => {
     skip();
     playSound("dark");
 
-    setWaveIntensity(2);
-    setTimeout(() => setWaveIntensity(0), 600);
+    // Dark pour stream
+    setIsPouringDark(true);
+    setTimeout(() => setIsPouringDark(false), 800);
 
+    // Wave & ripple
+    setWaveIntensity(4);
+    setTimeout(() => setWaveIntensity(1.5), 400);
+    setTimeout(() => setWaveIntensity(0), 1000);
+    triggerRipple();
+
+    // Glass vibration
     glassControls.start({
-      x: [0, 1, -1, 0],
-      transition: { duration: 0.25 },
+      x: [0, 1.5, -1.5, 1, -0.5, 0],
+      transition: { duration: 0.35 },
     });
+
+    // Spill clean water out if glass is full
+    if (totalFill >= 0.9 && negativity > 40) {
+      setTimeout(() => triggerSpill("clean"), 300);
+    }
 
     const tag = NEGATIVE_TAGS[Math.floor(Math.random() * NEGATIVE_TAGS.length)];
     const id = tagIdRef.current++;
     setFloatingTags((prev) => [...prev.slice(-5), { id, text: tag, x: 15 + Math.random() * 70, type: "negative" }]);
     setMessage("What you feed grows.");
     setTimeout(() => setFloatingTags((prev) => prev.filter((t) => t.id !== id)), 2800);
-  }, [skip, glassControls]);
+  }, [skip, glassControls, triggerSpill, triggerRipple, totalFill, negativity]);
 
   const handleReset = useCallback(() => {
     setFloatingTags([]);
@@ -257,6 +273,7 @@ const WaterSimulation = () => {
     setSpillDrops([]);
     setRipples([]);
     setIsPouringStream(false);
+    setIsPouringDark(false);
     setWaveIntensity(0);
     setMessage("Pour positivity to clear your mind.");
     reset();
@@ -516,6 +533,51 @@ const WaterSimulation = () => {
                     initial={{ cy: WATER_TOP_Y, opacity: 0, scale: 0 }}
                     animate={{
                       cy: [WATER_TOP_Y, WATER_TOP_Y - 10 - i * 5, WATER_TOP_Y + 3],
+                      opacity: [0, 0.7, 0],
+                      scale: [0, 1, 0.5],
+                    }}
+                    transition={{ duration: 0.6, delay: 0.2 + i * 0.08, ease: "easeOut" }}
+                  />
+                ))}
+              </motion.g>
+            )}
+          </AnimatePresence>
+
+          {/* ===== DARK POUR STREAM (negativity) ===== */}
+          <AnimatePresence>
+            {isPouringDark && (
+              <motion.g>
+                <motion.rect
+                  x={SVG_W / 2 - 3}
+                  y={10}
+                  width={6}
+                  rx={3}
+                  fill={waterColors.bottom}
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: WATER_TOP_Y - 10, opacity: 0.85 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                />
+                <motion.rect
+                  x={SVG_W / 2 - 1.5}
+                  y={10}
+                  width={3}
+                  rx={1.5}
+                  fill="rgba(50,40,30,0.6)"
+                  initial={{ height: 0 }}
+                  animate={{ height: WATER_TOP_Y - 10 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                />
+                {[0, 1, 2].map((i) => (
+                  <motion.circle
+                    key={`dsplash-${i}`}
+                    cx={SVG_W / 2 + (i - 1) * 12}
+                    r={2}
+                    fill="rgba(70,52,35,0.6)"
+                    initial={{ cy: WATER_TOP_Y, opacity: 0, scale: 0 }}
+                    animate={{
+                      cy: [WATER_TOP_Y, WATER_TOP_Y - 8 - i * 4, WATER_TOP_Y + 3],
                       opacity: [0, 0.7, 0],
                       scale: [0, 1, 0.5],
                     }}
