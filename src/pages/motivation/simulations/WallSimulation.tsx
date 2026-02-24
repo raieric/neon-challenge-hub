@@ -153,18 +153,16 @@ const WallSimulation = () => {
               const isBroken = brokenBricks.has(i);
 
               if (isCollapsed) {
+                const fallX = x + Math.cos(i * 2.3) * 25;
+                const fallY = WALL_BASE_Y - 8;
+                const fallR = Math.sin(i * 3.7) * 35;
                 return (
                   <motion.rect
                     key={`b-${i}`}
                     width={BRICK_W} height={BRICK_H} rx={1.5}
                     fill="url(#hBroken)"
-                    initial={{ x, y }}
-                    animate={{
-                      x: x + Math.cos(i * 2.3) * 25,
-                      y: WALL_BASE_Y - 8 + Math.random() * 6,
-                      rotate: Math.sin(i * 3.7) * 35,
-                      opacity: 0.35,
-                    }}
+                    initial={{ x, y, rotate: 0, opacity: 1 }}
+                    animate={{ x: fallX, y: fallY, rotate: fallR, opacity: 0.35 }}
                     transition={{ duration: 0.7, delay: i * 0.025, ease: "easeIn" }}
                   />
                 );
@@ -173,40 +171,60 @@ const WallSimulation = () => {
               return (
                 <motion.g
                   key={`b-${i}`}
-                  initial={{ opacity: 0, y: y + 12 }}
-                  animate={{ opacity: 1, y }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25, delay: i * 0.025 }}
                   onClick={() => toggleBrick(i)}
                   className="cursor-pointer"
                 >
                   {isBroken ? (
                     <>
-                      <motion.rect x={x} y={y} width={BRICK_W * 0.43} height={BRICK_H} rx={1}
-                        fill="url(#hBroken)" animate={{ rotate: -5, y: y + 2 }}
-                        style={{ transformOrigin: `${x}px ${y + BRICK_H}px` }} opacity={0.5}
+                      <motion.rect
+                        width={BRICK_W * 0.43} height={BRICK_H} rx={1}
+                        fill="url(#hBroken)"
+                        initial={{ x, y: y + 20, opacity: 0 }}
+                        animate={{ x, y: y + 2, opacity: 0.5, rotate: -5 }}
+                        style={{ transformOrigin: `${x}px ${y + BRICK_H}px` }}
+                        transition={{ type: "spring", stiffness: 120, damping: 14 }}
                       />
-                      <motion.rect x={x + BRICK_W * 0.55} y={y} width={BRICK_W * 0.4} height={BRICK_H} rx={1}
-                        fill="url(#hBroken)" animate={{ rotate: 4, y: y + 1.5 }}
-                        style={{ transformOrigin: `${x + BRICK_W}px ${y + BRICK_H}px` }} opacity={0.45}
+                      <motion.rect
+                        width={BRICK_W * 0.4} height={BRICK_H} rx={1}
+                        fill="url(#hBroken)"
+                        initial={{ x: x + BRICK_W * 0.55, y: y + 20, opacity: 0 }}
+                        animate={{ x: x + BRICK_W * 0.55, y: y + 1.5, opacity: 0.45, rotate: 4 }}
+                        style={{ transformOrigin: `${x + BRICK_W}px ${y + BRICK_H}px` }}
+                        transition={{ type: "spring", stiffness: 120, damping: 14 }}
                       />
-                      <line x1={x + BRICK_W * 0.46} y1={y} x2={x + BRICK_W * 0.53} y2={y + BRICK_H}
-                        stroke="hsl(10,20%,14%)" strokeWidth={0.8} opacity={0.5}
+                      <motion.line
+                        x1={x + BRICK_W * 0.46} y1={y} x2={x + BRICK_W * 0.53} y2={y + BRICK_H}
+                        stroke="hsl(10,20%,14%)" strokeWidth={0.8}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.5 }}
                       />
                     </>
                   ) : (
                     <>
-                      <rect x={x} y={y} width={BRICK_W} height={BRICK_H} rx={1.5}
+                      <motion.rect
+                        width={BRICK_W} height={BRICK_H} rx={1.5}
                         fill={row % 2 === 0 ? "url(#hBrick1)" : "url(#hBrick2)"}
                         filter="url(#hShadow)"
+                        initial={{ x, y: WALL_BASE_Y, opacity: 0 }}
+                        animate={{ x, y, opacity: 1 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 100,
+                          damping: 12,
+                          delay: (i % COLS) * 0.06,
+                        }}
                       />
-                      <line x1={x + 2} y1={y + BRICK_H * 0.5} x2={x + BRICK_W - 2} y2={y + BRICK_H * 0.5}
-                        stroke="hsl(15,30%,30%)" strokeWidth={0.3} opacity={0.25}
+                      <motion.line
+                        x1={x + 2} y1={y + BRICK_H * 0.5} x2={x + BRICK_W - 2} y2={y + BRICK_H * 0.5}
+                        stroke="hsl(15,30%,42%)" strokeWidth={0.4} opacity={0.3}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.3 }}
+                        transition={{ delay: (i % COLS) * 0.06 + 0.2 }}
                       />
                     </>
                   )}
                   <rect x={x - 1} y={y - 1} width={BRICK_W + 2} height={BRICK_H + 2} rx={2}
-                    fill="transparent" className="hover:fill-[rgba(255,255,255,0.05)]"
+                    fill="transparent" className="hover:fill-[rgba(255,255,255,0.08)]"
                   />
                 </motion.g>
               );
