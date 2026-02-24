@@ -331,11 +331,18 @@ const LadderSimulation = () => {
             <motion.text
               fontSize={22}
               textAnchor="middle"
-              animate={{
+              animate={isTryAgain ? {
+                y: SVG_H + 30,
+                x: SVG_W / 2 + 20,
+                rotate: 120,
+                opacity: 0,
+              } : {
                 y: (rungPositions[Math.min(rungs - 1, rungPositions.length - 1)]?.y ?? SVG_H - 50) - 8,
                 x: SVG_W / 2 - 2,
+                rotate: 0,
+                opacity: 1,
               }}
-              transition={{ type: "spring", stiffness: 180 }}
+              transition={isTryAgain ? { duration: 0.8, ease: "easeIn" } : { type: "spring", stiffness: 180 }}
             >
               🧗
             </motion.text>
