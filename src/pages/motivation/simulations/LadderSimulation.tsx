@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStreakStorage } from "../hooks/useStreakStorage";
 
@@ -5,6 +6,8 @@ const MESSAGES_UP = ["XP gained.", "Progress compiled.", "Build > Excuses.", "Mo
 const MESSAGES_SKIP = ["Warning: momentum decreasing.", "Entropy wins today.", "Runtime error: effort not found.", "Segfault in discipline."];
 
 const MAX_RUNGS = 12;
+const RUNG_HEIGHT = 12;
+const RUNG_GAP = 10;
 
 const LadderSimulation = () => {
   const { data, showUp, skip, reset } = useStreakStorage("ladder");
@@ -16,10 +19,24 @@ const LadderSimulation = () => {
     ? MESSAGES_SKIP[Math.abs(data.steps) % MESSAGES_SKIP.length]
     : "Start climbing.";
 
+  const [brokenRungs, setBrokenRungs] = useState<Set<number>>(new Set());
+
+  const toggleRung = (index: number) => {
+    setBrokenRungs((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
+  };
+
   return (
     <div className="flex flex-col items-center gap-6">
       {/* Ladder visual */}
-      <div className="relative w-40 h-80 flex flex-col-reverse items-center justify-start gap-0">
+      <div className="relative w-40 h-80 flex flex-col-reverse items-center justify-start">
         {/* SUCCESS label at top */}
         <motion.div
           className="absolute -top-8 font-display text-sm font-bold tracking-widest"
@@ -36,22 +53,32 @@ const LadderSimulation = () => {
         {/* Rungs */}
         <AnimatePresence>
           {Array.from({ length: rungs }).map((_, i) => {
+            const isBroken = brokenRungs.has(i);
             const cracked = data.collapsed && Math.random() > 0.5;
             return (
               <motion.div
                 key={i}
                 initial={{ scaleX: 0, opacity: 0 }}
                 animate={{
-                  scaleX: cracked ? 0.6 : 1,
-                  opacity: cracked ? 0.4 : 1,
+                  scaleX: cracked ? 0.6 : isBroken ? 0.5 : 1,
+                  opacity: cracked ? 0.4 : isBroken ? 0.35 : 1,
                   x: data.collapsed ? [0, -3, 3, -2, 0] : 0,
+                  rotate: isBroken ? 8 : 0,
                 }}
                 exit={{ scaleX: 0, opacity: 0 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
-                className="w-28 h-3 rounded-sm"
+                onClick={() => toggleRung(i)}
+                className="rounded-sm cursor-pointer hover:brightness-125 transition-all"
                 style={{
-                  background: `linear-gradient(90deg, hsl(var(--neon-purple)), hsl(var(--neon-cyan)))`,
-                  boxShadow: `0 0 ${8 + i * 2}px hsl(var(--neon-purple) / ${0.2 + i * 0.05})`,
+                  width: 112,
+                  height: RUNG_HEIGHT,
+                  marginBottom: i < rungs - 1 ? RUNG_GAP : 0,
+                  background: isBroken
+                    ? `linear-gradient(90deg, hsl(var(--destructive)), hsl(var(--destructive) / 0.6))`
+                    : `linear-gradient(90deg, hsl(var(--neon-purple)), hsl(var(--neon-cyan)))`,
+                  boxShadow: isBroken
+                    ? `0 0 6px hsl(var(--destructive) / 0.4)`
+                    : `0 0 ${8 + i * 2}px hsl(var(--neon-purple) / ${0.2 + i * 0.05})`,
                 }}
               />
             );
