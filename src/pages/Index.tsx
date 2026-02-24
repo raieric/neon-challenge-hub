@@ -136,6 +136,12 @@ const games = [
     to: "/motivation",
   },
   {
+    icon: "❌",
+    title: "Tic-Tac-Toe",
+    description: "Think ahead. Control the board.",
+    to: "/tic-tac-toe",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
