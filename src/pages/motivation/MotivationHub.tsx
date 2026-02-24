@@ -6,12 +6,14 @@ import LadderSimulation from "./simulations/LadderSimulation";
 import FireSimulation from "./simulations/FireSimulation";
 import WallSimulation from "./simulations/WallSimulation";
 import TreeSimulation from "./simulations/TreeSimulation";
+import WaterSimulation from "./simulations/WaterSimulation";
 
 const TABS = [
   { id: "ladder", label: "🪜 Ladder", component: LadderSimulation },
   { id: "fire", label: "🔥 Fire", component: FireSimulation },
   { id: "wall", label: "🧱 Wall", component: WallSimulation },
   { id: "tree", label: "🌱 Tree", component: TreeSimulation },
+  { id: "water", label: "💧 Water", component: WaterSimulation },
   { id: "future", label: "🚀 Future", component: null },
 ] as const;
 
