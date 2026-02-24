@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStreakStorage } from "../hooks/useStreakStorage";
 import Confetti from "@/components/Confetti";
@@ -30,6 +30,12 @@ const playSound = (type: "success" | "warning") => {
 
 const FRUIT_EMOJIS = ["🍎", "🍊", "🍋", "🍇", "🍑", "🍒"];
 
+// Seeded random for consistent positions
+const seededRandom = (seed: number) => {
+  const x = Math.sin(seed * 9301 + 49297) * 49297;
+  return x - Math.floor(x);
+};
+
 const TreeSimulation = () => {
   const { data, showUp, skip, reset } = useStreakStorage("tree");
   const growth = Math.min(data.steps, 10);
@@ -37,14 +43,12 @@ const TreeSimulation = () => {
   const skipCount = data.history.filter((h) => h === "skip").length;
   const isDying = !isDead && skipCount >= 3 && growth < 4;
 
-  const trunkHeight = isDead ? 30 : 20 + growth * 14;
-  const trunkWidth = isDead ? 8 : 10 + growth * 1.5;
-  const canopySize = isDead ? 0 : 20 + growth * 12;
   const hasFruits = growth >= 7 && !isDead;
   const isFullGrown = growth >= 10 && !isDead;
 
   const [showConfetti, setShowConfetti] = useState(false);
   const prevFullRef = useRef(false);
+  const prevDeadRef = useRef(false);
 
   useEffect(() => {
     if (isFullGrown && !prevFullRef.current) {
@@ -52,280 +56,383 @@ const TreeSimulation = () => {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 4000);
     }
-    if (isDead && !prevFullRef.current) {
+    prevFullRef.current = isFullGrown;
+  }, [isFullGrown]);
+
+  useEffect(() => {
+    if (isDead && !prevDeadRef.current) {
       playSound("warning");
     }
-    prevFullRef.current = isFullGrown;
-  }, [isFullGrown, isDead]);
+    prevDeadRef.current = isDead;
+  }, [isDead]);
 
-  // Generate fruit positions around the canopy
-  const fruits = hasFruits
-    ? Array.from({ length: Math.min((growth - 6) * 3, 12) }, (_, i) => {
-        const angle = (i / Math.min((growth - 6) * 3, 12)) * Math.PI * 2;
-        const radius = canopySize * 0.3;
-        return {
-          id: i,
-          emoji: FRUIT_EMOJIS[i % FRUIT_EMOJIS.length],
-          x: Math.cos(angle) * radius,
-          y: Math.sin(angle) * radius * 0.6,
-        };
-      })
-    : [];
+  // SVG dimensions
+  const W = 240;
+  const H = 320;
+  const groundY = H - 20;
 
-  // Branch positions
-  const branches = growth >= 3 && !isDead
-    ? Array.from({ length: Math.min(growth - 2, 5) }, (_, i) => ({
+  // Tree proportions based on growth
+  const trunkH = 30 + growth * 14;
+  const trunkBottomW = 6 + growth * 1.2;
+  const trunkTopW = 3 + growth * 0.5;
+  const cx = W / 2;
+  const trunkBase = groundY;
+  const trunkTop = groundY - trunkH;
+
+  // Canopy clusters — multiple overlapping ellipses for realistic look
+  const canopyClusters = useMemo(() => {
+    if (isDead || growth === 0) return [];
+    const count = Math.min(3 + growth, 9);
+    const baseRadius = 12 + growth * 5;
+    return Array.from({ length: count }, (_, i) => {
+      const angle = (i / count) * Math.PI * 2 - Math.PI / 2;
+      const spread = baseRadius * 0.5;
+      const rx = baseRadius * (0.6 + seededRandom(i * 3) * 0.5);
+      const ry = baseRadius * (0.5 + seededRandom(i * 7) * 0.4);
+      return {
         id: i,
-        side: i % 2 === 0 ? -1 : 1,
-        y: trunkHeight * (0.4 + i * 0.12),
-        length: 15 + (growth - 3) * 3,
-        angle: (i % 2 === 0 ? -35 : 35),
-      }))
-    : [];
+        cx: cx + Math.cos(angle) * spread * (i === 0 ? 0 : 1),
+        cy: trunkTop - baseRadius * 0.2 + Math.sin(angle) * spread * 0.6,
+        rx,
+        ry,
+      };
+    });
+  }, [growth, isDead, trunkTop, cx]);
+
+  // Branches
+  const branchPaths = useMemo(() => {
+    if (growth < 2 || isDead) return [];
+    const count = Math.min(growth - 1, 6);
+    return Array.from({ length: count }, (_, i) => {
+      const side = i % 2 === 0 ? -1 : 1;
+      const startY = trunkBase - trunkH * (0.35 + i * 0.1);
+      const len = 12 + growth * 3 + seededRandom(i * 11) * 10;
+      const curve = 15 + seededRandom(i * 17) * 10;
+      const endX = cx + side * len;
+      const endY = startY - curve;
+      const cpX = cx + side * len * 0.6;
+      const cpY = startY - curve * 0.3;
+      return {
+        id: i,
+        d: `M ${cx} ${startY} Q ${cpX} ${cpY} ${endX} ${endY}`,
+        thickness: 2 + (growth - i) * 0.3,
+      };
+    });
+  }, [growth, isDead, trunkH, trunkBase, cx]);
+
+  // Fruit positions on canopy
+  const fruits = useMemo(() => {
+    if (!hasFruits || canopyClusters.length === 0) return [];
+    const count = Math.min((growth - 6) * 3, 12);
+    return Array.from({ length: count }, (_, i) => {
+      const cluster = canopyClusters[i % canopyClusters.length];
+      const angle = seededRandom(i * 13 + 5) * Math.PI * 2;
+      const dist = 0.5 + seededRandom(i * 19) * 0.4;
+      return {
+        id: i,
+        emoji: FRUIT_EMOJIS[i % FRUIT_EMOJIS.length],
+        x: cluster.cx + Math.cos(angle) * cluster.rx * dist,
+        y: cluster.cy + Math.sin(angle) * cluster.ry * dist,
+      };
+    });
+  }, [hasFruits, growth, canopyClusters]);
+
+  // Root paths
+  const roots = useMemo(() => {
+    if (growth < 2 || isDead) return [];
+    return [-1, 0, 1].map((dir, i) => {
+      const endX = cx + dir * (10 + growth * 3);
+      const endY = groundY + 6 + seededRandom(i * 23) * 8;
+      return {
+        id: i,
+        d: `M ${cx} ${groundY - 2} Q ${cx + dir * 5} ${groundY + 3} ${endX} ${endY}`,
+      };
+    });
+  }, [growth, isDead, cx, groundY]);
+
+  // Dead branches
+  const deadBranches = useMemo(() => {
+    if (!isDead) return [];
+    return [
+      { d: `M ${cx} ${trunkTop + 5} Q ${cx - 20} ${trunkTop - 5} ${cx - 30} ${trunkTop + 2}` },
+      { d: `M ${cx} ${trunkTop + 10} Q ${cx + 18} ${trunkTop} ${cx + 28} ${trunkTop + 8}` },
+      { d: `M ${cx} ${trunkTop + 2} Q ${cx - 8} ${trunkTop - 15} ${cx - 5} ${trunkTop - 22}` },
+      { d: `M ${cx} ${trunkTop + 8} Q ${cx + 12} ${trunkTop - 8} ${cx + 18} ${trunkTop - 15}` },
+    ];
+  }, [isDead, cx, trunkTop]);
+
+  const healthyGreen1 = "hsl(120, 45%, 32%)";
+  const healthyGreen2 = "hsl(135, 50%, 28%)";
+  const healthyGreen3 = "hsl(110, 55%, 38%)";
+  const dyingYellow = "hsl(50, 40%, 35%)";
+  const dyingBrown = "hsl(35, 30%, 25%)";
 
   return (
     <div className="flex flex-col items-center gap-6">
       {showConfetti && <Confetti />}
 
-      {/* Tree visual */}
-      <div className="relative w-56 h-80 flex items-end justify-center">
-        {/* Sky glow behind tree when full */}
+      {/* SVG Tree */}
+      <motion.svg
+        width={W}
+        height={H}
+        viewBox={`0 0 ${W} ${H}`}
+        className="overflow-visible"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <defs>
+          <radialGradient id="canopyGrad" cx="40%" cy="30%">
+            <stop offset="0%" stopColor={isDying ? dyingYellow : healthyGreen3} />
+            <stop offset="60%" stopColor={isDying ? dyingBrown : healthyGreen1} />
+            <stop offset="100%" stopColor={isDying ? dyingBrown : healthyGreen2} />
+          </radialGradient>
+          <linearGradient id="trunkGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={isDead ? "hsl(30, 10%, 20%)" : isDying ? "hsl(30, 20%, 26%)" : "hsl(30, 45%, 32%)"} />
+            <stop offset="100%" stopColor={isDead ? "hsl(30, 8%, 14%)" : isDying ? "hsl(30, 15%, 18%)" : "hsl(25, 40%, 22%)"} />
+          </linearGradient>
+          <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={isDead ? "hsl(30, 15%, 18%)" : "hsl(100, 30%, 18%)"} />
+            <stop offset="100%" stopColor="transparent" />
+          </linearGradient>
+          {isFullGrown && (
+            <radialGradient id="glowGrad" cx="50%" cy="50%">
+              <stop offset="0%" stopColor="hsl(120, 60%, 50%)" stopOpacity="0.15" />
+              <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+            </radialGradient>
+          )}
+          <filter id="canopyShadow">
+            <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="rgba(0,0,0,0.3)" />
+          </filter>
+        </defs>
+
+        {/* Ground */}
+        <ellipse cx={cx} cy={groundY + 2} rx={100} ry={10} fill="url(#groundGrad)" />
+
+        {/* Glow behind full tree */}
         {isFullGrown && (
-          <motion.div
-            className="absolute rounded-full"
-            animate={{ opacity: [0.2, 0.4, 0.2] }}
+          <motion.circle
+            cx={cx}
+            cy={trunkTop - 20}
+            r={80}
+            fill="url(#glowGrad)"
+            animate={{ opacity: [0.3, 0.6, 0.3] }}
             transition={{ duration: 3, repeat: Infinity }}
-            style={{
-              width: canopySize + 60,
-              height: canopySize + 60,
-              bottom: trunkHeight - 10,
-              left: "50%",
-              transform: "translateX(-50%)",
-              background: "radial-gradient(circle, hsl(var(--neon-green) / 0.15), transparent)",
-            }}
           />
         )}
 
-        {/* Ground */}
-        <div
-          className="absolute bottom-0 w-full h-6 rounded-full"
-          style={{
-            background: isDead
-              ? "linear-gradient(to top, hsl(30 15% 15%), transparent)"
-              : "linear-gradient(to top, hsl(120 30% 15%), transparent)",
-          }}
-        />
-        {/* Grass blades */}
-        {!isDead &&
-          Array.from({ length: 8 }, (_, i) => (
-            <motion.div
-              key={`grass-${i}`}
-              className="absolute bottom-2 rounded-t-full"
-              style={{
-                width: 2,
-                height: 8 + Math.random() * 6,
-                left: `${15 + i * 10}%`,
-                background: "hsl(var(--neon-green) / 0.4)",
-                transformOrigin: "bottom",
-              }}
-              animate={{ rotate: [-5, 5, -5] }}
-              transition={{ duration: 2 + i * 0.3, repeat: Infinity }}
-            />
-          ))}
-
         {/* Roots */}
-        {growth >= 2 && !isDead && (
-          <>
-            {[-1, 1].map((dir) => (
-              <motion.div
-                key={`root-${dir}`}
-                className="absolute bottom-3 rounded-full"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                style={{
-                  width: 8 + growth * 2,
-                  height: 3,
-                  left: `calc(50% + ${dir * 4}px)`,
-                  transformOrigin: dir === -1 ? "right" : "left",
-                  background: isDying ? "hsl(30 20% 25%)" : "hsl(30 35% 30%)",
-                  rotate: dir * 15,
-                }}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Trunk */}
-        <motion.div
-          className="absolute bottom-4 rounded-t-md"
-          animate={{
-            height: trunkHeight,
-            width: trunkWidth,
-          }}
-          style={{
-            left: "50%",
-            transform: "translateX(-50%)",
-            background: isDead
-              ? "linear-gradient(to top, hsl(30 10% 15%), hsl(30 10% 20%))"
-              : isDying
-              ? "linear-gradient(to top, hsl(30 25% 22%), hsl(30 20% 28%))"
-              : "linear-gradient(to top, hsl(25 40% 25%), hsl(30 45% 35%))",
-            borderRadius: "4px 4px 2px 2px",
-          }}
-          transition={{ duration: 0.5 }}
-        >
-          {/* Bark texture */}
-          {!isDead && growth >= 4 && (
-            <>
-              {[0.3, 0.5, 0.7].map((pos) => (
-                <div
-                  key={pos}
-                  className="absolute w-full"
-                  style={{
-                    top: `${pos * 100}%`,
-                    height: 1,
-                    background: "hsl(30 30% 20% / 0.5)",
-                  }}
-                />
-              ))}
-            </>
-          )}
-        </motion.div>
-
-        {/* Branches */}
-        {branches.map((b) => (
-          <motion.div
-            key={`branch-${b.id}`}
-            className="absolute"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            style={{
-              width: b.length,
-              height: 3 + growth * 0.3,
-              bottom: b.y + 4,
-              left: "50%",
-              transformOrigin: b.side === -1 ? "right center" : "left center",
-              transform: `translateX(${b.side === -1 ? `-${b.length}px` : "0"}) rotate(${b.angle}deg)`,
-              background: isDying ? "hsl(30 20% 25%)" : "hsl(30 40% 30%)",
-              borderRadius: 2,
-            }}
+        {roots.map((r) => (
+          <motion.path
+            key={`root-${r.id}`}
+            d={r.d}
+            stroke={isDying ? "hsl(30, 15%, 22%)" : "hsl(30, 35%, 28%)"}
+            strokeWidth={2.5}
+            fill="none"
+            strokeLinecap="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.8 }}
           />
         ))}
 
-        {/* Canopy layers */}
-        {!isDead && growth > 0 && (
-          <>
-            {/* Main canopy */}
-            <motion.div
-              className="absolute"
-              animate={{
-                width: canopySize,
-                height: canopySize * 0.85,
-                bottom: trunkHeight + 4,
-                opacity: isDying ? 0.5 : 1,
-              }}
-              style={{
-                left: "50%",
-                transform: "translateX(-50%)",
-                borderRadius: "50% 50% 45% 45%",
-                background: isDying
-                  ? "radial-gradient(ellipse, hsl(60 30% 30%), hsl(40 20% 20%))"
-                  : `radial-gradient(ellipse at 40% 30%, hsl(120 50% 35%), hsl(140 45% 25%))`,
-                boxShadow: isDying
-                  ? "none"
-                  : `inset -8px -8px 20px hsl(140 40% 15% / 0.5), 0 0 ${growth * 3}px hsl(var(--neon-green) / 0.2)`,
-              }}
-              transition={{ duration: 0.5 }}
+        {/* Trunk — tapered shape using path */}
+        <motion.path
+          d={`M ${cx - trunkBottomW} ${trunkBase}
+              L ${cx - trunkTopW} ${trunkTop}
+              Q ${cx} ${trunkTop - 4} ${cx + trunkTopW} ${trunkTop}
+              L ${cx + trunkBottomW} ${trunkBase} Z`}
+          fill="url(#trunkGrad)"
+          initial={{ scaleY: 0 }}
+          animate={{ scaleY: 1 }}
+          style={{ transformOrigin: `${cx}px ${trunkBase}px` }}
+          transition={{ duration: 0.6 }}
+        />
+
+        {/* Bark texture lines */}
+        {!isDead && growth >= 3 && [0.25, 0.45, 0.65, 0.8].map((t) => {
+          const y = trunkBase - trunkH * t;
+          const w = trunkBottomW - (trunkBottomW - trunkTopW) * t;
+          return (
+            <line
+              key={`bark-${t}`}
+              x1={cx - w * 0.7}
+              y1={y}
+              x2={cx + w * 0.5}
+              y2={y + 1}
+              stroke="hsl(30, 25%, 18%)"
+              strokeWidth={0.8}
+              opacity={0.4}
             />
-            {/* Highlight layer */}
-            {growth >= 4 && !isDying && (
-              <motion.div
-                className="absolute"
-                animate={{
-                  width: canopySize * 0.6,
-                  height: canopySize * 0.45,
-                  bottom: trunkHeight + canopySize * 0.35,
-                }}
-                style={{
-                  left: "46%",
-                  transform: "translateX(-50%)",
-                  borderRadius: "50%",
-                  background: "radial-gradient(ellipse, hsl(110 55% 42% / 0.6), transparent)",
-                }}
-              />
-            )}
+          );
+        })}
 
-            {/* Fruits */}
-            <AnimatePresence>
-              {fruits.map((f) => (
-                <motion.span
-                  key={`fruit-${f.id}`}
-                  className="absolute text-sm select-none"
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0, opacity: 0, y: 40 }}
-                  transition={{ delay: f.id * 0.1, type: "spring" }}
-                  style={{
-                    bottom: trunkHeight + canopySize * 0.4 + f.y,
-                    left: `calc(50% + ${f.x}px)`,
-                    filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.3))",
-                  }}
-                >
-                  {f.emoji}
-                </motion.span>
-              ))}
-            </AnimatePresence>
-          </>
-        )}
+        {/* Branches */}
+        {branchPaths.map((b) => (
+          <motion.path
+            key={`branch-${b.id}`}
+            d={b.d}
+            stroke={isDying ? "hsl(30, 20%, 24%)" : "hsl(30, 40%, 28%)"}
+            strokeWidth={b.thickness}
+            fill="none"
+            strokeLinecap="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.6, delay: b.id * 0.1 }}
+          />
+        ))}
 
-        {/* Dead tree - bare branches */}
-        {isDead && (
-          <>
-            {[
-              { x: -12, y: 20, r: -40, l: 18 },
-              { x: 8, y: 25, r: 30, l: 15 },
-              { x: -6, y: 15, r: -25, l: 12 },
-              { x: 10, y: 18, r: 50, l: 10 },
-            ].map((branch, i) => (
-              <motion.div
-                key={`dead-branch-${i}`}
-                className="absolute"
+        {/* Canopy clusters */}
+        {canopyClusters.map((c, i) => (
+          <motion.ellipse
+            key={`canopy-${c.id}`}
+            cx={c.cx}
+            cy={c.cy}
+            initial={{ rx: 0, ry: 0, opacity: 0 }}
+            animate={{
+              rx: c.rx,
+              ry: c.ry,
+              opacity: isDying ? 0.5 : 0.85,
+            }}
+            transition={{ duration: 0.5, delay: i * 0.06 }}
+            fill="url(#canopyGrad)"
+            filter={i === 0 ? "url(#canopyShadow)" : undefined}
+          />
+        ))}
+
+        {/* Leaf detail bumps on canopy edge */}
+        {!isDead && !isDying && growth >= 5 && canopyClusters.slice(1).map((c, i) => {
+          const bumpAngle = seededRandom(i * 31) * Math.PI * 2;
+          return (
+            <motion.circle
+              key={`bump-${i}`}
+              cx={c.cx + Math.cos(bumpAngle) * c.rx * 0.9}
+              cy={c.cy + Math.sin(bumpAngle) * c.ry * 0.9}
+              r={4 + growth * 0.5}
+              fill={healthyGreen3}
+              opacity={0.6}
+              initial={{ r: 0 }}
+              animate={{ r: 4 + growth * 0.5 }}
+              transition={{ delay: 0.3 + i * 0.05 }}
+            />
+          );
+        })}
+
+        {/* Fruits */}
+        <AnimatePresence>
+          {fruits.map((f) => (
+            <motion.g key={`fruit-${f.id}`}>
+              {/* Fruit shadow */}
+              <motion.ellipse
+                cx={f.x}
+                cy={f.y + 6}
+                rx={4}
+                ry={2}
+                fill="rgba(0,0,0,0.15)"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 0.6 }}
-                style={{
-                  width: branch.l,
-                  height: 2,
-                  bottom: branch.y + 4,
-                  left: `calc(50% + ${branch.x}px)`,
-                  background: "hsl(30 10% 20%)",
-                  transform: `rotate(${branch.r}deg)`,
-                  borderRadius: 1,
-                }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: f.id * 0.1 }}
               />
-            ))}
-            {/* Falling leaves */}
-            {[0, 1, 2, 3, 4].map((i) => (
-              <motion.span
-                key={`leaf-${i}`}
-                className="absolute text-base"
-                initial={{ opacity: 0, y: 0 }}
-                animate={{
-                  opacity: [0, 1, 0],
-                  y: [0, 80 + i * 15],
-                  x: [0, (i % 2 === 0 ? 1 : -1) * 25],
-                  rotate: [0, 360],
-                }}
-                transition={{ duration: 2.5, delay: i * 0.4, repeat: Infinity, repeatDelay: 2 }}
-                style={{ bottom: trunkHeight, left: `calc(50% + ${(i - 2) * 12}px)` }}
-              >
-                🍂
-              </motion.span>
-            ))}
-          </>
-        )}
-      </div>
+              {/* Fruit body */}
+              <motion.circle
+                cx={f.x}
+                cy={f.y}
+                r={5}
+                fill={
+                  f.emoji === "🍎" ? "hsl(0, 70%, 45%)" :
+                  f.emoji === "🍊" ? "hsl(30, 80%, 50%)" :
+                  f.emoji === "🍋" ? "hsl(55, 80%, 55%)" :
+                  f.emoji === "🍇" ? "hsl(280, 50%, 40%)" :
+                  f.emoji === "🍑" ? "hsl(20, 70%, 60%)" :
+                  "hsl(0, 65%, 42%)"
+                }
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ delay: f.id * 0.1, type: "spring" }}
+              />
+              {/* Fruit highlight */}
+              <motion.circle
+                cx={f.x - 1.5}
+                cy={f.y - 1.5}
+                r={1.8}
+                fill="white"
+                opacity={0.35}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: f.id * 0.1 + 0.1 }}
+              />
+              {/* Fruit stem */}
+              <motion.line
+                x1={f.x}
+                y1={f.y - 5}
+                x2={f.x + 1}
+                y2={f.y - 8}
+                stroke="hsl(30, 40%, 25%)"
+                strokeWidth={1}
+                strokeLinecap="round"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: f.id * 0.1 }}
+              />
+            </motion.g>
+          ))}
+        </AnimatePresence>
 
-      {/* Warning for dying tree */}
+        {/* Dead tree — bare gnarly branches */}
+        {isDead && deadBranches.map((b, i) => (
+          <motion.path
+            key={`dead-b-${i}`}
+            d={b.d}
+            stroke="hsl(30, 10%, 22%)"
+            strokeWidth={2}
+            fill="none"
+            strokeLinecap="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.6, delay: i * 0.15 }}
+          />
+        ))}
+
+        {/* Falling leaves when dead */}
+        {isDead && [0, 1, 2, 3, 4].map((i) => (
+          <motion.text
+            key={`fall-${i}`}
+            fontSize={12}
+            initial={{ opacity: 0, y: trunkTop, x: cx + (i - 2) * 12 }}
+            animate={{
+              opacity: [0, 1, 0],
+              y: [trunkTop, groundY - 10],
+              x: [cx + (i - 2) * 12, cx + (i - 2) * 12 + (i % 2 === 0 ? 20 : -20)],
+              rotate: [0, 360],
+            }}
+            transition={{ duration: 2.5, delay: i * 0.5, repeat: Infinity, repeatDelay: 2 }}
+          >
+            🍂
+          </motion.text>
+        ))}
+
+        {/* Small grass tufts */}
+        {!isDead && Array.from({ length: 6 }, (_, i) => {
+          const gx = 40 + i * 32;
+          return (
+            <motion.path
+              key={`grass-${i}`}
+              d={`M ${gx} ${groundY} Q ${gx - 2} ${groundY - 8} ${gx - 4} ${groundY - 12}
+                  M ${gx} ${groundY} Q ${gx + 1} ${groundY - 10} ${gx + 3} ${groundY - 13}
+                  M ${gx} ${groundY} Q ${gx + 3} ${groundY - 6} ${gx + 6} ${groundY - 10}`}
+              stroke="hsl(120, 40%, 30%)"
+              strokeWidth={1.2}
+              fill="none"
+              strokeLinecap="round"
+              animate={{ rotate: [-2, 2, -2] }}
+              transition={{ duration: 2 + i * 0.2, repeat: Infinity }}
+              style={{ transformOrigin: `${gx}px ${groundY}px` }}
+            />
+          );
+        })}
+      </motion.svg>
+
+      {/* Warning for dead tree */}
       {isDead && (
         <motion.div
           initial={{ scale: 0 }}
