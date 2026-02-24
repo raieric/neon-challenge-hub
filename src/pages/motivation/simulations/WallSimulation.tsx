@@ -120,24 +120,24 @@ const WallSimulation = () => {
         <svg width={SVG_W} height={SVG_H} viewBox={`0 0 ${SVG_W} ${SVG_H}`}>
           <defs>
             <linearGradient id="hBrick1" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="hsl(15,60%,45%)" />
-              <stop offset="100%" stopColor="hsl(10,50%,35%)" />
+              <stop offset="0%" stopColor="hsl(12,70%,58%)" />
+              <stop offset="100%" stopColor="hsl(8,65%,48%)" />
             </linearGradient>
             <linearGradient id="hBrick2" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="hsl(18,58%,42%)" />
-              <stop offset="100%" stopColor="hsl(8,52%,38%)" />
+              <stop offset="0%" stopColor="hsl(16,68%,55%)" />
+              <stop offset="100%" stopColor="hsl(6,60%,50%)" />
             </linearGradient>
             <linearGradient id="hBroken" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="hsl(15,30%,28%)" />
-              <stop offset="100%" stopColor="hsl(10,25%,20%)" />
+              <stop offset="0%" stopColor="hsl(15,35%,38%)" />
+              <stop offset="100%" stopColor="hsl(10,30%,30%)" />
             </linearGradient>
             <linearGradient id="hRoof" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="hsl(20,50%,32%)" />
-              <stop offset="100%" stopColor="hsl(15,45%,24%)" />
+              <stop offset="0%" stopColor="hsl(20,55%,45%)" />
+              <stop offset="100%" stopColor="hsl(15,50%,35%)" />
             </linearGradient>
             <linearGradient id="hDoor" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="hsl(30,50%,32%)" />
-              <stop offset="100%" stopColor="hsl(25,45%,22%)" />
+              <stop offset="0%" stopColor="hsl(30,55%,45%)" />
+              <stop offset="100%" stopColor="hsl(25,50%,35%)" />
             </linearGradient>
             <filter id="hShadow">
               <feDropShadow dx="0.5" dy="0.8" stdDeviation="0.5" floodColor="rgba(0,0,0,0.25)" />
@@ -219,9 +219,9 @@ const WallSimulation = () => {
               <rect x={SVG_W / 2 - 10} y={WALL_BASE_Y - 2 * ROW_H + 3}
                 width={20} height={2 * ROW_H - 5} rx={1.5} fill="url(#hDoor)"
               />
-              <circle cx={SVG_W / 2 + 5} cy={WALL_BASE_Y - ROW_H + 2} r={1.5} fill="hsl(40,60%,50%)" />
+              <circle cx={SVG_W / 2 + 5} cy={WALL_BASE_Y - ROW_H + 2} r={2} fill="hsl(40,70%,60%)" />
               <rect x={SVG_W / 2 - 11} y={WALL_BASE_Y - 2 * ROW_H + 2}
-                width={22} height={2 * ROW_H - 4} rx={2} fill="none" stroke="hsl(25,35%,20%)" strokeWidth={0.8}
+                width={22} height={2 * ROW_H - 4} rx={2} fill="none" stroke="hsl(25,40%,35%)" strokeWidth={1}
               />
             </motion.g>
           )}
@@ -233,10 +233,10 @@ const WallSimulation = () => {
                 const wy = wallTopY + ROW_H + 2;
                 return (
                   <g key={`win-${idx}`}>
-                    <rect x={wx} y={wy} width={16} height={13} rx={1} fill="hsl(210,50%,65%)" opacity={0.45} />
-                    <line x1={wx + 8} y1={wy} x2={wx + 8} y2={wy + 13} stroke="hsl(25,30%,22%)" strokeWidth={0.8} />
-                    <line x1={wx} y1={wy + 6.5} x2={wx + 16} y2={wy + 6.5} stroke="hsl(25,30%,22%)" strokeWidth={0.8} />
-                    <rect x={wx - 0.5} y={wy - 0.5} width={17} height={14} rx={1.5} fill="none" stroke="hsl(25,40%,26%)" strokeWidth={0.8} />
+                    <rect x={wx} y={wy} width={16} height={13} rx={1} fill="hsl(210,60%,75%)" opacity={0.8} />
+                    <line x1={wx + 8} y1={wy} x2={wx + 8} y2={wy + 13} stroke="hsl(25,40%,35%)" strokeWidth={0.8} />
+                    <line x1={wx} y1={wy + 6.5} x2={wx + 16} y2={wy + 6.5} stroke="hsl(25,40%,35%)" strokeWidth={0.8} />
+                    <rect x={wx - 0.5} y={wy - 0.5} width={17} height={14} rx={1.5} fill="none" stroke="hsl(25,45%,40%)" strokeWidth={1} />
                   </g>
                 );
               })}
@@ -251,11 +251,11 @@ const WallSimulation = () => {
                 fill="url(#hRoof)"
               />
               <line x1={WALL_LEFT - 12} y1={wallTopY} x2={WALL_LEFT + TOTAL_WALL_W + 12} y2={wallTopY}
-                stroke="hsl(20,40%,20%)" strokeWidth={1.5}
+                stroke="hsl(20,45%,32%)" strokeWidth={1.5}
               />
               {/* Chimney */}
-              <rect x={SVG_W / 2 + 20} y={roofPeakY + 6} width={10} height={18} fill="hsl(12,50%,33%)" rx={1} />
-              <rect x={SVG_W / 2 + 18} y={roofPeakY + 4} width={14} height={4} fill="hsl(12,45%,28%)" rx={1} />
+              <rect x={SVG_W / 2 + 20} y={roofPeakY + 6} width={10} height={18} fill="hsl(12,55%,45%)" rx={1} />
+              <rect x={SVG_W / 2 + 18} y={roofPeakY + 4} width={14} height={4} fill="hsl(12,50%,40%)" rx={1} />
             </motion.g>
           )}
 
