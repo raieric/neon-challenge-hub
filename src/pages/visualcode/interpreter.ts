@@ -408,7 +408,13 @@ class CInterpreter {
     // Simple line-by-line C interpreter
     const lines = this.originalLines.map(l => l.trim()).filter(l => l && !l.startsWith('//') && !l.startsWith('#'));
     this.findCFunctions(lines);
-    this.executeCLines(lines, this.vars);
+    try {
+      this.executeCLines(lines, this.vars);
+    } catch (e) {
+      if (!(e instanceof ReturnValue)) {
+        this.record(0, 'expression', `Error: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
     return this.steps;
   }
 
