@@ -485,4 +485,306 @@ int main() {
     return 0;
 }`,
   },
+
+  // ═══════════════════════════════════
+  // JAVASCRIPT EXAMPLES
+  // ═══════════════════════════════════
+  {
+    name: 'Variables & Types',
+    language: 'javascript',
+    description: 'Basic variable declarations and types',
+    code: `let name = "Alice"
+let age = 25
+let height = 5.6
+let isStudent = true
+
+console.log(name)
+console.log(age)
+console.log(height)
+console.log(isStudent)`,
+  },
+  {
+    name: 'If-Else If-Else',
+    language: 'javascript',
+    description: 'Multi-branch conditional logic',
+    code: `let score = 75
+let grade = ""
+
+if (score >= 90) {
+    grade = "A"
+} else if (score >= 80) {
+    grade = "B"
+} else if (score >= 70) {
+    grade = "C"
+} else if (score >= 60) {
+    grade = "D"
+} else {
+    grade = "F"
+}
+
+console.log(grade)`,
+  },
+  {
+    name: 'Nested Conditions',
+    language: 'javascript',
+    description: 'Conditions inside conditions',
+    code: `let x = 15
+
+if (x > 0) {
+    if (x > 10) {
+        console.log("Greater than 10")
+    } else {
+        console.log("Between 1 and 10")
+    }
+} else {
+    console.log("Non-positive")
+}
+
+console.log("Done")`,
+  },
+  {
+    name: 'For Loop',
+    language: 'javascript',
+    description: 'Counting with a for loop',
+    code: `let total = 0
+
+for (let i = 1; i <= 5; i++) {
+    total += i
+    console.log(total)
+}
+
+console.log(total)`,
+  },
+  {
+    name: 'While Loop',
+    language: 'javascript',
+    description: 'Counting with a while loop',
+    code: `let count = 1
+let total = 0
+
+while (count <= 5) {
+    total += count
+    console.log(total)
+    count++
+}
+
+console.log(total)`,
+  },
+  {
+    name: 'Nested Loops',
+    language: 'javascript',
+    description: 'Multiplication table pattern',
+    code: `for (let i = 1; i <= 3; i++) {
+    for (let j = 1; j <= 3; j++) {
+        let result = i * j
+        console.log(result)
+    }
+    console.log("---")
+}`,
+  },
+  {
+    name: 'Array Operations',
+    language: 'javascript',
+    description: 'Creating and modifying arrays',
+    code: `let fruits = ["apple", "banana", "cherry"]
+console.log(fruits)
+
+fruits.push("date")
+console.log(fruits)
+console.log(fruits.length)
+
+let first = fruits[0]
+let last = fruits[3]
+console.log(first)
+console.log(last)`,
+  },
+  {
+    name: 'Array with Loops',
+    language: 'javascript',
+    description: 'Processing array elements',
+    code: `let numbers = [4, 2, 7, 1, 9, 3]
+let n = numbers.length
+
+let total = 0
+for (let i = 0; i < n; i++) {
+    total += numbers[i]
+    console.log(numbers[i])
+}
+
+let average = total / n
+console.log(average)`,
+  },
+  {
+    name: 'Objects',
+    language: 'javascript',
+    description: 'Working with object properties',
+    code: `let name = "Alice"
+let age = 25
+let city = "NYC"
+
+console.log(name)
+console.log(age)
+console.log(city)
+
+age = 26
+console.log(age)`,
+  },
+  {
+    name: 'Functions',
+    language: 'javascript',
+    description: 'Defining and calling functions',
+    code: `function greet(name) {
+    console.log(name)
+}
+
+function add(a, b) {
+    return a + b
+}
+
+function multiply(a, b) {
+    return a * b
+}
+
+greet("Alice")
+let result = add(3, 5)
+console.log(result)
+let product = multiply(4, 6)
+console.log(product)`,
+  },
+  {
+    name: 'Factorial (Recursion)',
+    language: 'javascript',
+    description: 'Recursive function call',
+    code: `function factorial(n) {
+    if (n <= 1) {
+        return 1
+    }
+    return n * factorial(n - 1)
+}
+
+let result = factorial(5)
+console.log(result)`,
+  },
+  {
+    name: 'Fibonacci',
+    language: 'javascript',
+    description: 'Fibonacci with recursion',
+    code: `function fib(n) {
+    if (n <= 0) {
+        return 0
+    }
+    if (n === 1) {
+        return 1
+    }
+    return fib(n - 1) + fib(n - 2)
+}
+
+for (let i = 0; i < 8; i++) {
+    console.log(fib(i))
+}`,
+  },
+  {
+    name: 'Bubble Sort',
+    language: 'javascript',
+    description: 'Sorting algorithm visualization',
+    code: `let arr = [5, 3, 8, 1, 2]
+let n = arr.length
+
+for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n - 1; j++) {
+        if (arr[j] > arr[j + 1]) {
+            let temp = arr[j]
+            arr[j] = arr[j + 1]
+            arr[j + 1] = temp
+        }
+    }
+}
+
+console.log(arr)`,
+  },
+  {
+    name: 'Linear Search',
+    language: 'javascript',
+    description: 'Searching in an array',
+    code: `function search(arr, target) {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === target) {
+            return i
+        }
+    }
+    return -1
+}
+
+let numbers = [10, 25, 30, 45, 60]
+let pos = search(numbers, 30)
+console.log(pos)
+
+let pos2 = search(numbers, 99)
+console.log(pos2)`,
+  },
+  {
+    name: 'Find Maximum',
+    language: 'javascript',
+    description: 'Finding max in an array',
+    code: `let arr = [34, 12, 67, 45, 23]
+let max = arr[0]
+
+for (let i = 1; i < arr.length; i++) {
+    if (arr[i] > max) {
+        max = arr[i]
+    }
+}
+
+console.log(max)`,
+  },
+  {
+    name: 'Sum & Average',
+    language: 'javascript',
+    description: 'Computing stats from an array',
+    code: `function computeSum(arr) {
+    let total = 0
+    for (let i = 0; i < arr.length; i++) {
+        total += arr[i]
+    }
+    return total
+}
+
+let data = [12, 45, 67, 23, 89]
+let s = computeSum(data)
+let avg = s / data.length
+console.log(s)
+console.log(avg)`,
+  },
+  {
+    name: 'GCD (Euclid)',
+    language: 'javascript',
+    description: 'Greatest Common Divisor',
+    code: `function gcd(a, b) {
+    if (b === 0) {
+        return a
+    }
+    return gcd(b, a % b)
+}
+
+let result = gcd(48, 18)
+console.log(result)
+
+let result2 = gcd(100, 75)
+console.log(result2)`,
+  },
+  {
+    name: 'Swap Values',
+    language: 'javascript',
+    description: 'Swapping two variables',
+    code: `let a = 10
+let b = 20
+console.log(a)
+console.log(b)
+
+let temp = a
+a = b
+b = temp
+console.log(a)
+console.log(b)`,
+  },
 ];
