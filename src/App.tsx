@@ -67,6 +67,7 @@ const App = () => (
           <Route path="/impromptu" element={<ImpromptuPage />} />
           <Route path="/motivation" element={<MotivationHub />} />
           <Route path="/tic-tac-toe" element={<TicTacToe />} />
+          <Route path="/visualcode-lab" element={<VisualCodeLab />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
