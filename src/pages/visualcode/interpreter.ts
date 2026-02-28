@@ -1,5 +1,5 @@
 // Types
-export type Language = 'python' | 'c';
+export type Language = 'python' | 'c' | 'javascript';
 
 export interface StackFrame {
   functionName: string;
@@ -690,8 +690,444 @@ class CInterpreter {
   }
 }
 
+// ─── JavaScript Interpreter ───
+class JavaScriptInterpreter {
+  private steps: ExecutionStep[] = [];
+  private globalVars: Record<string, any> = {};
+  private callStack: StackFrame[] = [];
+  private output: string[] = [];
+  private functions: Record<string, { params: string[]; body: string[]; startLine: number }> = {};
+  private stepCount = 0;
+  private maxSteps = 500;
+  private originalLines: string[] = [];
+
+  run(code: string): ExecutionStep[] {
+    this.steps = [];
+    this.globalVars = {};
+    this.callStack = [];
+    this.output = [];
+    this.functions = {};
+    this.stepCount = 0;
+    this.originalLines = code.split('\n');
+
+    const lines = this.originalLines.map(l => l.trim()).filter(l => l && !l.startsWith('//'));
+    this.findFunctions(lines);
+    try {
+      this.executeLines(lines, this.globalVars);
+    } catch (e) {
+      if (!(e instanceof ReturnValue)) {
+        this.record(0, 'expression', `Error: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+    return this.steps;
+  }
+
+  private record(line: number, type: ExecutionStep['type'], explanation: string, scope?: Record<string, any>) {
+    if (this.stepCount++ > this.maxSteps) throw new Error('Max steps exceeded');
+    this.steps.push({
+      line: Math.min(line, this.originalLines.length - 1),
+      type, explanation,
+      variables: JSON.parse(JSON.stringify(scope ?? this.globalVars)),
+      callStack: JSON.parse(JSON.stringify(this.callStack)),
+      output: [...this.output],
+    });
+  }
+
+  private findFunctions(lines: string[]) {
+    for (let i = 0; i < lines.length; i++) {
+      const m = lines[i].match(/^function\s+(\w+)\s*\(([^)]*)\)\s*\{?$/);
+      if (m) {
+        const params = m[2] ? m[2].split(',').map(p => p.trim()).filter(Boolean) : [];
+        let depth = lines[i].includes('{') ? 1 : 0;
+        let j = i + 1;
+        if (depth === 0 && j < lines.length && lines[j] === '{') { depth = 1; j++; }
+        const bodyStart = j;
+        while (j < lines.length && depth > 0) {
+          if (lines[j].includes('{')) depth++;
+          if (lines[j].includes('}')) depth--;
+          if (depth > 0) j++;
+          else break;
+        }
+        this.functions[m[1]] = { params, body: lines.slice(bodyStart, j), startLine: i };
+      }
+    }
+  }
+
+  private executeLines(lines: string[], scope: Record<string, any>) {
+    let i = 0;
+    while (i < lines.length && this.stepCount < this.maxSteps) {
+      let line = lines[i].replace(/;$/, '').trim();
+      if (!line || line === '{' || line === '}') { i++; continue; }
+
+      // Skip function definitions
+      if (line.match(/^function\s+\w+\s*\(/)) {
+        let d = line.includes('{') ? 1 : 0;
+        i++;
+        while (i < lines.length) {
+          if (lines[i].includes('{')) d++;
+          if (lines[i].includes('}')) d--;
+          i++;
+          if (d <= 0) break;
+        }
+        continue;
+      }
+
+      i = this.executeLine(line, i, lines, scope);
+    }
+  }
+
+  private executeLine(line: string, idx: number, lines: string[], scope: Record<string, any>): number {
+    line = line.replace(/;$/, '').trim();
+
+    // Variable declaration with let/const/var
+    const decl = line.match(/^(?:let|const|var)\s+(\w+)\s*=\s*(.+)$/);
+    if (decl) {
+      const val = this.evalJS(decl[2], scope);
+      scope[decl[1]] = val;
+      this.record(idx, 'assignment', `${decl[1]} = ${JSON.stringify(val)}`, scope);
+      return idx + 1;
+    }
+
+    // Variable declaration without assignment
+    const declOnly = line.match(/^(?:let|const|var)\s+(\w+)$/);
+    if (declOnly) {
+      scope[declOnly[1]] = undefined;
+      this.record(idx, 'assignment', `${declOnly[1]} = undefined`, scope);
+      return idx + 1;
+    }
+
+    // Assignment
+    const assign = line.match(/^(\w+)\s*=\s*(.+)$/);
+    if (assign && !line.includes('==') && !line.includes('===')) {
+      const val = this.evalJS(assign[2], scope);
+      scope[assign[1]] = val;
+      this.record(idx, 'assignment', `${assign[1]} = ${JSON.stringify(val)}`, scope);
+      return idx + 1;
+    }
+
+    // Augmented assignment
+    const aug = line.match(/^(\w+)\s*(\+=|-=|\*=|\/=|%=)\s*(.+)$/);
+    if (aug) {
+      const v = this.evalJS(aug[3], scope);
+      const op = aug[2];
+      if (op === '+=') scope[aug[1]] = (scope[aug[1]] ?? 0) + v;
+      else if (op === '-=') scope[aug[1]] = (scope[aug[1]] ?? 0) - v;
+      else if (op === '*=') scope[aug[1]] = (scope[aug[1]] ?? 0) * v;
+      else if (op === '/=') scope[aug[1]] = (scope[aug[1]] ?? 0) / v;
+      else if (op === '%=') scope[aug[1]] = (scope[aug[1]] ?? 0) % v;
+      this.record(idx, 'assignment', `${aug[1]} ${op} ${v} → ${scope[aug[1]]}`, scope);
+      return idx + 1;
+    }
+
+    // Increment/decrement
+    const inc = line.match(/^(\w+)(\+\+|--)$/);
+    if (inc) {
+      scope[inc[1]] = (scope[inc[1]] ?? 0) + (inc[2] === '++' ? 1 : -1);
+      this.record(idx, 'assignment', `${inc[1]}${inc[2]} → ${scope[inc[1]]}`, scope);
+      return idx + 1;
+    }
+
+    // console.log
+    if (line.startsWith('console.log(') && line.endsWith(')')) {
+      const argsStr = line.slice(12, -1);
+      const args = argsStr.trim() ? this.parseComma(argsStr).map(a => this.evalJS(a, scope)) : [];
+      const out = args.map(a => typeof a === 'string' ? a : JSON.stringify(a)).join(' ');
+      this.output.push(out);
+      this.record(idx, 'print', `Output: ${out}`, scope);
+      return idx + 1;
+    }
+
+    // Array method calls: arr.push(x), arr.pop(), etc.
+    const method = line.match(/^(\w+)\.(push|pop|shift|unshift|splice|reverse|sort)\s*\(([^)]*)\)$/);
+    if (method) {
+      const obj = scope[method[1]];
+      const args = method[3].trim() ? this.parseComma(method[3]).map(a => this.evalJS(a, scope)) : [];
+      if (Array.isArray(obj)) {
+        if (method[2] === 'push') obj.push(...args);
+        else if (method[2] === 'pop') obj.pop();
+        else if (method[2] === 'shift') obj.shift();
+        else if (method[2] === 'unshift') obj.unshift(...args);
+        else if (method[2] === 'reverse') obj.reverse();
+        else if (method[2] === 'sort') obj.sort((a: number, b: number) => a - b);
+      }
+      this.record(idx, 'expression', `${method[1]}.${method[2]}(${args.map(a => JSON.stringify(a)).join(', ')})`, scope);
+      return idx + 1;
+    }
+
+    // If statement
+    if (line.startsWith('if') && line.includes('(')) {
+      const cond = line.match(/if\s*\((.+)\)/)?.[1] ?? '';
+      const val = this.evalJS(cond, scope);
+      let blockLines: string[] = [];
+      let j = idx + 1;
+      if (line.includes('{') || (j < lines.length && lines[j].trim() === '{')) {
+        if (!line.includes('{')) j++;
+        let d = 1;
+        while (j < lines.length && d > 0) {
+          if (lines[j].includes('{')) d++;
+          if (lines[j].includes('}')) d--;
+          if (d > 0) { blockLines.push(lines[j]); j++; }
+          else j++;
+        }
+      } else {
+        blockLines = [lines[j] ?? ''];
+        j = idx + 2;
+      }
+
+      if (val) {
+        this.record(idx, 'condition_true', `${cond} → true`, scope);
+        for (const bl of blockLines) this.executeLine(bl, idx, lines, scope);
+      } else {
+        this.record(idx, 'condition_false', `${cond} → false`, scope);
+      }
+
+      // Check for else if / else
+      if (j < lines.length) {
+        const nextLine = lines[j]?.trim() ?? '';
+        if (nextLine.startsWith('} else if') || nextLine.startsWith('else if')) {
+          if (!val) return this.executeLine(nextLine.replace(/^\}\s*/, ''), j, lines, scope);
+          // skip else if block
+          let d = nextLine.includes('{') ? 1 : 0;
+          j++;
+          while (j < lines.length && d > 0) {
+            if (lines[j].includes('{')) d++;
+            if (lines[j].includes('}')) d--;
+            j++;
+          }
+          // might have more else
+          if (j < lines.length && (lines[j]?.trim().startsWith('} else') || lines[j]?.trim().startsWith('else'))) {
+            let d2 = lines[j].includes('{') ? 1 : 0;
+            j++;
+            while (j < lines.length && d2 > 0) {
+              if (lines[j].includes('{')) d2++;
+              if (lines[j].includes('}')) d2--;
+              j++;
+            }
+          }
+          return j;
+        }
+        if (nextLine.startsWith('} else') || nextLine.startsWith('else')) {
+          let elseLines: string[] = [];
+          let k = j + 1;
+          if (nextLine.includes('{') || (k < lines.length && lines[k].trim() === '{')) {
+            if (!nextLine.includes('{')) k++;
+            let d = 1;
+            while (k < lines.length && d > 0) {
+              if (lines[k].includes('{')) d++;
+              if (lines[k].includes('}')) d--;
+              if (d > 0) { elseLines.push(lines[k]); k++; }
+              else k++;
+            }
+          } else {
+            elseLines = [lines[k] ?? ''];
+            k++;
+          }
+          if (!val) {
+            this.record(j, 'condition_true', 'Entering else block', scope);
+            for (const bl of elseLines) this.executeLine(bl, j, lines, scope);
+          }
+          return k;
+        }
+      }
+      return j;
+    }
+
+    // For loop
+    const forM = line.match(/^for\s*\((.+)\)/);
+    if (forM) {
+      const parts = forM[1].split(';').map(s => s.trim());
+      if (parts.length === 3) {
+        this.executeLine(parts[0], idx, lines, scope);
+        this.record(idx, 'loop_start', `For loop started`, scope);
+        let iter = 0;
+        let blockLines: string[] = [];
+        let j = idx + 1;
+        if (line.includes('{') || (j < lines.length && lines[j].trim() === '{')) {
+          if (!line.includes('{')) j++;
+          let d = 1;
+          while (j < lines.length && d > 0) {
+            if (lines[j].includes('{')) d++;
+            if (lines[j].includes('}')) d--;
+            if (d > 0) { blockLines.push(lines[j]); j++; }
+            else j++;
+          }
+        }
+        while (this.evalJS(parts[1], scope) && iter++ < 200 && this.stepCount < this.maxSteps) {
+          this.record(idx, 'loop_check', `Condition true (iteration ${iter})`, scope);
+          for (const bl of blockLines) this.executeLine(bl, idx, lines, scope);
+          this.executeLine(parts[2], idx, lines, scope);
+        }
+        return j;
+      }
+    }
+
+    // While loop
+    if (line.startsWith('while') && line.includes('(')) {
+      const cond = line.match(/while\s*\((.+)\)/)?.[1] ?? '';
+      let blockLines: string[] = [];
+      let j = idx + 1;
+      if (line.includes('{') || (j < lines.length && lines[j].trim() === '{')) {
+        if (!line.includes('{')) j++;
+        let d = 1;
+        while (j < lines.length && d > 0) {
+          if (lines[j].includes('{')) d++;
+          if (lines[j].includes('}')) d--;
+          if (d > 0) { blockLines.push(lines[j]); j++; }
+          else j++;
+        }
+      }
+      this.record(idx, 'loop_start', `While loop: ${cond}`, scope);
+      let iter = 0;
+      while (this.evalJS(cond, scope) && iter++ < 200 && this.stepCount < this.maxSteps) {
+        this.record(idx, 'loop_check', `${cond} → true (iteration ${iter})`, scope);
+        for (const bl of blockLines) this.executeLine(bl, idx, lines, scope);
+      }
+      if (iter > 0) this.record(idx, 'condition_false', `${cond} → false, loop ended`, scope);
+      return j;
+    }
+
+    // Return
+    if (line.startsWith('return')) {
+      const val = this.evalJS(line.slice(6).trim(), scope);
+      this.record(idx, 'function_return', `Return ${JSON.stringify(val)}`, scope);
+      throw new ReturnValue(val);
+    }
+
+    // General expression
+    this.evalJS(line, scope);
+    this.record(idx, 'expression', `Evaluated: ${line}`, scope);
+    return idx + 1;
+  }
+
+  private evalJS(expr: string, scope: Record<string, any>): any {
+    expr = expr.trim().replace(/;$/, '');
+    if (!expr) return undefined;
+
+    // Remove let/const/var prefix for inline declarations (e.g. in for init)
+    const declM = expr.match(/^(?:let|const|var)\s+(\w+)\s*=\s*(.+)$/);
+    if (declM) {
+      const val = this.evalJS(declM[2], scope);
+      scope[declM[1]] = val;
+      return val;
+    }
+
+    if (/^-?\d+(\.\d+)?$/.test(expr)) return Number(expr);
+    if ((expr.startsWith('"') && expr.endsWith('"')) || (expr.startsWith("'") && expr.endsWith("'")) || (expr.startsWith('`') && expr.endsWith('`')))
+      return expr.slice(1, -1);
+    if (expr === 'true') return true;
+    if (expr === 'false') return false;
+    if (expr === 'null') return null;
+    if (expr === 'undefined') return undefined;
+    if (/^\w+$/.test(expr) && expr in scope) return scope[expr];
+
+    // Array literal
+    if (expr.startsWith('[') && expr.endsWith(']')) {
+      const inner = expr.slice(1, -1).trim();
+      if (!inner) return [];
+      return this.parseComma(inner).map(e => this.evalJS(e, scope));
+    }
+
+    // Object literal
+    if (expr.startsWith('{') && expr.endsWith('}')) {
+      const inner = expr.slice(1, -1).trim();
+      if (!inner) return {};
+      const obj: Record<string, any> = {};
+      const pairs = this.parseComma(inner);
+      for (const pair of pairs) {
+        const [k, ...rest] = pair.split(':');
+        if (k && rest.length) obj[k.trim().replace(/['"]/g, '')] = this.evalJS(rest.join(':'), scope);
+      }
+      return obj;
+    }
+
+    // Array/object indexing
+    const idxM = expr.match(/^(\w+)\[(.+)\]$/);
+    if (idxM) {
+      const obj = scope[idxM[1]];
+      const key = this.evalJS(idxM[2], scope);
+      return obj?.[key];
+    }
+
+    // Property access: obj.prop or arr.length
+    const propM = expr.match(/^(\w+)\.(\w+)$/);
+    if (propM) {
+      const obj = scope[propM[1]];
+      if (obj !== undefined && obj !== null) return obj[propM[2]];
+    }
+
+    // Preprocess function calls
+    let processed = this.preprocessFuncs(expr, scope);
+
+    const keys = Object.keys(scope);
+    const vals = Object.values(scope);
+    try {
+      return new Function(...keys, `"use strict"; return (${processed})`)(...vals);
+    } catch { return undefined; }
+  }
+
+  private preprocessFuncs(expr: string, scope: Record<string, any>): string {
+    let result = expr;
+    let safety = 20;
+    while (safety-- > 0) {
+      const m = result.match(/\b(\w+)\s*\(([^()]*)\)/);
+      if (!m) break;
+      const name = m[1];
+      if (['if', 'while', 'for', 'function', 'return', 'Math', 'console', 'let', 'const', 'var'].includes(name)) break;
+      const args = m[2].trim() ? this.parseComma(m[2]).map(a => this.evalJS(a, scope)) : [];
+      const ret = this.callFunc(name, args, scope);
+      result = result.replace(m[0], ret === undefined ? 'undefined' : JSON.stringify(ret));
+    }
+    return result;
+  }
+
+  private callFunc(name: string, args: any[], scope: Record<string, any>): any {
+    // Built-ins
+    if (name === 'Math') return undefined;
+    if (name === 'parseInt') return parseInt(String(args[0]));
+    if (name === 'parseFloat') return parseFloat(String(args[0]));
+    if (name === 'String') return String(args[0]);
+    if (name === 'Number') return Number(args[0]);
+    if (name === 'isNaN') return isNaN(args[0]);
+    if (name === 'Array') return new Array(args[0]).fill(0);
+
+    // User-defined
+    const func = this.functions[name];
+    if (!func) return undefined;
+
+    const local: Record<string, any> = {};
+    func.params.forEach((p, i) => { local[p] = args[i]; });
+    this.callStack.push({ functionName: name, args: { ...local } });
+    this.record(func.startLine, 'function_call', `Call ${name}(${args.map(a => JSON.stringify(a)).join(', ')})`, local);
+
+    try {
+      for (const bl of func.body) this.executeLine(bl, func.startLine, func.body, local);
+      this.callStack.pop();
+      return undefined;
+    } catch (e) {
+      if (e instanceof ReturnValue) { this.callStack.pop(); return e.value; }
+      this.callStack.pop(); throw e;
+    }
+  }
+
+  private parseComma(str: string): string[] {
+    const result: string[] = [];
+    let cur = '', depth = 0, inStr = false, sc = '';
+    for (const ch of str) {
+      if (inStr) { cur += ch; if (ch === sc) inStr = false; continue; }
+      if (ch === '"' || ch === "'" || ch === '`') { inStr = true; sc = ch; cur += ch; continue; }
+      if (ch === '(' || ch === '[' || ch === '{') { depth++; cur += ch; continue; }
+      if (ch === ')' || ch === ']' || ch === '}') { depth--; cur += ch; continue; }
+      if (ch === ',' && depth === 0) { result.push(cur.trim()); cur = ''; continue; }
+      cur += ch;
+    }
+    if (cur.trim()) result.push(cur.trim());
+    return result;
+  }
+}
+
 // ─── Public API ───
 export function traceCode(code: string, language: Language): ExecutionStep[] {
   if (language === 'python') return new PythonInterpreter().run(code);
+  if (language === 'javascript') return new JavaScriptInterpreter().run(code);
   return new CInterpreter().run(code);
 }

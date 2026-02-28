@@ -259,6 +259,7 @@ const VisualCodeLab = () => {
         >
           <option value="python">Python</option>
           <option value="c">C</option>
+          <option value="javascript">JavaScript</option>
         </select>
 
         <div className="h-5 w-px bg-white/10 mx-1 hidden sm:block" />
