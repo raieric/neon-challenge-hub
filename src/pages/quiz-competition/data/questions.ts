@@ -19,6 +19,8 @@ export const categories = [
   'Emerging Technology',
   'Science & Technology',
   'Current Affairs',
+  'C Programming',
+  'Python Programming',
 ] as const;
 
 export type Category = typeof categories[number];
@@ -359,4 +361,52 @@ export const sampleQuestions: Question[] = [
   { id: 'ca-23', text: 'What is the Doomsday Clock?', answer: 'A symbolic clock indicating how close humanity is to global catastrophe', category: 'Current Affairs', difficulty: 'hard' },
   { id: 'ca-24', text: 'What is the full form of NATO?', answer: 'North Atlantic Treaty Organization', category: 'Current Affairs', difficulty: 'medium' },
   { id: 'ca-25', text: 'What is net-zero emissions?', answer: 'Balancing greenhouse gas emissions with removal so the net output is zero', category: 'Current Affairs', difficulty: 'medium' },
+
+  // ═══════════════════════════════════
+  // C PROGRAMMING (20 questions)
+  // ═══════════════════════════════════
+  { id: 'cprog-1', text: 'What is the purpose of the main() function in C?', answer: 'It is the entry point of a C program where execution begins', category: 'C Programming', difficulty: 'easy' },
+  { id: 'cprog-2', text: 'What is a pointer in C?', answer: 'A variable that stores the memory address of another variable', category: 'C Programming', difficulty: 'medium' },
+  { id: 'cprog-3', text: 'What is the difference between malloc() and calloc()?', answer: 'malloc allocates uninitialized memory; calloc allocates memory initialized to zero', category: 'C Programming', difficulty: 'medium' },
+  { id: 'cprog-4', text: 'What does the sizeof operator do in C?', answer: 'Returns the size in bytes of a data type or variable', category: 'C Programming', difficulty: 'easy' },
+  { id: 'cprog-5', text: 'What is a segmentation fault?', answer: 'An error caused by accessing memory that the program does not have permission to access', category: 'C Programming', difficulty: 'medium' },
+  { id: 'cprog-6', text: 'What is the difference between struct and union in C?', answer: 'In a struct each member has its own memory; in a union all members share the same memory', category: 'C Programming', difficulty: 'hard' },
+  { id: 'cprog-7', text: 'What does the preprocessor directive #define do?', answer: 'Creates a macro or symbolic constant via text substitution before compilation', category: 'C Programming', difficulty: 'easy' },
+  { id: 'cprog-8', text: 'What is a dangling pointer?', answer: 'A pointer that references memory that has been freed or deallocated', category: 'C Programming', difficulty: 'hard' },
+  { id: 'cprog-9', text: 'What is the purpose of the static keyword for a local variable?', answer: 'It preserves the variable value between function calls', category: 'C Programming', difficulty: 'medium' },
+  { id: 'cprog-10', text: 'What is the null character in C strings?', answer: '\\0 — it marks the end of a string', category: 'C Programming', difficulty: 'easy' },
+  { id: 'cprog-11', text: 'What is the difference between pass by value and pass by reference in C?', answer: 'Pass by value copies the argument; pass by reference passes the address using pointers', category: 'C Programming', difficulty: 'medium' },
+  { id: 'cprog-12', text: 'What does the volatile keyword indicate?', answer: 'That a variable may change unexpectedly and should not be optimized by the compiler', category: 'C Programming', difficulty: 'hard' },
+  { id: 'cprog-13', text: 'What is a function pointer in C?', answer: 'A pointer that stores the address of a function and can be used to call it indirectly', category: 'C Programming', difficulty: 'hard' },
+  { id: 'cprog-14', text: 'What is the difference between ++i and i++?', answer: '++i increments before use (pre-increment); i++ uses then increments (post-increment)', category: 'C Programming', difficulty: 'easy' },
+  { id: 'cprog-15', text: 'What header file is needed for printf and scanf?', answer: 'stdio.h (standard input/output header)', category: 'C Programming', difficulty: 'easy' },
+  { id: 'cprog-16', text: 'What is a memory leak in C?', answer: 'When dynamically allocated memory is never freed, causing wasted memory', category: 'C Programming', difficulty: 'medium' },
+  { id: 'cprog-17', text: 'What is the purpose of the typedef keyword?', answer: 'It creates an alias (alternative name) for an existing data type', category: 'C Programming', difficulty: 'medium' },
+  { id: 'cprog-18', text: 'What is recursion in C?', answer: 'When a function calls itself to solve a problem by breaking it into smaller subproblems', category: 'C Programming', difficulty: 'medium' },
+  { id: 'cprog-19', text: 'What is the difference between a compiler and an interpreter?', answer: 'A compiler translates entire source code before execution; an interpreter translates line by line', category: 'C Programming', difficulty: 'easy' },
+  { id: 'cprog-20', text: 'What are header guards and why are they used?', answer: '#ifndef/#define/#endif directives that prevent a header file from being included multiple times', category: 'C Programming', difficulty: 'hard' },
+
+  // ═══════════════════════════════════
+  // PYTHON PROGRAMMING (20 questions)
+  // ═══════════════════════════════════
+  { id: 'py-1', text: 'What is a list comprehension in Python?', answer: 'A concise way to create lists: [expression for item in iterable if condition]', category: 'Python Programming', difficulty: 'medium' },
+  { id: 'py-2', text: 'What is the difference between a list and a tuple in Python?', answer: 'Lists are mutable (changeable); tuples are immutable (unchangeable)', category: 'Python Programming', difficulty: 'easy' },
+  { id: 'py-3', text: 'What does the self keyword represent in Python classes?', answer: 'A reference to the current instance of the class', category: 'Python Programming', difficulty: 'medium' },
+  { id: 'py-4', text: 'What is a decorator in Python?', answer: 'A function that wraps another function to modify or extend its behavior', category: 'Python Programming', difficulty: 'hard' },
+  { id: 'py-5', text: 'What is the difference between == and is in Python?', answer: '== compares values; is compares object identity (memory address)', category: 'Python Programming', difficulty: 'medium' },
+  { id: 'py-6', text: 'What is a lambda function in Python?', answer: 'An anonymous single-expression function defined with the lambda keyword', category: 'Python Programming', difficulty: 'medium' },
+  { id: 'py-7', text: 'What does pip stand for in Python?', answer: 'Pip Installs Packages — a package manager for Python libraries', category: 'Python Programming', difficulty: 'easy' },
+  { id: 'py-8', text: 'What is the Global Interpreter Lock (GIL)?', answer: 'A mutex that allows only one thread to execute Python bytecode at a time', category: 'Python Programming', difficulty: 'hard' },
+  { id: 'py-9', text: 'What is a dictionary in Python?', answer: 'An unordered collection of key-value pairs enclosed in curly braces', category: 'Python Programming', difficulty: 'easy' },
+  { id: 'py-10', text: 'What is the purpose of __init__ in a Python class?', answer: 'It is the constructor method that initializes object attributes when an instance is created', category: 'Python Programming', difficulty: 'easy' },
+  { id: 'py-11', text: 'What is a generator in Python?', answer: 'A function that yields values one at a time using the yield keyword, enabling lazy evaluation', category: 'Python Programming', difficulty: 'hard' },
+  { id: 'py-12', text: 'What does the with statement do in Python?', answer: 'It provides a context manager for automatic resource management (e.g., file handling)', category: 'Python Programming', difficulty: 'medium' },
+  { id: 'py-13', text: 'What is slicing in Python?', answer: 'Extracting a portion of a sequence using [start:stop:step] syntax', category: 'Python Programming', difficulty: 'easy' },
+  { id: 'py-14', text: 'What is the difference between append() and extend() for lists?', answer: 'append adds a single element; extend adds all elements from an iterable', category: 'Python Programming', difficulty: 'medium' },
+  { id: 'py-15', text: 'What is a virtual environment in Python?', answer: 'An isolated Python environment for managing project-specific dependencies', category: 'Python Programming', difficulty: 'medium' },
+  { id: 'py-16', text: 'What does the *args syntax do in a function definition?', answer: 'It allows the function to accept any number of positional arguments as a tuple', category: 'Python Programming', difficulty: 'medium' },
+  { id: 'py-17', text: 'What is the difference between a shallow copy and a deep copy?', answer: 'Shallow copy copies references to nested objects; deep copy creates fully independent copies', category: 'Python Programming', difficulty: 'hard' },
+  { id: 'py-18', text: 'What is a set in Python?', answer: 'An unordered collection of unique elements', category: 'Python Programming', difficulty: 'easy' },
+  { id: 'py-19', text: 'What does the map() function do in Python?', answer: 'Applies a given function to each item of an iterable and returns a map object', category: 'Python Programming', difficulty: 'medium' },
+  { id: 'py-20', text: 'What is exception handling in Python?', answer: 'Using try/except blocks to catch and handle errors during program execution', category: 'Python Programming', difficulty: 'easy' },
 ];
