@@ -29,6 +29,7 @@ import NumberBingo from "./pages/number-bingo/NumberBingo";
 import ImpromptuPage from "./pages/impromptu/ImpromptuPage";
 import MotivationHub from "./pages/motivation/MotivationHub";
 import TicTacToe from "./pages/TicTacToe";
+import VisualCodeLab from "./pages/visualcode/VisualCodeLab";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

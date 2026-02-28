@@ -143,6 +143,12 @@ const games = [
   },
   {
     icon: "⚡",
+    title: "VisualCode Lab",
+    description: "Visualize real code execution with animated memory, variables, and function flow.",
+    to: "/visualcode-lab",
+  },
+  {
+    icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",
     comingSoon: true,
