@@ -148,6 +148,12 @@ const games = [
     to: "/visualcode-lab",
   },
   {
+    icon: "🏆",
+    title: "Live Quiz Competition",
+    description: "Host-controlled multi-team quiz system for live events.",
+    to: "/quiz-competition",
+  },
+  {
     icon: "⚡",
     title: "Reaction Challenge",
     description: "Test your reflex speed.",

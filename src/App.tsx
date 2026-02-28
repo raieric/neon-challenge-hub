@@ -30,6 +30,7 @@ import ImpromptuPage from "./pages/impromptu/ImpromptuPage";
 import MotivationHub from "./pages/motivation/MotivationHub";
 import TicTacToe from "./pages/TicTacToe";
 import VisualCodeLab from "./pages/visualcode/VisualCodeLab";
+import QuizCompetition from "./pages/quiz-competition/QuizCompetition";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -68,6 +69,7 @@ const App = () => (
           <Route path="/motivation" element={<MotivationHub />} />
           <Route path="/tic-tac-toe" element={<TicTacToe />} />
           <Route path="/visualcode-lab" element={<VisualCodeLab />} />
+          <Route path="/quiz-competition" element={<QuizCompetition />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
