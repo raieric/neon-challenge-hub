@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import SpinWheel from "./pages/SpinWheel";
 import RockPaperScissors from "./pages/RockPaperScissors";
@@ -31,49 +32,53 @@ import MotivationHub from "./pages/motivation/MotivationHub";
 import TicTacToe from "./pages/TicTacToe";
 import VisualCodeLab from "./pages/visualcode/VisualCodeLab";
 import QuizCompetition from "./pages/quiz-competition/QuizCompetition";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/spin" element={<SpinWheel />} />
-          <Route path="/rps" element={<RockPaperScissors />} />
-          <Route path="/spin2" element={<SpinWheel2 />} />
-          <Route path="/social" element={<SocialArena />} />
-          <Route path="/visionary" element={<VisionaryArena />} />
-          <Route path="/trolley" element={<TrolleySimulator />} />
-          <Route path="/settle" element={<SettleThis />} />
-          <Route path="/auction" element={<AuctionChallenge />} />
-          <Route path="/alive" element={<WhoWasAlive />} />
-          <Route path="/circle" element={<DrawCircle />} />
-          <Route path="/memory-match" element={<MemoryMatch />} />
-          <Route path="/spend-binod" element={<SpendBinod />} />
-          <Route path="/life-progress" element={<LifeProgress />} />
-          <Route path="/universe-forecast" element={<UniverseForecast />} />
-          <Route path="/password-challenge" element={<PasswordChallenge />} />
-          <Route path="/quiz" element={<QuizHome />} />
-          <Route path="/quiz/c" element={<CQuizPage />} />
-          <Route path="/quiz/java" element={<JavaQuizPage />} />
-          <Route path="/quiz/python" element={<PythonQuizPage />} />
-          <Route path="/imposter" element={<ImposterClassroom />} />
-          <Route path="/word-bingo" element={<WordBingo />} />
-          <Route path="/number-bingo" element={<NumberBingo />} />
-          <Route path="/impromptu" element={<ImpromptuPage />} />
-          <Route path="/motivation" element={<MotivationHub />} />
-          <Route path="/tic-tac-toe" element={<TicTacToe />} />
-          <Route path="/visualcode-lab" element={<VisualCodeLab />} />
-          <Route path="/quiz-competition" element={<QuizCompetition />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/spin" element={<SpinWheel />} />
+            <Route path="/rps" element={<RockPaperScissors />} />
+            <Route path="/spin2" element={<SpinWheel2 />} />
+            <Route path="/social" element={<SocialArena />} />
+            <Route path="/visionary" element={<VisionaryArena />} />
+            <Route path="/trolley" element={<TrolleySimulator />} />
+            <Route path="/settle" element={<SettleThis />} />
+            <Route path="/auction" element={<AuctionChallenge />} />
+            <Route path="/alive" element={<WhoWasAlive />} />
+            <Route path="/circle" element={<DrawCircle />} />
+            <Route path="/memory-match" element={<MemoryMatch />} />
+            <Route path="/spend-binod" element={<SpendBinod />} />
+            <Route path="/life-progress" element={<LifeProgress />} />
+            <Route path="/universe-forecast" element={<UniverseForecast />} />
+            <Route path="/password-challenge" element={<PasswordChallenge />} />
+            <Route path="/quiz" element={<QuizHome />} />
+            <Route path="/quiz/c" element={<CQuizPage />} />
+            <Route path="/quiz/java" element={<JavaQuizPage />} />
+            <Route path="/quiz/python" element={<PythonQuizPage />} />
+            <Route path="/imposter" element={<ImposterClassroom />} />
+            <Route path="/word-bingo" element={<WordBingo />} />
+            <Route path="/number-bingo" element={<NumberBingo />} />
+            <Route path="/impromptu" element={<ImpromptuPage />} />
+            <Route path="/motivation" element={<MotivationHub />} />
+            <Route path="/tic-tac-toe" element={<TicTacToe />} />
+            <Route path="/visualcode-lab" element={<VisualCodeLab />} />
+            <Route path="/quiz-competition" element={<QuizCompetition />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
