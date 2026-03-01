@@ -12,55 +12,192 @@ interface CardPair {
   definition: string;
 }
 
-const easyPairs: CardPair[] = [
-  { term: "int", definition: "Integer data type" },
-  { term: "float", definition: "Decimal number type" },
-  { term: "printf", definition: "Output function" },
-  { term: "scanf", definition: "Input function" },
-  { term: "&&", definition: "Logical AND" },
-  { term: "||", definition: "Logical OR" },
-  { term: "=", definition: "Assignment operator" },
-  { term: "==", definition: "Comparison operator" },
-  { term: "char", definition: "Single character type" },
-  { term: "void", definition: "No return type" },
-  { term: "return", definition: "Exit function with value" },
-  { term: "#include", definition: "Header file directive" },
-];
+type Genre = "programming" | "fruits" | "vegetables" | "gadgets";
 
-const mediumPairs: CardPair[] = [
-  { term: "for", definition: "Loop with init, condition, update" },
-  { term: "while", definition: "Loop with condition first" },
-  { term: "break", definition: "Exit loop immediately" },
-  { term: "continue", definition: "Skip current iteration" },
-  { term: "%", definition: "Modulus operator" },
-  { term: "\\n", definition: "New line escape sequence" },
-  { term: "sizeof", definition: "Returns size of a type" },
-  { term: "malloc", definition: "Dynamic memory allocation" },
-  { term: "struct", definition: "User-defined data type" },
-  { term: "typedef", definition: "Create type alias" },
-  { term: "enum", definition: "Named integer constants" },
-  { term: "switch", definition: "Multi-way branch statement" },
-];
+const genreConfig: Record<Genre, { label: string; emoji: string }> = {
+  programming: { label: "Programming", emoji: "💻" },
+  fruits: { label: "Fruits", emoji: "🍎" },
+  vegetables: { label: "Vegetables", emoji: "🥦" },
+  gadgets: { label: "Tech Gadgets", emoji: "📱" },
+};
 
-const hardPairs: CardPair[] = [
-  { term: "Segmentation fault", definition: "Invalid memory access" },
-  { term: "Dangling pointer", definition: "Pointer to freed memory" },
-  { term: "Stack overflow", definition: "Too many recursive calls" },
-  { term: "Undefined behavior", definition: "Not specified by standard" },
-  { term: "Buffer overflow", definition: "Write past array bounds" },
-  { term: "Race condition", definition: "Timing-dependent bug" },
-  { term: "Memory leak", definition: "Unreleased allocated memory" },
-  { term: "Deadlock", definition: "Threads waiting on each other" },
-  { term: "Null dereference", definition: "Accessing via null pointer" },
-  { term: "Off-by-one", definition: "Loop boundary error" },
-  { term: "Double free", definition: "Freeing memory twice" },
-  { term: "Use after free", definition: "Accessing freed memory" },
-];
-
-const difficultyData: Record<string, CardPair[]> = {
-  easy: easyPairs,
-  medium: mediumPairs,
-  hard: hardPairs,
+const allPairs: Record<Genre, Record<string, CardPair[]>> = {
+  programming: {
+    easy: [
+      { term: "int", definition: "Integer data type" },
+      { term: "float", definition: "Decimal number type" },
+      { term: "printf", definition: "Output function" },
+      { term: "scanf", definition: "Input function" },
+      { term: "&&", definition: "Logical AND" },
+      { term: "||", definition: "Logical OR" },
+      { term: "=", definition: "Assignment operator" },
+      { term: "==", definition: "Comparison operator" },
+      { term: "char", definition: "Single character type" },
+      { term: "void", definition: "No return type" },
+      { term: "return", definition: "Exit function with value" },
+      { term: "#include", definition: "Header file directive" },
+    ],
+    medium: [
+      { term: "for", definition: "Loop with init, condition, update" },
+      { term: "while", definition: "Loop with condition first" },
+      { term: "break", definition: "Exit loop immediately" },
+      { term: "continue", definition: "Skip current iteration" },
+      { term: "%", definition: "Modulus operator" },
+      { term: "\\n", definition: "New line escape sequence" },
+      { term: "sizeof", definition: "Returns size of a type" },
+      { term: "malloc", definition: "Dynamic memory allocation" },
+      { term: "struct", definition: "User-defined data type" },
+      { term: "typedef", definition: "Create type alias" },
+      { term: "enum", definition: "Named integer constants" },
+      { term: "switch", definition: "Multi-way branch statement" },
+    ],
+    hard: [
+      { term: "Segmentation fault", definition: "Invalid memory access" },
+      { term: "Dangling pointer", definition: "Pointer to freed memory" },
+      { term: "Stack overflow", definition: "Too many recursive calls" },
+      { term: "Undefined behavior", definition: "Not specified by standard" },
+      { term: "Buffer overflow", definition: "Write past array bounds" },
+      { term: "Race condition", definition: "Timing-dependent bug" },
+      { term: "Memory leak", definition: "Unreleased allocated memory" },
+      { term: "Deadlock", definition: "Threads waiting on each other" },
+      { term: "Null dereference", definition: "Accessing via null pointer" },
+      { term: "Off-by-one", definition: "Loop boundary error" },
+      { term: "Double free", definition: "Freeing memory twice" },
+      { term: "Use after free", definition: "Accessing freed memory" },
+    ],
+  },
+  fruits: {
+    easy: [
+      { term: "🍎 Apple", definition: "Crunchy red or green fruit" },
+      { term: "🍌 Banana", definition: "Yellow curved tropical fruit" },
+      { term: "🍊 Orange", definition: "Citrus fruit rich in Vitamin C" },
+      { term: "🍇 Grapes", definition: "Small round fruit in clusters" },
+      { term: "🍓 Strawberry", definition: "Red heart-shaped berry" },
+      { term: "🍑 Peach", definition: "Fuzzy skin stone fruit" },
+      { term: "🍒 Cherry", definition: "Small red fruit with pit" },
+      { term: "🥝 Kiwi", definition: "Brown fuzzy green-fleshed fruit" },
+      { term: "🍍 Pineapple", definition: "Tropical spiky yellow fruit" },
+      { term: "🥭 Mango", definition: "Sweet tropical stone fruit" },
+      { term: "🍋 Lemon", definition: "Sour yellow citrus fruit" },
+      { term: "🫐 Blueberry", definition: "Tiny blue antioxidant berry" },
+    ],
+    medium: [
+      { term: "Avocado", definition: "Creamy green fruit with pit" },
+      { term: "Pomegranate", definition: "Red fruit with juicy seeds" },
+      { term: "Dragon fruit", definition: "Pink skin white speckled flesh" },
+      { term: "Lychee", definition: "Sweet translucent Asian fruit" },
+      { term: "Papaya", definition: "Tropical orange-fleshed melon-like" },
+      { term: "Guava", definition: "Green skin pink aromatic fruit" },
+      { term: "Passion fruit", definition: "Purple fruit with seedy pulp" },
+      { term: "Fig", definition: "Soft pear-shaped sweet fruit" },
+      { term: "Persimmon", definition: "Orange tomato-shaped fruit" },
+      { term: "Jackfruit", definition: "Largest tree-borne fruit" },
+      { term: "Starfruit", definition: "Star-shaped when sliced" },
+      { term: "Durian", definition: "Spiky strong-smelling fruit" },
+    ],
+    hard: [
+      { term: "Rambutan", definition: "Hairy red shell sweet flesh" },
+      { term: "Kumquat", definition: "Tiny citrus eaten with peel" },
+      { term: "Cherimoya", definition: "Custard apple creamy texture" },
+      { term: "Soursop", definition: "Spiny green tangy white pulp" },
+      { term: "Tamarind", definition: "Pod fruit sweet-sour paste" },
+      { term: "Mangosteen", definition: "Purple rind white segments" },
+      { term: "Sapodilla", definition: "Brown skin caramel-flavored" },
+      { term: "Longan", definition: "Dragon eye translucent flesh" },
+      { term: "Breadfruit", definition: "Starchy tropical cooking fruit" },
+      { term: "Jabuticaba", definition: "Grows directly on tree trunk" },
+      { term: "Ackee", definition: "Must be ripe to eat safely" },
+      { term: "Miracle fruit", definition: "Makes sour taste sweet" },
+    ],
+  },
+  vegetables: {
+    easy: [
+      { term: "🥕 Carrot", definition: "Orange root vegetable" },
+      { term: "🥔 Potato", definition: "Starchy underground tuber" },
+      { term: "🍅 Tomato", definition: "Red fruit used as vegetable" },
+      { term: "🥒 Cucumber", definition: "Green crispy water-rich veggie" },
+      { term: "🌽 Corn", definition: "Yellow kernels on a cob" },
+      { term: "🥬 Lettuce", definition: "Leafy green for salads" },
+      { term: "🧅 Onion", definition: "Layered bulb that makes you cry" },
+      { term: "🧄 Garlic", definition: "Pungent bulb with cloves" },
+      { term: "🌶️ Chili", definition: "Spicy hot pepper" },
+      { term: "🥦 Broccoli", definition: "Green tree-shaped vegetable" },
+      { term: "🍆 Eggplant", definition: "Purple glossy nightshade" },
+      { term: "🫑 Bell Pepper", definition: "Colorful sweet crunchy pepper" },
+    ],
+    medium: [
+      { term: "Zucchini", definition: "Green summer squash" },
+      { term: "Asparagus", definition: "Tall green spear vegetable" },
+      { term: "Cauliflower", definition: "White compact flower head" },
+      { term: "Spinach", definition: "Iron-rich dark leafy green" },
+      { term: "Celery", definition: "Crunchy stalked water-rich" },
+      { term: "Radish", definition: "Small red peppery root" },
+      { term: "Beet", definition: "Deep red earthy root" },
+      { term: "Turnip", definition: "White-purple round root veggie" },
+      { term: "Artichoke", definition: "Thistle with edible heart" },
+      { term: "Leek", definition: "Mild onion-family stalk" },
+      { term: "Kale", definition: "Curly dark superfood green" },
+      { term: "Sweet Potato", definition: "Orange-fleshed sweet tuber" },
+    ],
+    hard: [
+      { term: "Kohlrabi", definition: "Bulbous cabbage-family stem" },
+      { term: "Daikon", definition: "Large white Asian radish" },
+      { term: "Jicama", definition: "Crunchy sweet Mexican turnip" },
+      { term: "Celeriac", definition: "Knobby celery root vegetable" },
+      { term: "Romanesco", definition: "Fractal-patterned green brassica" },
+      { term: "Salsify", definition: "Oyster-flavored root veggie" },
+      { term: "Chayote", definition: "Mild pear-shaped gourd" },
+      { term: "Taro", definition: "Starchy purple-speckled root" },
+      { term: "Cassava", definition: "Tropical starchy tuberous root" },
+      { term: "Fiddlehead", definition: "Coiled young fern frond" },
+      { term: "Purslane", definition: "Succulent omega-3 rich weed" },
+      { term: "Cardoon", definition: "Artichoke relative edible stalks" },
+    ],
+  },
+  gadgets: {
+    easy: [
+      { term: "📱 Smartphone", definition: "Pocket computer with touchscreen" },
+      { term: "💻 Laptop", definition: "Portable folding computer" },
+      { term: "🎧 Headphones", definition: "Wearable audio output device" },
+      { term: "⌨️ Keyboard", definition: "Input device with keys" },
+      { term: "🖱️ Mouse", definition: "Pointing and clicking device" },
+      { term: "📷 Camera", definition: "Captures photos and video" },
+      { term: "🔋 Power Bank", definition: "Portable battery charger" },
+      { term: "📺 Smart TV", definition: "Internet-connected television" },
+      { term: "⌚ Smartwatch", definition: "Wrist-worn mini computer" },
+      { term: "🎮 Console", definition: "Dedicated gaming system" },
+      { term: "🖥️ Monitor", definition: "External display screen" },
+      { term: "🔌 USB Drive", definition: "Portable flash storage" },
+    ],
+    medium: [
+      { term: "Drone", definition: "Remote-controlled flying device" },
+      { term: "VR Headset", definition: "Immersive virtual reality viewer" },
+      { term: "E-Reader", definition: "Digital book reading device" },
+      { term: "Smart Speaker", definition: "Voice-activated AI assistant" },
+      { term: "Fitness Tracker", definition: "Wearable health monitor" },
+      { term: "Webcam", definition: "Camera for video calls" },
+      { term: "Router", definition: "Network traffic director" },
+      { term: "SSD", definition: "Fast solid-state storage" },
+      { term: "Mechanical KB", definition: "Keyboard with physical switches" },
+      { term: "Stylus", definition: "Digital pen for touchscreens" },
+      { term: "DAC", definition: "Digital-to-analog audio converter" },
+      { term: "NAS", definition: "Network attached file storage" },
+    ],
+    hard: [
+      { term: "FPGA Board", definition: "Programmable logic circuit" },
+      { term: "Oscilloscope", definition: "Electronic signal visualizer" },
+      { term: "Raspberry Pi", definition: "Credit-card sized computer" },
+      { term: "Arduino", definition: "Open-source microcontroller board" },
+      { term: "LiDAR Scanner", definition: "Laser-based distance mapping" },
+      { term: "Thermal Camera", definition: "Infrared heat imaging device" },
+      { term: "Logic Analyzer", definition: "Digital signal debugger" },
+      { term: "SDR Dongle", definition: "Software defined radio receiver" },
+      { term: "EEG Headband", definition: "Brainwave monitoring wearable" },
+      { term: "Holographic Display", definition: "3D light-field projection" },
+      { term: "Quantum Processor", definition: "Qubit-based computing chip" },
+      { term: "Neuromorphic Chip", definition: "Brain-inspired silicon processor" },
+    ],
+  },
 };
 
 // --- TYPES ---
@@ -102,6 +239,7 @@ const playErrorSound = () => {
 
 // --- COMPONENT ---
 const MemoryMatch = () => {
+  const [genre, setGenre] = useState<Genre>("programming");
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
   const [cards, setCards] = useState<GameCard[]>([]);
   const [flippedIds, setFlippedIds] = useState<number[]>([]);
@@ -119,7 +257,7 @@ const MemoryMatch = () => {
   const totalPairs = 8;
 
   const initGame = useCallback(() => {
-    const pool = difficultyData[difficulty];
+    const pool = allPairs[genre][difficulty];
     const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, totalPairs);
     const gameCards: GameCard[] = [];
     shuffled.forEach((pair, i) => {
@@ -138,7 +276,7 @@ const MemoryMatch = () => {
     setShowConfetti(false);
     setTimeLeft(60);
     if (timerRef.current) clearInterval(timerRef.current);
-  }, [difficulty]);
+  }, [difficulty, genre]);
 
   useEffect(() => { initGame(); }, [initGame]);
 
@@ -245,7 +383,22 @@ const MemoryMatch = () => {
             <Brain className="inline w-8 h-8 mr-2 text-neon-purple" />
             Memory Match
           </h1>
-          <p className="text-muted-foreground text-sm">Flip cards and match programming pairs</p>
+          <p className="text-muted-foreground text-sm">Flip cards and match pairs</p>
+        </div>
+
+        {/* Genre Selector */}
+        <div className="flex flex-wrap justify-center gap-2 mb-4">
+          {(Object.keys(genreConfig) as Genre[]).map((g) => (
+            <Button
+              key={g}
+              variant={genre === g ? "default" : "outline"}
+              size="sm"
+              onClick={() => setGenre(g)}
+              className="font-display text-xs"
+            >
+              {genreConfig[g].emoji} {genreConfig[g].label}
+            </Button>
+          ))}
         </div>
 
         {/* Difficulty */}
