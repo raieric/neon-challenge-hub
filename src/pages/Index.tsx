@@ -5,6 +5,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { LogIn, LogOut } from "lucide-react";
+import Footer from "@/components/Footer";
 
 const games = [
   {
@@ -205,9 +206,10 @@ const Index = () => {
 
         {/* Footer */}
         <div className="mt-20 text-center animate-fade-in" style={{ animationDelay: "800ms" }}>
-          <p className="font-body text-sm text-muted-foreground/50 tracking-wider uppercase">
+          <p className="font-body text-sm text-muted-foreground/50 tracking-wider uppercase mb-4">
             Designed for live classroom interaction
           </p>
+          <Footer />
         </div>
       </div>
     </div>
