@@ -1,5 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Question, sampleQuestions, RoundType, Category } from '../data/questions';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 export interface Team {
   id: string;
@@ -65,6 +67,34 @@ function loadState(): QuizState {
 
 export function useQuizState() {
   const [state, setState] = useState<QuizState>(loadState);
+  const { user } = useAuth();
+
+  // Load user's custom questions from DB
+  useEffect(() => {
+    if (!user) return;
+    const loadUserQuestions = async () => {
+      const { data } = await supabase
+        .from('user_quiz_questions')
+        .select('*')
+        .eq('user_id', user.id);
+      if (data && data.length > 0) {
+        const dbQuestions: Question[] = data.map((q: any) => ({
+          id: q.id,
+          text: q.text,
+          answer: q.answer,
+          category: q.category,
+          difficulty: q.difficulty as 'easy' | 'medium' | 'hard',
+          used: false,
+        }));
+        setState(s => {
+          const existingIds = new Set(s.questions.map(q => q.id));
+          const newOnes = dbQuestions.filter(q => !existingIds.has(q.id));
+          return newOnes.length > 0 ? { ...s, questions: [...s.questions, ...newOnes] } : s;
+        });
+      }
+    };
+    loadUserQuestions();
+  }, [user]);
 
   useEffect(() => {
     const { timerRunning, ...rest } = state;
@@ -189,19 +219,36 @@ export function useQuizState() {
     }));
   }, []);
 
-  const addQuestion = useCallback((q: Omit<Question, 'id'>) => {
+  const addQuestion = useCallback(async (q: Omit<Question, 'id'>) => {
+    if (user) {
+      const { data, error } = await supabase
+        .from('user_quiz_questions')
+        .insert({ user_id: user.id, text: q.text, answer: q.answer, category: q.category, difficulty: q.difficulty })
+        .select()
+        .single();
+      if (data && !error) {
+        setState(s => ({
+          ...s,
+          questions: [...s.questions, { id: data.id, text: data.text, answer: data.answer, category: data.category, difficulty: data.difficulty as any, used: false }],
+        }));
+        return;
+      }
+    }
     setState(s => ({
       ...s,
       questions: [...s.questions, { ...q, id: `custom-${Date.now()}` }],
     }));
-  }, []);
+  }, [user]);
 
-  const deleteQuestion = useCallback((id: string) => {
+  const deleteQuestion = useCallback(async (id: string) => {
+    if (user) {
+      await supabase.from('user_quiz_questions').delete().eq('id', id).eq('user_id', user.id);
+    }
     setState(s => ({
       ...s,
       questions: s.questions.filter(q => q.id !== id),
     }));
-  }, []);
+  }, [user]);
 
   const startTimer = useCallback(() => {
     setState(s => ({ ...s, timerRunning: true, timerValue: s.timerValue <= 0 ? s.timerDuration : s.timerValue }));

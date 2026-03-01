@@ -1,13 +1,16 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Play, SkipForward, Pause, RotateCcw, BookOpen, ChevronRight, Code2 } from "lucide-react";
+import { ArrowLeft, Play, SkipForward, Pause, RotateCcw, BookOpen, ChevronRight, Code2, Save, Trash2, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import ParticleBackground from "@/components/ParticleBackground";
 import { traceCode, type ExecutionStep, type Language } from "./interpreter";
 import { examples } from "./examples";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 // ─── Code Editor ───
 const CodeEditor = ({ code, onChange, currentLine }: { code: string; onChange: (c: string) => void; currentLine: number }) => {
@@ -171,7 +174,16 @@ const Canvas = ({ step, learningMode }: { step: ExecutionStep | null; learningMo
 };
 
 // ─── Main Page ───
+interface SavedSnippet {
+  id: string;
+  name: string;
+  language: string;
+  code: string;
+  description: string;
+}
+
 const VisualCodeLab = () => {
+  const { user } = useAuth();
   const [language, setLanguage] = useState<Language>('python');
   const [code, setCode] = useState(examples[0].code);
   const [steps, setSteps] = useState<ExecutionStep[]>([]);
@@ -181,9 +193,42 @@ const VisualCodeLab = () => {
   const [learningMode, setLearningMode] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showExamples, setShowExamples] = useState(false);
+  const [savedSnippets, setSavedSnippets] = useState<SavedSnippet[]>([]);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [snippetName, setSnippetName] = useState('');
+  const [snippetDesc, setSnippetDesc] = useState('');
+  const [showSaved, setShowSaved] = useState(false);
   const runTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const filteredExamples = examples.filter(e => e.language === language);
+
+  // Load saved snippets
+  useEffect(() => {
+    if (!user) { setSavedSnippets([]); return; }
+    supabase.from('user_code_snippets').select('*').eq('user_id', user.id).order('updated_at', { ascending: false })
+      .then(({ data }) => { if (data) setSavedSnippets(data as any); });
+  }, [user]);
+
+  const saveSnippet = async () => {
+    if (!user || !snippetName.trim()) return;
+    const { data, error: err } = await supabase.from('user_code_snippets')
+      .insert({ user_id: user.id, name: snippetName.trim(), language, code, description: snippetDesc.trim() })
+      .select().single();
+    if (data && !err) {
+      setSavedSnippets(prev => [data as any, ...prev]);
+      toast.success('Snippet saved!');
+      setShowSaveDialog(false);
+      setSnippetName('');
+      setSnippetDesc('');
+    } else { toast.error('Failed to save'); }
+  };
+
+  const deleteSnippet = async (id: string) => {
+    if (!user) return;
+    await supabase.from('user_code_snippets').delete().eq('id', id).eq('user_id', user.id);
+    setSavedSnippets(prev => prev.filter(s => s.id !== id));
+    toast.success('Snippet deleted');
+  };
 
   const handleRun = useCallback(() => {
     try {
@@ -316,7 +361,7 @@ const VisualCodeLab = () => {
         <div className="w-80 lg:w-96 border-l border-white/10 flex flex-col bg-background/80 backdrop-blur-xl overflow-hidden hidden md:flex">
           {/* Examples toggle */}
           <button
-            onClick={() => setShowExamples(!showExamples)}
+            onClick={() => { setShowExamples(!showExamples); setShowSaved(false); }}
             className="flex items-center gap-2 px-3 py-2 border-b border-white/10 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             <ChevronRight size={12} className={`transition-transform ${showExamples ? 'rotate-90' : ''}`} />
@@ -335,6 +380,60 @@ const VisualCodeLab = () => {
                   <p className="text-[10px] text-muted-foreground">{ex.description}</p>
                 </button>
               ))}
+            </div>
+          )}
+
+          {/* My Snippets toggle (logged in only) */}
+          {user && (
+            <>
+              <button
+                onClick={() => { setShowSaved(!showSaved); setShowExamples(false); }}
+                className="flex items-center gap-2 px-3 py-2 border-b border-white/10 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ChevronRight size={12} className={`transition-transform ${showSaved ? 'rotate-90' : ''}`} />
+                💾 My Snippets ({savedSnippets.filter(s => s.language === language).length})
+              </button>
+
+              {showSaved && (
+                <div className="border-b border-white/10 max-h-48 overflow-auto p-2 space-y-1">
+                  {savedSnippets.filter(s => s.language === language).length === 0 ? (
+                    <p className="text-[10px] text-muted-foreground/50 italic px-3 py-2">No saved snippets yet</p>
+                  ) : savedSnippets.filter(s => s.language === language).map(s => (
+                    <div key={s.id} className="flex items-center gap-1">
+                      <button
+                        onClick={() => { setCode(s.code); handleReset(); setShowSaved(false); }}
+                        className="flex-1 text-left px-3 py-2 rounded-md hover:bg-muted/50 transition-colors group"
+                      >
+                        <p className="text-xs font-bold text-foreground group-hover:text-neon-cyan transition-colors">{s.name}</p>
+                        {s.description && <p className="text-[10px] text-muted-foreground">{s.description}</p>}
+                      </button>
+                      <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-destructive shrink-0" onClick={() => deleteSnippet(s.id)}>
+                        <Trash2 size={10} />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Save button */}
+          {user && (
+            <div className="px-2 py-1.5 border-b border-white/10">
+              {showSaveDialog ? (
+                <div className="space-y-1.5">
+                  <input value={snippetName} onChange={e => setSnippetName(e.target.value)} placeholder="Snippet name..." className="w-full px-2 py-1.5 rounded bg-muted/30 border border-white/10 text-xs text-foreground outline-none" />
+                  <input value={snippetDesc} onChange={e => setSnippetDesc(e.target.value)} placeholder="Description (optional)..." className="w-full px-2 py-1.5 rounded bg-muted/30 border border-white/10 text-xs text-foreground outline-none" />
+                  <div className="flex gap-1">
+                    <Button size="sm" className="text-xs h-6 flex-1" onClick={saveSnippet} disabled={!snippetName.trim()}>Save</Button>
+                    <Button size="sm" variant="ghost" className="text-xs h-6" onClick={() => setShowSaveDialog(false)}>Cancel</Button>
+                  </div>
+                </div>
+              ) : (
+                <Button size="sm" variant="secondary" className="w-full text-xs h-7 gap-1" onClick={() => setShowSaveDialog(true)}>
+                  <Save size={12} /> Save Snippet
+                </Button>
+              )}
             </div>
           )}
 

@@ -62,6 +62,69 @@ export type Database = {
         }
         Relationships: []
       }
+      user_code_snippets: {
+        Row: {
+          code: string
+          created_at: string
+          description: string
+          id: string
+          language: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string
+          id?: string
+          language?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string
+          id?: string
+          language?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_quiz_questions: {
+        Row: {
+          answer: string
+          category: string
+          created_at: string
+          difficulty: string
+          id: string
+          text: string
+          user_id: string
+        }
+        Insert: {
+          answer: string
+          category: string
+          created_at?: string
+          difficulty?: string
+          id?: string
+          text: string
+          user_id: string
+        }
+        Update: {
+          answer?: string
+          category?: string
+          created_at?: string
+          difficulty?: string
+          id?: string
+          text?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_wheel_options: {
         Row: {
           color: string
