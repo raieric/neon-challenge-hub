@@ -18,6 +18,8 @@ export default function HostPanel({ state }: HostPanelProps) {
   const [showAddQuestion, setShowAddQuestion] = useState(false);
   const [newQ, setNewQ] = useState({ text: '', answer: '', category: 'Programming' as string, difficulty: 'medium' as const });
   const [importJson, setImportJson] = useState('');
+  const [customCategory, setCustomCategory] = useState('');
+  const [allCategories, setAllCategories] = useState<string[]>([...categories]);
 
   const tabs = [
     { id: 'teams' as const, label: 'Teams', icon: Users },
@@ -187,16 +189,38 @@ export default function HostPanel({ state }: HostPanelProps) {
               >
                 All
               </button>
-              {categories.map(cat => (
+              {allCategories.map(cat => (
                 <button
                   key={cat}
-                  onClick={() => state.setCategory(cat)}
+                  onClick={() => state.setCategory(cat as any)}
                   className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors
                     ${state.selectedCategory === cat ? 'bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/30' : 'bg-muted/20 text-muted-foreground hover:bg-muted/40'}`}
                 >
                   {cat}
                 </button>
               ))}
+            </div>
+
+            {/* Add custom category */}
+            <div className="flex gap-2">
+              <input
+                value={customCategory}
+                onChange={e => setCustomCategory(e.target.value)}
+                placeholder="New topic/category..."
+                className="flex-1 px-3 py-1.5 rounded-lg bg-muted/30 border border-white/10 text-xs text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-neon-cyan/50"
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && customCategory.trim()) {
+                    setAllCategories(prev => prev.includes(customCategory.trim()) ? prev : [...prev, customCategory.trim()]);
+                    setCustomCategory('');
+                  }
+                }}
+              />
+              <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => {
+                if (customCategory.trim()) {
+                  setAllCategories(prev => prev.includes(customCategory.trim()) ? prev : [...prev, customCategory.trim()]);
+                  setCustomCategory('');
+                }
+              }}>+ Topic</Button>
             </div>
 
             {/* Add question / import */}
@@ -218,7 +242,7 @@ export default function HostPanel({ state }: HostPanelProps) {
                 <input value={newQ.answer} onChange={e => setNewQ(p => ({ ...p, answer: e.target.value }))} placeholder="Answer..." className="w-full px-3 py-2 rounded-lg bg-muted/30 border border-white/10 text-sm text-foreground outline-none" />
                 <div className="flex gap-2">
                   <select value={newQ.category} onChange={e => setNewQ(p => ({ ...p, category: e.target.value }))} className="flex-1 px-2 py-2 rounded-lg bg-muted/30 border border-white/10 text-xs text-foreground">
-                    {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                    {allCategories.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                   <select value={newQ.difficulty} onChange={e => setNewQ(p => ({ ...p, difficulty: e.target.value as any }))} className="px-2 py-2 rounded-lg bg-muted/30 border border-white/10 text-xs text-foreground">
                     <option value="easy">Easy</option>
