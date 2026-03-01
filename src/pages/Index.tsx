@@ -34,12 +34,6 @@ const games = [
     to: "/visionary",
   },
   {
-    icon: "🎲",
-    title: "Lucky Draw",
-    description: "One click. Pure randomness.",
-    comingSoon: true,
-  },
-  {
     icon: "🚂",
     title: "Trolley Simulator",
     description: "25 moral dilemmas. No right answers.",
