@@ -15,7 +15,7 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 const Footer = () => (
   <footer className="relative z-10 py-6 text-center space-y-3">
     <p className="font-body text-sm text-muted-foreground/60 tracking-wide">
-      Designed with ❤️ by{" "}
+      Created with ❤️ by{" "}
       <a
         href="https://www.instagram.com/jungey_sircar/"
         target="_blank"
