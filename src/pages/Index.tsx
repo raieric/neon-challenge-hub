@@ -1,6 +1,10 @@
+import { Link } from "react-router-dom";
 import ParticleBackground from "@/components/ParticleBackground";
 import GameCard from "@/components/GameCard";
 import ThemeToggle from "@/components/ThemeToggle";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { LogIn, LogOut } from "lucide-react";
 
 const games = [
   {
@@ -150,6 +154,7 @@ const games = [
 ];
 
 const Index = () => {
+  const { user, signOut } = useAuth();
   return (
     <div className="min-h-screen relative overflow-hidden">
       <ParticleBackground />
@@ -162,8 +167,19 @@ const Index = () => {
       </div>
 
       <div className="relative z-10 flex flex-col items-center px-4 sm:px-6 py-12 sm:py-20">
-        {/* Theme Toggle */}
-        <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+        {/* Top bar */}
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2">
+          {user ? (
+            <Button variant="ghost" size="sm" onClick={signOut} className="gap-2 font-display text-xs">
+              <LogOut className="w-3 h-3" /> Sign Out
+            </Button>
+          ) : (
+            <Link to="/auth">
+              <Button variant="outline" size="sm" className="gap-2 font-display text-xs">
+                <LogIn className="w-3 h-3" /> Login
+              </Button>
+            </Link>
+          )}
           <ThemeToggle />
         </div>
 

@@ -1,10 +1,14 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, X } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, X, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useBirthdayNotifications } from "@/hooks/useBirthdayNotifications";
 
-// ─── LUNAR CALCULATION (Simplified astronomical algorithm) ───
+// ─── LUNAR CALCULATION ───
 const LUNAR_CYCLE = 29.53058770576;
 const KNOWN_NEW_MOON = new Date("2024-01-11T11:57:00Z").getTime();
 
@@ -21,7 +25,6 @@ const getNextMoonPhase = (targetDay: number, from: Date): Date => {
   return new Date(from.getTime() + daysUntil * 24 * 60 * 60 * 1000);
 };
 
-// Moon phase targets (approximate days into cycle)
 const MOON_PHASES = [
   { emoji: "🌑", name: "New Moon", day: 0 },
   { emoji: "🌒", name: "Waxing Crescent", day: 3.69 },
@@ -33,7 +36,7 @@ const MOON_PHASES = [
   { emoji: "🌘", name: "Waning Crescent", day: 25.84 },
 ];
 
-// ─── EASTER CALCULATION (Anonymous Gregorian algorithm) ───
+// ─── EASTER ───
 const getEaster = (year: number): Date => {
   const a = year % 19;
   const b = Math.floor(year / 100);
@@ -52,7 +55,6 @@ const getEaster = (year: number): Date => {
   return new Date(year, month - 1, day);
 };
 
-// ─── THANKSGIVING (4th Thursday of November) ───
 const getThanksgiving = (year: number): Date => {
   const nov1 = new Date(year, 10, 1);
   const dayOfWeek = nov1.getDay();
@@ -60,7 +62,6 @@ const getThanksgiving = (year: number): Date => {
   return new Date(year, 10, firstThursday + 21);
 };
 
-// ─── MOTHER'S DAY (2nd Sunday of May) ───
 const getMothersDay = (year: number): Date => {
   const may1 = new Date(year, 4, 1);
   const dayOfWeek = may1.getDay();
@@ -68,7 +69,6 @@ const getMothersDay = (year: number): Date => {
   return new Date(year, 4, firstSunday + 7);
 };
 
-// ─── FATHER'S DAY (3rd Sunday of June) ───
 const getFathersDay = (year: number): Date => {
   const jun1 = new Date(year, 5, 1);
   const dayOfWeek = jun1.getDay();
@@ -76,7 +76,6 @@ const getFathersDay = (year: number): Date => {
   return new Date(year, 5, firstSunday + 14);
 };
 
-// ─── DASHAIN (approximate Nepali calendar — Vijaya Dashami dates) ───
 const getDashain = (year: number): Date => {
   const dashainDates: Record<number, string> = {
     2024: "2024-10-12", 2025: "2025-10-02", 2026: "2026-10-21",
@@ -84,10 +83,9 @@ const getDashain = (year: number): Date => {
     2030: "2030-10-07",
   };
   if (dashainDates[year]) return new Date(dashainDates[year]);
-  return new Date(year, 9, 10); // fallback ~Oct 10
+  return new Date(year, 9, 10);
 };
 
-// ─── NEXT OCCURRENCE HELPER ───
 const getNextDate = (month: number, day: number, now: Date): Date => {
   const thisYear = new Date(now.getFullYear(), month, day);
   if (thisYear.getTime() > now.getTime()) return thisYear;
@@ -100,7 +98,6 @@ const getNextRecurring = (getDate: (y: number) => Date, now: Date): Date => {
   return getDate(now.getFullYear() + 1);
 };
 
-// ─── FORMATTING ───
 const formatTimeLeft = (ms: number): string => {
   if (ms <= 0) return "Now!";
   const seconds = Math.floor(ms / 1000);
@@ -119,7 +116,6 @@ const formatTimeLeft = (ms: number): string => {
   return `${seconds}s`;
 };
 
-// ─── EVENT TYPES ───
 interface ProgressEvent {
   emoji: string;
   name: string;
@@ -129,78 +125,51 @@ interface ProgressEvent {
   color: string;
 }
 
-interface CustomBirthday {
+interface DbBirthday {
+  id: string;
   name: string;
-  date: string; // YYYY-MM-DD
+  birthday: string;
 }
 
 const buildEvents = (): ProgressEvent[] => {
   const events: ProgressEvent[] = [];
 
-  // Short-term
-  const shortTerm: Array<{ emoji: string; name: string; getTarget: (n: Date) => Date; getStart: (n: Date, t: Date) => Date }> = [
-    {
-      emoji: "🕑", name: "Next Minute",
-      getTarget: (n) => { const d = new Date(n); d.setSeconds(0, 0); d.setMinutes(d.getMinutes() + 1); return d; },
-      getStart: (n) => { const d = new Date(n); d.setSeconds(0, 0); return d; },
-    },
-    {
-      emoji: "🕑", name: "Next Hour",
-      getTarget: (n) => { const d = new Date(n); d.setMinutes(0, 0, 0); d.setHours(d.getHours() + 1); return d; },
-      getStart: (n) => { const d = new Date(n); d.setMinutes(0, 0, 0); return d; },
-    },
-    {
-      emoji: "🌅", name: "Next Day",
-      getTarget: (n) => { const d = new Date(n); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + 1); return d; },
-      getStart: (n) => { const d = new Date(n); d.setHours(0, 0, 0, 0); return d; },
-    },
-    {
-      emoji: "📅", name: "Next Month",
-      getTarget: (n) => new Date(n.getFullYear(), n.getMonth() + 1, 1),
-      getStart: (n) => new Date(n.getFullYear(), n.getMonth(), 1),
-    },
-    {
-      emoji: "🎆", name: "Next Year",
-      getTarget: (n) => new Date(n.getFullYear() + 1, 0, 1),
-      getStart: (n) => new Date(n.getFullYear(), 0, 1),
-    },
+  const shortTerm = [
+    { emoji: "🕑", name: "Next Minute", getTarget: (n: Date) => { const d = new Date(n); d.setSeconds(0, 0); d.setMinutes(d.getMinutes() + 1); return d; }, getStart: (n: Date) => { const d = new Date(n); d.setSeconds(0, 0); return d; } },
+    { emoji: "🕑", name: "Next Hour", getTarget: (n: Date) => { const d = new Date(n); d.setMinutes(0, 0, 0); d.setHours(d.getHours() + 1); return d; }, getStart: (n: Date) => { const d = new Date(n); d.setMinutes(0, 0, 0); return d; } },
+    { emoji: "🌅", name: "Next Day", getTarget: (n: Date) => { const d = new Date(n); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + 1); return d; }, getStart: (n: Date) => { const d = new Date(n); d.setHours(0, 0, 0, 0); return d; } },
+    { emoji: "📅", name: "Next Month", getTarget: (n: Date) => new Date(n.getFullYear(), n.getMonth() + 1, 1), getStart: (n: Date) => new Date(n.getFullYear(), n.getMonth(), 1) },
+    { emoji: "🎆", name: "Next Year", getTarget: (n: Date) => new Date(n.getFullYear() + 1, 0, 1), getStart: (n: Date) => new Date(n.getFullYear(), 0, 1) },
   ];
   shortTerm.forEach((e) => events.push({ ...e, category: "short", color: "from-cyan-400 to-blue-500" }));
 
-  // Holidays
-  const holidays: Array<{ emoji: string; name: string; getDate: (y: number) => Date }> = [
-    { emoji: "💑", name: "Valentine's Day", getDate: (y) => new Date(y, 1, 14) },
-    { emoji: "🍀", name: "St. Patrick's Day", getDate: (y) => new Date(y, 2, 17) },
+  const holidays = [
+    { emoji: "💑", name: "Valentine's Day", getDate: (y: number) => new Date(y, 1, 14) },
+    { emoji: "🍀", name: "St. Patrick's Day", getDate: (y: number) => new Date(y, 2, 17) },
     { emoji: "🐇", name: "Easter", getDate: getEaster },
     { emoji: "👩", name: "Mother's Day", getDate: getMothersDay },
     { emoji: "👨", name: "Father's Day", getDate: getFathersDay },
-    { emoji: "👻", name: "Halloween", getDate: (y) => new Date(y, 9, 31) },
+    { emoji: "👻", name: "Halloween", getDate: (y: number) => new Date(y, 9, 31) },
     { emoji: "🦃", name: "Thanksgiving", getDate: getThanksgiving },
-    { emoji: "🎅", name: "Christmas", getDate: (y) => new Date(y, 11, 25) },
+    { emoji: "🎅", name: "Christmas", getDate: (y: number) => new Date(y, 11, 25) },
     { emoji: "🏵", name: "Dashain", getDate: getDashain },
   ];
   holidays.forEach((h) =>
     events.push({
       emoji: h.emoji, name: h.name, category: "holiday", color: "from-orange-400 to-rose-500",
       getTarget: (n) => getNextRecurring(h.getDate, n),
-      getStart: (n, t) => {
-        const prev = new Date(t);
-        prev.setFullYear(prev.getFullYear() - 1);
-        return prev;
-      },
+      getStart: (_n, t) => { const prev = new Date(t); prev.setFullYear(prev.getFullYear() - 1); return prev; },
     })
   );
 
-  // Moon phases
   MOON_PHASES.forEach((mp) =>
     events.push({
       emoji: mp.emoji, name: mp.name, category: "moon", color: "from-slate-300 to-indigo-400",
       getTarget: (n) => getNextMoonPhase(mp.day, n),
-      getStart: (n, t) => new Date(t.getTime() - LUNAR_CYCLE * 24 * 60 * 60 * 1000),
+      getStart: (_n, t) => new Date(t.getTime() - LUNAR_CYCLE * 24 * 60 * 60 * 1000),
     })
   );
 
-  // Long-term
   const longTerm = [
     { emoji: "📅", name: "Next Decade", getTarget: (n: Date) => { const y = Math.ceil((n.getFullYear() + 1) / 10) * 10; return new Date(y, 0, 1); }, getStart: (n: Date) => { const y = Math.floor(n.getFullYear() / 10) * 10; return new Date(y, 0, 1); } },
     { emoji: "📅", name: "Next Century", getTarget: (n: Date) => { const y = Math.ceil((n.getFullYear() + 1) / 100) * 100; return new Date(y, 0, 1); }, getStart: (n: Date) => { const y = Math.floor(n.getFullYear() / 100) * 100; return new Date(y, 0, 1); } },
@@ -208,7 +177,6 @@ const buildEvents = (): ProgressEvent[] => {
   ];
   longTerm.forEach((e) => events.push({ ...e, category: "longterm", color: "from-violet-400 to-purple-600" }));
 
-  // Cosmic
   const cosmic = [
     { emoji: "☄️", name: "Halley's Comet", year: 2061 },
     { emoji: "🏭", name: "Chernobyl Safe Zone", year: 2200 },
@@ -219,7 +187,7 @@ const buildEvents = (): ProgressEvent[] => {
   cosmic.forEach((c) =>
     events.push({
       emoji: c.emoji, name: c.name, category: "cosmic", color: "from-indigo-500 to-purple-900",
-      getTarget: () => new Date(Math.min(c.year, 275760), 0, 1), // JS Date max year limit
+      getTarget: () => new Date(Math.min(c.year, 275760), 0, 1),
       getStart: () => new Date(2024, 0, 1),
     })
   );
@@ -227,7 +195,6 @@ const buildEvents = (): ProgressEvent[] => {
   return events;
 };
 
-// ─── PROGRESS BAR COMPONENT ───
 const ProgressBar = ({ emoji, name, timeLeft, progress, colorClass, isShort }: {
   emoji: string; name: string; timeLeft: string; progress: number; colorClass: string; isShort: boolean;
 }) => (
@@ -261,37 +228,71 @@ const ProgressBar = ({ emoji, name, timeLeft, progress, colorClass, isShort }: {
   </motion.div>
 );
 
-// ─── MAIN COMPONENT ───
 const LifeProgress = () => {
   const [now, setNow] = useState(new Date());
   const [filter, setFilter] = useState<string>("all");
-  const [birthdays, setBirthdays] = useState<CustomBirthday[]>(() => {
+  const { user } = useAuth();
+  const [dbBirthdays, setDbBirthdays] = useState<DbBirthday[]>([]);
+  const [localBirthdays, setLocalBirthdays] = useState<{ name: string; date: string }[]>(() => {
     try { return JSON.parse(localStorage.getItem("life-progress-birthdays") || "[]"); } catch { return []; }
   });
   const [showAddModal, setShowAddModal] = useState(false);
   const [newName, setNewName] = useState("");
   const [newDate, setNewDate] = useState("");
 
-  // Tick
+  useBirthdayNotifications();
+
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // Save birthdays
+  // Save local birthdays
   useEffect(() => {
-    localStorage.setItem("life-progress-birthdays", JSON.stringify(birthdays));
-  }, [birthdays]);
+    if (!user) localStorage.setItem("life-progress-birthdays", JSON.stringify(localBirthdays));
+  }, [localBirthdays, user]);
+
+  // Fetch DB birthdays
+  useEffect(() => {
+    if (!user) return;
+    const fetchBirthdays = async () => {
+      const { data } = await supabase
+        .from("user_birthdays")
+        .select("id, name, birthday")
+        .eq("user_id", user.id)
+        .order("created_at");
+      if (data) setDbBirthdays(data as DbBirthday[]);
+    };
+    fetchBirthdays();
+  }, [user]);
 
   const events = useMemo(() => buildEvents(), []);
 
-  const addBirthday = () => {
+  const addBirthday = async () => {
     if (!newName.trim() || !newDate) return;
-    setBirthdays((prev) => [...prev, { name: newName.trim(), date: newDate }]);
+    if (user) {
+      const { data, error } = await supabase
+        .from("user_birthdays")
+        .insert({ user_id: user.id, name: newName.trim(), birthday: newDate })
+        .select("id, name, birthday")
+        .single();
+      if (error) { toast.error("Failed to save birthday"); return; }
+      if (data) setDbBirthdays((prev) => [...prev, data as DbBirthday]);
+      toast.success(`Added ${newName.trim()}'s birthday!`);
+    } else {
+      setLocalBirthdays((prev) => [...prev, { name: newName.trim(), date: newDate }]);
+    }
     setNewName(""); setNewDate(""); setShowAddModal(false);
   };
 
-  const removeBirthday = (idx: number) => setBirthdays((prev) => prev.filter((_, i) => i !== idx));
+  const removeBirthday = async (id: string | number) => {
+    if (user && typeof id === "string") {
+      await supabase.from("user_birthdays").delete().eq("id", id);
+      setDbBirthdays((prev) => prev.filter((b) => b.id !== id));
+    } else {
+      setLocalBirthdays((prev) => prev.filter((_, i) => i !== id));
+    }
+  };
 
   const categories = [
     { key: "all", label: "All" },
@@ -305,7 +306,6 @@ const LifeProgress = () => {
 
   const filteredEvents = filter === "all" ? events : events.filter((e) => e.category === filter);
 
-  // Build computed data
   const computedEvents = filteredEvents.map((e) => {
     const target = e.getTarget(now);
     const start = e.getStart(now, target);
@@ -316,9 +316,10 @@ const LifeProgress = () => {
     return { ...e, timeLeft: formatTimeLeft(msLeft), progress, msLeft };
   });
 
-  // Birthday events
-  const birthdayEvents = birthdays.map((b, idx) => {
-    const [, m, d] = b.date.split("-").map(Number);
+  const birthdaySource = user ? dbBirthdays : localBirthdays;
+  const birthdayEvents = birthdaySource.map((b: any, idx: number) => {
+    const dateStr = b.birthday || b.date;
+    const [, m, d] = dateStr.split("-").map(Number);
     const target = getNextDate(m - 1, d, now);
     const prevYear = new Date(target);
     prevYear.setFullYear(prevYear.getFullYear() - 1);
@@ -326,158 +327,104 @@ const LifeProgress = () => {
     const elapsed = now.getTime() - prevYear.getTime();
     const progress = total > 0 ? elapsed / total : 1;
     const msLeft = target.getTime() - now.getTime();
-    return { emoji: "💖", name: `${b.name}'s Birthday`, timeLeft: formatTimeLeft(msLeft), progress, msLeft, color: "from-pink-400 to-rose-500", idx };
+    return { emoji: "💖", name: `${b.name}'s Birthday`, timeLeft: formatTimeLeft(msLeft), progress, msLeft, color: "from-pink-400 to-rose-500", id: b.id ?? idx };
   });
 
   const showBirthdays = filter === "all" || filter === "custom";
 
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
-      {/* Starfield background */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background" />
         {Array.from({ length: 60 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full bg-foreground/20 animate-pulse"
-            style={{
-              width: Math.random() * 3 + 1,
-              height: Math.random() * 3 + 1,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 4}s`,
-              animationDuration: `${2 + Math.random() * 3}s`,
-            }}
-          />
+          <div key={i} className="absolute rounded-full bg-foreground/20 animate-pulse" style={{
+            width: Math.random() * 3 + 1, height: Math.random() * 3 + 1,
+            top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 4}s`, animationDuration: `${2 + Math.random() * 3}s`,
+          }} />
         ))}
         <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-neon-purple/5 rounded-full blur-[150px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-neon-cyan/5 rounded-full blur-[150px]" />
       </div>
 
       <div className="relative z-10 max-w-3xl mx-auto px-4 py-8">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <Link to="/">
-            <Button variant="ghost" size="sm" className="gap-2 font-display">
-              <ArrowLeft className="w-4 h-4" /> Back
+          <Link to="/"><Button variant="ghost" size="sm" className="gap-2 font-display"><ArrowLeft className="w-4 h-4" /> Back</Button></Link>
+          <div className="flex items-center gap-2">
+            {!user && (
+              <Link to="/auth">
+                <Button variant="outline" size="sm" className="gap-2 font-display">
+                  <LogIn className="w-4 h-4" /> Login to Save
+                </Button>
+              </Link>
+            )}
+            <Button variant="outline" size="sm" onClick={() => setShowAddModal(true)} className="gap-2 font-display">
+              <Plus className="w-4 h-4" /> Add Birthday
             </Button>
-          </Link>
-          <Button variant="outline" size="sm" onClick={() => setShowAddModal(true)} className="gap-2 font-display">
-            <Plus className="w-4 h-4" /> Add Birthday
-          </Button>
+          </div>
         </div>
 
         <div className="text-center mb-10">
-          <h1 className="font-display text-3xl sm:text-5xl font-black tracking-tight mb-2">
-            ⏳ Life & Universe Progress
-          </h1>
+          <h1 className="font-display text-3xl sm:text-5xl font-black tracking-tight mb-2">⏳ Life & Universe Progress</h1>
           <p className="text-muted-foreground text-sm sm:text-base">See how far away the future really is.</p>
+          {user && <p className="text-xs text-neon-cyan mt-1 font-display">✓ Logged in — birthdays are saved to your account</p>}
         </div>
 
-        {/* Category filters */}
         <div className="flex flex-wrap justify-center gap-2 mb-8">
           {categories.map((c) => (
-            <Button
-              key={c.key}
-              variant={filter === c.key ? "default" : "outline"}
-              size="sm"
-              onClick={() => setFilter(c.key)}
-              className="font-display text-xs"
-            >
+            <Button key={c.key} variant={filter === c.key ? "default" : "outline"} size="sm" onClick={() => setFilter(c.key)} className="font-display text-xs">
               {c.label}
             </Button>
           ))}
         </div>
 
-        {/* Event list */}
         <div className="space-y-3">
           {computedEvents.map((e, i) => (
-            <ProgressBar
-              key={`${e.name}-${i}`}
-              emoji={e.emoji}
-              name={e.name}
-              timeLeft={e.timeLeft}
-              progress={e.progress}
-              colorClass={e.color}
-              isShort={e.category === "short"}
-            />
+            <ProgressBar key={`${e.name}-${i}`} emoji={e.emoji} name={e.name} timeLeft={e.timeLeft} progress={e.progress} colorClass={e.color} isShort={e.category === "short"} />
           ))}
 
-          {/* Custom birthdays */}
           {showBirthdays && birthdayEvents.map((b) => (
-            <div key={b.idx} className="relative">
-              <ProgressBar
-                emoji={b.emoji}
-                name={b.name}
-                timeLeft={b.timeLeft}
-                progress={b.progress}
-                colorClass={b.color}
-                isShort={false}
-              />
-              <button
-                onClick={() => removeBirthday(b.idx)}
-                className="absolute top-3 right-3 p-1 rounded-full hover:bg-destructive/20 text-muted-foreground hover:text-destructive transition-colors"
-              >
+            <div key={b.id} className="relative">
+              <ProgressBar emoji={b.emoji} name={b.name} timeLeft={b.timeLeft} progress={b.progress} colorClass={b.color} isShort={false} />
+              <button onClick={() => removeBirthday(b.id)} className="absolute top-3 right-3 p-1 rounded-full hover:bg-destructive/20 text-muted-foreground hover:text-destructive transition-colors">
                 <Trash2 className="w-3 h-3" />
               </button>
             </div>
           ))}
         </div>
 
-        {/* Footer */}
         <div className="mt-16 text-center">
-          <p className="text-xs text-muted-foreground/40 font-display tracking-wider uppercase">
-            Time waits for no one
-          </p>
+          <p className="text-xs text-muted-foreground/40 font-display tracking-wider uppercase">Time waits for no one</p>
         </div>
       </div>
 
-      {/* Add Birthday Modal */}
       <AnimatePresence>
         {showAddModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
-            onClick={() => setShowAddModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
+            onClick={() => setShowAddModal(false)}>
+            <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}
               className="glass-panel rounded-2xl p-6 max-w-sm w-full mx-4 border border-border/50"
-              onClick={(e) => e.stopPropagation()}
-            >
+              onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-display text-lg font-bold">💖 Add Birthday</h2>
-                <button onClick={() => setShowAddModal(false)} className="p-1 rounded hover:bg-muted">
-                  <X className="w-4 h-4" />
-                </button>
+                <button onClick={() => setShowAddModal(false)} className="p-1 rounded hover:bg-muted"><X className="w-4 h-4" /></button>
               </div>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-display mb-1 text-muted-foreground">Name</label>
-                  <input
-                    type="text"
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    placeholder="e.g. Anita"
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-display focus:outline-none focus:ring-2 focus:ring-neon-purple/50"
-                  />
+                  <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="e.g. Anita" maxLength={100}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-display focus:outline-none focus:ring-2 focus:ring-neon-purple/50" />
                 </div>
                 <div>
                   <label className="block text-sm font-display mb-1 text-muted-foreground">Birthday</label>
-                  <input
-                    type="date"
-                    value={newDate}
-                    onChange={(e) => setNewDate(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-display focus:outline-none focus:ring-2 focus:ring-neon-purple/50"
-                  />
+                  <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-display focus:outline-none focus:ring-2 focus:ring-neon-purple/50" />
                 </div>
                 <Button onClick={addBirthday} className="w-full font-display" disabled={!newName.trim() || !newDate}>
                   Add Birthday
                 </Button>
+                {!user && <p className="text-xs text-muted-foreground text-center">💡 <Link to="/auth" className="text-neon-cyan underline">Sign in</Link> to save permanently</p>}
               </div>
             </motion.div>
           </motion.div>
