@@ -159,12 +159,6 @@ const games = [
     description: "Test your reflex speed.",
     comingSoon: true,
   },
-  {
-    icon: "🎯",
-    title: "Code Randomizer",
-    description: "Randomly select who writes the code.",
-    comingSoon: true,
-  },
 ];
 
 const Index = () => {
