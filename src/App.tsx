@@ -32,6 +32,7 @@ import MotivationHub from "./pages/motivation/MotivationHub";
 import TicTacToe from "./pages/TicTacToe";
 import VisualCodeLab from "./pages/visualcode/VisualCodeLab";
 import QuizCompetition from "./pages/quiz-competition/QuizCompetition";
+import LoopArcade from "./pages/LoopArcade";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -74,6 +75,7 @@ const App = () => (
             <Route path="/tic-tac-toe" element={<TicTacToe />} />
             <Route path="/visualcode-lab" element={<VisualCodeLab />} />
             <Route path="/quiz-competition" element={<QuizCompetition />} />
+            <Route path="/loop-arcade" element={<LoopArcade />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

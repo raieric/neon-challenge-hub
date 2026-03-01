@@ -152,6 +152,12 @@ const games = [
     description: "Host-controlled multi-team quiz system for live events.",
     to: "/quiz-competition",
   },
+  {
+    icon: "🕹️",
+    title: "Loop Arcade",
+    description: "Click speed, color tap, memory & target shoot mini games.",
+    to: "/loop-arcade",
+  },
 ];
 
 const Index = () => {
