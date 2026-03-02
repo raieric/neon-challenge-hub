@@ -7,6 +7,14 @@ import { Button } from "@/components/ui/button";
 import { LogIn, LogOut } from "lucide-react";
 import Footer from "@/components/Footer";
 import SnakeEscapeAnimation from "@/components/SnakeEscapeAnimation";
+import {
+  SpinWheelAnim, RPSAnim, SpotlightAnim, NetworkAnim, RocketAnim,
+  TrolleyAnim, CodeTypingAnim, ScaleAnim, GavelAnim, TimelineAnim,
+  MoneyRainAnim, DrawCircleAnim, MemoryMatchAnim, LifeProgressAnim,
+  UniverseAnim, PasswordAnim, ImposterAnim, WordBingoAnim,
+  NumberBingoAnim, SpeakingAnim, FlameAnim, TicTacToeAnim,
+  CodeFlowAnim, PodiumAnim,
+} from "@/components/CardAnimations";
 
 const games = [
   {
@@ -14,150 +22,175 @@ const games = [
     title: "Spin The Wheel",
     description: "Let fate decide your classroom challenge.",
     to: "/spin",
+    animation: <SpinWheelAnim />,
   },
   {
     icon: "✊",
     title: "Rock Paper Scissors",
     description: "Play against the computer with animated battle effects!",
     to: "/rps",
+    animation: <RPSAnim />,
   },
   {
     icon: "🎤",
     title: "Spin The Wheel 2 – Personality Arena",
     description: "Step into the spotlight. Express, perform, and impress.",
     to: "/spin2",
+    animation: <SpotlightAnim />,
   },
   {
     icon: "🎯",
     title: "Social Arena – Group Dynamics",
     description: "Collaboration. Pressure. Interaction.",
     to: "/social",
+    animation: <NetworkAnim />,
   },
   {
     icon: "🚀",
     title: "Visionary Arena – Big Ideas Lab",
     description: "Think beyond code. Lead the future.",
     to: "/visionary",
+    animation: <RocketAnim />,
   },
   {
     icon: "🚂",
     title: "Trolley Simulator",
     description: "25 moral dilemmas. No right answers.",
     to: "/trolley",
+    animation: <TrolleyAnim />,
   },
   {
     icon: "💻",
     title: "Programming Quiz Portal",
     description: "Test your programming fundamentals.",
     to: "/quiz",
+    animation: <CodeTypingAnim />,
   },
   {
     icon: "⚖️",
     title: "Let's Settle This",
     description: "Choose your side. The class decides.",
     to: "/settle",
+    animation: <ScaleAnim />,
   },
   {
     icon: "💰",
     title: "Auction Challenge",
     description: "How much is it really worth?",
     to: "/auction",
+    animation: <GavelAnim />,
   },
   {
     icon: "📜",
     title: "Who Was Alive?",
     description: "Enter a year. Discover history.",
     to: "/alive",
+    animation: <TimelineAnim />,
   },
   {
     icon: "💰",
     title: "Spend Billionaire's Money",
     description: "Choose a billionaire and blow their fortune!",
     to: "/spend-binod",
+    animation: <MoneyRainAnim />,
   },
   {
     icon: "⭕",
     title: "Draw a Perfect Circle",
     description: "Steady hands. Pure geometry.",
     to: "/circle",
+    animation: <DrawCircleAnim />,
   },
   {
     icon: "🧩",
     title: "Memory Match",
     description: "Match programming concepts with definitions.",
     to: "/memory-match",
+    animation: <MemoryMatchAnim />,
   },
   {
     icon: "⏳",
     title: "Life & Universe Progress",
     description: "How long until…?",
     to: "/life-progress",
+    animation: <LifeProgressAnim />,
   },
   {
     icon: "🌌",
     title: "Universe Forecast",
     description: "The future of everything.",
     to: "/universe-forecast",
+    animation: <UniverseAnim />,
   },
   {
     icon: "🔐",
     title: "Infinite Password Challenge",
     description: "Strong enough yet?",
     to: "/password-challenge",
+    animation: <PasswordAnim />,
   },
   {
     icon: "🎭",
     title: "Who is the Imposter?",
     description: "Find the imposter before it's too late.",
     to: "/imposter",
+    animation: <ImposterAnim />,
   },
   {
     icon: "🔤",
     title: "Word Bingo",
     description: "Match words and complete a winning line.",
     to: "/word-bingo",
+    animation: <WordBingoAnim />,
   },
   {
     icon: "🎱",
     title: "Lucky Number Bingo",
     description: "Mark your numbers before someone shouts BINGO!",
     to: "/number-bingo",
+    animation: <NumberBingoAnim />,
   },
   {
     icon: "🎙️",
     title: "Impromptu Speaking",
     description: "Get a random topic. Speak for 60 seconds. Improve daily.",
     to: "/impromptu",
+    animation: <SpeakingAnim />,
   },
   {
     icon: "⚡",
     title: "Motivation Lab",
     description: "Small actions. Massive consequences.",
     to: "/motivation",
+    animation: <FlameAnim />,
   },
   {
     icon: "❌",
     title: "Tic-Tac-Toe",
     description: "Think ahead. Control the board.",
     to: "/tic-tac-toe",
+    animation: <TicTacToeAnim />,
   },
   {
     icon: "⚡",
     title: "VisualCode Lab",
     description: "Visualize real code execution with animated memory, variables, and function flow.",
     to: "/visualcode-lab",
+    animation: <CodeFlowAnim />,
   },
   {
     icon: "🏆",
     title: "Live Quiz Competition",
     description: "Host-controlled multi-team quiz system for live events.",
     to: "/quiz-competition",
+    animation: <PodiumAnim />,
   },
   {
     icon: "🕹️",
     title: "Loop Arcade",
     description: "Click speed, color tap, memory & target shoot mini games.",
     to: "/loop-arcade",
+    animation: <SnakeEscapeAnimation />,
   },
 ];
 
@@ -211,7 +244,6 @@ const Index = () => {
               key={game.title}
               {...game}
               delay={i * 150}
-              {...(game.to === "/loop-arcade" ? { animation: <SnakeEscapeAnimation /> } : {})}
             />
           ))}
         </div>
