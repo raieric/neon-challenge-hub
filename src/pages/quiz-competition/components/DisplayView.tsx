@@ -178,26 +178,24 @@ const DisplayView = ({ state }: DisplayViewProps) => {
             ))}
           </div>
 
-          {/* Questions list */}
-          <div className="flex-1 overflow-auto p-2 space-y-1">
-            {state.filteredQuestions.map((q: any, i: number) => (
-              <button
-                key={q.id}
-                className={`w-full text-left p-2 rounded-lg border transition-all
-                  ${q.used ? 'opacity-30 border-white/5' : 'border-white/10 hover:border-neon-cyan/30 hover:bg-neon-cyan/5'}
-                  ${i === state.currentQuestionIndex && state.showQuestion ? 'border-neon-cyan/50 bg-neon-cyan/10' : ''}`}
-                onClick={() => { state.selectQuestion(i); state.markQuestionUsed(q.id); }}
-              >
-                <p className="text-xs text-foreground leading-tight">{q.text}</p>
-                <div className="flex items-center gap-1 mt-1">
-                  <span className="text-[9px] text-muted-foreground">{q.category}</span>
-                  <span className={`px-1 py-0.5 rounded text-[8px] font-bold uppercase
-                    ${q.difficulty === 'easy' ? 'bg-green-500/20 text-green-400' : q.difficulty === 'medium' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}`}>
-                    {q.difficulty}
-                  </span>
-                </div>
-              </button>
-            ))}
+          {/* Questions grid - numbered tiles */}
+          <div className="flex-1 overflow-auto p-3">
+            <div className="grid grid-cols-4 gap-2">
+              {state.filteredQuestions.map((q: any, i: number) => (
+                <button
+                  key={q.id}
+                  className={`aspect-square flex flex-col items-center justify-center rounded-lg border text-sm font-bold transition-all
+                    ${q.used ? 'opacity-20 border-white/5 cursor-not-allowed' : 'border-white/10 hover:border-neon-cyan/40 hover:bg-neon-cyan/10 hover:scale-105'}
+                    ${i === state.currentQuestionIndex && state.showQuestion ? 'border-neon-cyan/60 bg-neon-cyan/20 ring-1 ring-neon-cyan/30' : 'bg-white/5'}`}
+                  onClick={() => { if (!q.used) { state.selectQuestion(i); state.markQuestionUsed(q.id); } }}
+                  disabled={q.used}
+                >
+                  <span className="text-lg text-foreground">{i + 1}</span>
+                  <span className={`mt-0.5 w-2 h-2 rounded-full
+                    ${q.difficulty === 'easy' ? 'bg-green-400' : q.difficulty === 'medium' ? 'bg-amber-400' : 'bg-red-400'}`} />
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}
