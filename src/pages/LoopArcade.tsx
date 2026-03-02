@@ -460,14 +460,20 @@ const SnakeEscapeGame = () => {
     escaping: false,
     escapeProgress: 0,
     escaped: false,
+    hunting: false,
+    huntTarget: 0,
+    snakeX: 0,
+    snakeY: 0,
+    huntPause: 0,
+    frogsEaten: 0,
     resetTimer: 0,
     confetti: [] as { x: number; y: number; vx: number; vy: number; color: string; life: number }[],
     gapAngle: Math.random() * TAU,
     frogs: [
-      { angle: 0, speed: -0.004, croaking: false, croakTimer: 1500 + Math.random() * 2000, shocked: false, laughing: false },
-      { angle: TAU / 3, speed: -0.005, croaking: false, croakTimer: 1500 + Math.random() * 2000, shocked: false, laughing: false },
-      { angle: (TAU * 2) / 3, speed: -0.003, croaking: false, croakTimer: 1500 + Math.random() * 2000, shocked: false, laughing: false },
-    ] as SEFrog[],
+      { angle: 0, speed: -0.004, croaking: false, croakTimer: 1500 + Math.random() * 2000, shocked: false, laughing: false, eaten: false },
+      { angle: TAU / 3, speed: -0.005, croaking: false, croakTimer: 1500 + Math.random() * 2000, shocked: false, laughing: false, eaten: false },
+      { angle: (TAU * 2) / 3, speed: -0.003, croaking: false, croakTimer: 1500 + Math.random() * 2000, shocked: false, laughing: false, eaten: false },
+    ] as (SEFrog & { eaten: boolean })[],
     tonguePhase: 0,
     escapeCount: 0,
   });
@@ -519,6 +525,7 @@ const SnakeEscapeGame = () => {
 
     // Frogs
     for (const frog of s.frogs) {
+      if (frog.eaten) continue;
       if (!s.escaped) {
         frog.angle = (frog.angle + frog.speed) % TAU;
         if (frog.angle < 0) frog.angle += TAU;
@@ -578,36 +585,31 @@ const SnakeEscapeGame = () => {
     }
 
     // Snake logic
-    if (s.escaping && !s.escaped) {
+    if (s.escaping && !s.escaped && !s.hunting) {
       let diff = s.gapAngle - s.snakeAngle;
       if (diff > Math.PI) diff -= TAU;
       if (diff < -Math.PI) diff += TAU;
       if (Math.abs(diff) < 0.05) {
         s.escaped = true;
-        s.escapeProgress = 0;
-        s.resetTimer = 3000;
+        s.hunting = true;
+        s.huntTarget = 0;
+        s.frogsEaten = 0;
+        s.huntPause = 0;
+        s.snakeX = SE_CX + Math.cos(s.gapAngle) * SE_TRACK_R;
+        s.snakeY = SE_CY + Math.sin(s.gapAngle) * SE_TRACK_R;
         s.escapeCount++;
         setEscapes(s.escapeCount);
         setHigh("snake", s.escapeCount);
         setHighScoreState(getHigh("snake"));
         s.frogs.forEach(f => { f.shocked = true; });
-        for (let i = 0; i < 30; i++) {
-          s.confetti.push({
-            x: gx, y: gy,
-            vx: (Math.random() - 0.5) * 4,
-            vy: (Math.random() - 0.5) * 4,
-            color: ["#ff0", "#0ff", "#f0f", "#0f0", "#f90"][Math.floor(Math.random() * 5)],
-            life: 70,
-          });
-        }
       } else {
         s.snakeAngle += Math.sign(diff) * SE_SNAKE_SPEED * 2.5;
       }
-    } else if (!s.escaped) {
+    } else if (!s.escaped && !s.hunting) {
       s.snakeAngle = (s.snakeAngle + SE_SNAKE_SPEED * s.snakeDir) % TAU;
     }
 
-    // Draw snake
+    // Draw snake on track
     if (!s.escaped) {
       const segments = 25;
       ctx.lineCap = "round";
@@ -654,33 +656,98 @@ const SnakeEscapeGame = () => {
         ctx.lineTo(tx + Math.cos(tongueDir - 0.4) * 3, ty + Math.sin(tongueDir - 0.4) * 3);
         ctx.stroke();
       }
-    } else {
-      s.escapeProgress += 0.02;
-      const escR = SE_TRACK_R + s.escapeProgress * 60;
-      if (s.escapeProgress < 1) {
-        const hx = SE_CX + Math.cos(s.gapAngle) * escR;
-        const hy = SE_CY + Math.sin(s.gapAngle) * escR;
-        ctx.fillStyle = "#22aa33";
-        ctx.globalAlpha = 1 - s.escapeProgress;
-        ctx.beginPath();
-        ctx.arc(hx, hy, 6, 0, TAU);
-        ctx.fill();
-        ctx.globalAlpha = 1;
+    } else if (s.hunting) {
+      // Snake hunts frogs one by one
+      const uneaten = s.frogs.filter(f => !f.eaten);
+      if (uneaten.length === 0) {
+        // All eaten - pause then reset
+        s.huntPause += dt;
+        if (s.huntPause > 1500) {
+          s.hunting = false;
+          s.escaped = false;
+          s.escaping = false;
+          s.escapeProgress = 0;
+          s.confetti = [];
+          s.snakeAngle = Math.random() * TAU;
+          s.snakeDir = 1;
+          s.gapAngle = Math.random() * TAU;
+          s.frogs.forEach(f => {
+            f.shocked = false;
+            f.laughing = false;
+            f.eaten = false;
+            f.angle = Math.random() * TAU;
+          });
+        }
+      } else {
+        // Move toward nearest uneaten frog
+        const target = uneaten[0];
+        const tx = SE_CX + Math.cos(target.angle) * SE_FROG_R;
+        const ty = SE_CY + Math.sin(target.angle) * SE_FROG_R;
+        const dx = tx - s.snakeX;
+        const dy = ty - s.snakeY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const huntSpeed = 3.5;
+        if (dist < 8) {
+          // Eat the frog!
+          target.eaten = true;
+          s.frogsEaten++;
+          // Confetti burst at frog position
+          for (let i = 0; i < 15; i++) {
+            s.confetti.push({
+              x: tx, y: ty,
+              vx: (Math.random() - 0.5) * 4,
+              vy: (Math.random() - 0.5) * 4,
+              color: ["#ff0", "#0ff", "#f0f", "#0f0", "#f90"][Math.floor(Math.random() * 5)],
+              life: 50,
+            });
+          }
+          // After eating all, start pause timer
+          if (s.frogs.every(f => f.eaten)) {
+            s.huntPause = 0;
+          }
+        } else {
+          s.snakeX += (dx / dist) * huntSpeed;
+          s.snakeY += (dy / dist) * huntSpeed;
+        }
       }
-      s.resetTimer -= dt;
-      if (s.resetTimer <= 0) {
-        s.snakeAngle = Math.random() * TAU;
-        s.snakeDir = 1;
-        s.escaping = false;
-        s.escaped = false;
-        s.escapeProgress = 0;
-        s.confetti = [];
-        s.gapAngle = Math.random() * TAU;
-        s.frogs.forEach(f => {
-          f.shocked = false;
-          f.laughing = false;
-          f.angle = Math.random() * TAU;
-        });
+
+      // Draw hunting snake (free-roaming)
+      const headWobble = Math.sin(s.tonguePhase * 2) * 1;
+      // Body trail segments behind head
+      ctx.fillStyle = "#22aa33";
+      ctx.beginPath();
+      ctx.arc(s.snakeX + headWobble, s.snakeY, 8, 0, TAU);
+      ctx.fill();
+      // Angry eyes
+      ctx.fillStyle = "#ff0";
+      ctx.beginPath();
+      ctx.arc(s.snakeX - 3, s.snakeY - 3, 2.5, 0, TAU);
+      ctx.arc(s.snakeX + 3, s.snakeY - 3, 2.5, 0, TAU);
+      ctx.fill();
+      ctx.fillStyle = "#c00";
+      ctx.beginPath();
+      ctx.arc(s.snakeX - 3, s.snakeY - 3, 1, 0, TAU);
+      ctx.arc(s.snakeX + 3, s.snakeY - 3, 1, 0, TAU);
+      ctx.fill();
+      // Tongue always out while hunting
+      const uneatenNow = s.frogs.filter(f => !f.eaten);
+      if (uneatenNow.length > 0) {
+        const tgt = uneatenNow[0];
+        const tgx = SE_CX + Math.cos(tgt.angle) * SE_FROG_R;
+        const tgy = SE_CY + Math.sin(tgt.angle) * SE_FROG_R;
+        const tongueDir = Math.atan2(tgy - s.snakeY, tgx - s.snakeX);
+        ctx.strokeStyle = "#ff3333";
+        ctx.lineWidth = 1.2;
+        const tLen = 10 + Math.sin(s.tonguePhase * 3) * 3;
+        ctx.beginPath();
+        ctx.moveTo(s.snakeX, s.snakeY);
+        const ttx = s.snakeX + Math.cos(tongueDir) * tLen;
+        const tty = s.snakeY + Math.sin(tongueDir) * tLen;
+        ctx.lineTo(ttx, tty);
+        ctx.lineTo(ttx + Math.cos(tongueDir + 0.4) * 3, tty + Math.sin(tongueDir + 0.4) * 3);
+        ctx.moveTo(ttx, tty);
+        ctx.lineTo(ttx + Math.cos(tongueDir - 0.4) * 3, tty + Math.sin(tongueDir - 0.4) * 3);
+        ctx.stroke();
       }
     }
 
@@ -719,7 +786,7 @@ const SnakeEscapeGame = () => {
           <p className="text-3xl font-black font-display text-neon-cyan">{highScore}</p>
         </div>
       </div>
-      <p className="text-xs text-muted-foreground font-body">Watch the snake escape when a frog croaks near the gap!</p>
+      <p className="text-xs text-muted-foreground font-body">Watch the snake escape and eat all frogs when one croaks near the gap!</p>
       <canvas
         ref={canvasRef}
         className="w-full max-w-sm h-72 sm:h-80 rounded-xl border border-border/30"
