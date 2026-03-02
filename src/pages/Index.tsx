@@ -70,8 +70,8 @@ const games = [
   },
   {
     icon: "💰",
-    title: "Spend Binod's Money",
-    description: "Can you spend $2 billion?",
+    title: "Spend Billionaire's Money",
+    description: "Choose a billionaire and blow their fortune!",
     to: "/spend-binod",
   },
   {

@@ -6,7 +6,25 @@ import { motion, AnimatePresence } from "framer-motion";
 import binodPhoto from "@/assets/binod-chaudhary.jpg";
 import Confetti from "@/components/Confetti";
 
-const STARTING_BALANCE = 2_000_000_000;
+interface Billionaire {
+  id: string;
+  name: string;
+  netWorth: number;
+  photo: string;
+  emoji: string;
+  description: string;
+}
+
+const billionaires: Billionaire[] = [
+  { id: "binod", name: "Binod Chaudhary", netWorth: 2_000_000_000, photo: binodPhoto, emoji: "🇳🇵", description: "Nepal's only billionaire – Wai Wai king" },
+  { id: "mukesh", name: "Mukesh Ambani", netWorth: 116_000_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Mukesh_Ambani.jpg/440px-Mukesh_Ambani.jpg", emoji: "🇮🇳", description: "Chairman of Reliance Industries" },
+  { id: "elon", name: "Elon Musk", netWorth: 250_000_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/440px-Elon_Musk_Royal_Society_%28crop2%29.jpg", emoji: "🚀", description: "CEO of Tesla & SpaceX" },
+  { id: "zuck", name: "Mark Zuckerberg", netWorth: 177_000_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/440px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg", emoji: "👤", description: "CEO of Meta (Facebook)" },
+  { id: "pavel", name: "Pavel Durov", netWorth: 15_500_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Pavel_Durov_in_2024_%28cropped%29.jpg/440px-Pavel_Durov_in_2024_%28cropped%29.jpg", emoji: "✈️", description: "Founder of Telegram" },
+  { id: "bezos", name: "Jeff Bezos", netWorth: 200_000_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Jeff_Bezos_at_Amazon_Spheres_Grand_Opening_in_Seattle_-_2018_%2839074799225%29_%28cropped%29.jpg/440px-Jeff_Bezos_at_Amazon_Spheres_Grand_Opening_in_Seattle_-_2018_%2839074799225%29_%28cropped%29.jpg", emoji: "📦", description: "Founder of Amazon" },
+  { id: "gates", name: "Bill Gates", netWorth: 128_000_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Bill_Gates_2017_%28cropped%29.jpg/440px-Bill_Gates_2017_%28cropped%29.jpg", emoji: "💻", description: "Co-founder of Microsoft" },
+  { id: "buffett", name: "Warren Buffett", netWorth: 133_000_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Warren_Buffett_KU_Visit.jpg/440px-Warren_Buffett_KU_Visit.jpg", emoji: "📈", description: "CEO of Berkshire Hathaway" },
+];
 
 interface Item {
   id: number;
@@ -72,9 +90,32 @@ const items: Item[] = [
   { id: 53, name: "Nepali Film Production", price: 2000000, image: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200&h=200&fit=crop", category: "Large" },
   { id: 54, name: "Cargo Ship", price: 35000000, image: "https://images.unsplash.com/photo-1524522173746-f628baad3644?w=200&h=200&fit=crop", category: "Large" },
   { id: 55, name: "PlayStation 5 Bundle", price: 600, image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=200&h=200&fit=crop", category: "Small" },
+  // Extra big-ticket items for mega billionaires
+  { id: 56, name: "NBA Basketball Team", price: 2_500_000_000, image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 57, name: "Social Media Company", price: 10_000_000_000, image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 58, name: "Mars Colony Mission", price: 20_000_000_000, image: "https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 59, name: "Aircraft Carrier", price: 13_000_000_000, image: "https://images.unsplash.com/photo-1569974507005-6dc61f97fb5c?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 60, name: "Undersea Cable Network", price: 5_000_000_000, image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 61, name: "Space Station Module", price: 3_000_000_000, image: "https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 62, name: "Premier League Club", price: 4_000_000_000, image: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 63, name: "Semiconductor Factory", price: 15_000_000_000, image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 64, name: "Hyperloop Network", price: 8_000_000_000, image: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 65, name: "Nuclear Power Plant", price: 25_000_000_000, image: "https://images.unsplash.com/photo-1591529824855-667a60e5b3c2?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 66, name: "Global Vaccine Program", price: 7_000_000_000, image: "https://images.unsplash.com/photo-1584483766114-2cea6facdf57?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 67, name: "Tropical Island", price: 1_000_000_000, image: "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 68, name: "Luxury Cruise Ship", price: 1_500_000_000, image: "https://images.unsplash.com/photo-1548574505-5e239809ee19?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 69, name: "Self-Driving Car Company", price: 30_000_000_000, image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0afa?w=200&h=200&fit=crop", category: "Mega" },
+  { id: 70, name: "Global 5G Network", price: 50_000_000_000, image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=200&h=200&fit=crop", category: "Mega" },
 ].sort((a, b) => a.price - b.price);
 
 const formatMoney = (amount: number): string => {
+  if (amount >= 1_000_000_000) return "$" + (amount / 1_000_000_000).toFixed(2) + "B";
+  if (amount >= 1_000_000) return "$" + (amount / 1_000_000).toFixed(2) + "M";
+  if (Number.isInteger(amount)) return "$" + amount.toLocaleString("en-US");
+  return "$" + amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
+const formatMoneyFull = (amount: number): string => {
   if (Number.isInteger(amount)) return "$" + amount.toLocaleString("en-US");
   return "$" + amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
@@ -92,7 +133,6 @@ const playTone = (freq: number, dur: number, type: OscillatorType = "sine") => {
   } catch {}
 };
 
-// Animated counter component
 const AnimatedMoney = ({ value }: { value: number }) => {
   const [display, setDisplay] = useState(value);
   const rafRef = useRef<number>();
@@ -119,8 +159,68 @@ const AnimatedMoney = ({ value }: { value: number }) => {
   return <span>{formatMoney(rounded)}</span>;
 };
 
-const SpendBinod = () => {
-  const [balance, setBalance] = useState(STARTING_BALANCE);
+// ─── Selection Screen ───────────────────────────────────────────
+const BillionaireSelector = ({ onSelect }: { onSelect: (b: Billionaire) => void }) => {
+  return (
+    <div className="min-h-screen bg-background text-foreground relative">
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-neon-purple/8 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-neon-cyan/8 rounded-full blur-[120px]" />
+      </div>
+
+      <div className="relative z-10 max-w-5xl mx-auto px-4 py-8">
+        <div className="flex items-center mb-8">
+          <Link to="/">
+            <Button variant="ghost" size="sm" className="gap-2 font-display">
+              <ArrowLeft className="w-4 h-4" /> Back
+            </Button>
+          </Link>
+        </div>
+
+        <div className="text-center mb-10">
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mb-3">
+            💰 Spend a Billionaire's Money
+          </h1>
+          <p className="text-muted-foreground text-base sm:text-lg">
+            Whose fortune do you want to blow through?
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {billionaires.map((b, i) => (
+            <motion.button
+              key={b.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06 }}
+              onClick={() => onSelect(b)}
+              className="glass-panel rounded-xl p-4 text-center border border-border/50 hover:border-neon-cyan/40 hover:shadow-[0_0_30px_hsl(185_80%_50%/0.15)] transition-all duration-300 group"
+              whileHover={{ y: -4, scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <div className="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden border-3 border-neon-cyan/30 group-hover:border-neon-cyan/60 transition-colors">
+                <img
+                  src={b.photo}
+                  alt={b.name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+              <p className="font-display text-sm font-bold mb-1 truncate">{b.emoji} {b.name}</p>
+              <p className="text-neon-cyan font-display text-xs font-bold">{formatMoney(b.netWorth)}</p>
+              <p className="text-muted-foreground text-[10px] mt-1 leading-tight">{b.description}</p>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── Spending Screen ────────────────────────────────────────────
+const SpendingGame = ({ billionaire, onBack }: { billionaire: Billionaire; onBack: () => void }) => {
+  const startingBalance = billionaire.netWorth;
+  const [balance, setBalance] = useState(startingBalance);
   const [quantities, setQuantities] = useState<Record<number, number>>(() => {
     const q: Record<number, number> = {};
     items.forEach((i) => (q[i.id] = 0));
@@ -129,11 +229,10 @@ const SpendBinod = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const totalSpent = STARTING_BALANCE - balance;
+  const totalSpent = startingBalance - balance;
   const totalItems = Object.values(quantities).reduce((a, b) => a + b, 0);
 
   const buy = useCallback((item: Item) => {
-    // Use cents to avoid floating point issues
     const balanceCents = Math.round(balance * 100);
     const priceCents = Math.round(item.price * 100);
     if (balanceCents < priceCents) return;
@@ -158,7 +257,7 @@ const SpendBinod = () => {
   }, [balance, quantities]);
 
   const restart = () => {
-    setBalance(STARTING_BALANCE);
+    setBalance(startingBalance);
     const q: Record<number, number> = {};
     items.forEach((i) => (q[i.id] = 0));
     setQuantities(q);
@@ -170,13 +269,12 @@ const SpendBinod = () => {
     .filter((i) => quantities[i.id] > 0)
     .sort((a, b) => b.price - a.price)[0];
 
-  const spentPercent = Math.min(100, (totalSpent / STARTING_BALANCE) * 100);
+  const spentPercent = Math.min(100, (totalSpent / startingBalance) * 100);
 
   return (
     <div className="min-h-screen bg-background text-foreground relative">
       {showConfetti && <Confetti />}
 
-      {/* Ambient */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-[-20%] left-[-10%] w-[400px] h-[400px] bg-neon-purple/8 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] bg-neon-cyan/8 rounded-full blur-[120px]" />
@@ -185,11 +283,11 @@ const SpendBinod = () => {
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-6">
         {/* Nav */}
         <div className="flex items-center justify-between mb-6">
-          <Link to="/">
-            <Button variant="ghost" size="sm" className="gap-2 font-display">
-              <ArrowLeft className="w-4 h-4" /> Back
+          <div className="flex gap-2">
+            <Button variant="ghost" size="sm" onClick={onBack} className="gap-2 font-display">
+              <ArrowLeft className="w-4 h-4" /> Change Person
             </Button>
-          </Link>
+          </div>
           <Button variant="outline" size="sm" onClick={restart} className="gap-2 font-display">
             <RotateCcw className="w-4 h-4" /> Reset
           </Button>
@@ -199,18 +297,18 @@ const SpendBinod = () => {
         <div className="text-center mb-6">
           <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-4 border-neon-cyan/40 shadow-[0_0_30px_hsl(185_80%_50%/0.3)]">
             <img
-              src={binodPhoto}
-              alt="Binod Chaudhary"
+              src={billionaire.photo}
+              alt={billionaire.name}
               className="w-full h-full object-cover"
             />
           </div>
           <h1 className="font-display text-3xl sm:text-4xl font-black tracking-tight mb-1">
-            💰 Spend Binod Chaudhary's Money
+            💰 Spend {billionaire.name}'s Money
           </h1>
-          <p className="text-muted-foreground text-sm">Try to spend $2,000,000,000</p>
+          <p className="text-muted-foreground text-sm">Try to spend {formatMoneyFull(startingBalance)}</p>
         </div>
 
-        {/* Money Counter - Sticky */}
+        {/* Money Counter */}
         <div className="sticky top-0 z-20 mb-8 -mx-4 px-4 pt-2 pb-2 bg-background/80 backdrop-blur-md">
           <div className="rounded-2xl p-3 sm:p-4 text-center bg-gradient-to-r from-green-600/20 via-emerald-500/20 to-green-600/20 border border-green-500/30 shadow-[0_0_40px_hsl(140_60%_40%/0.15)]">
             <p className="text-xs text-muted-foreground mb-1 font-display tracking-wider uppercase">Remaining Balance</p>
@@ -248,7 +346,7 @@ const SpendBinod = () => {
                   />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-display font-bold text-sm truncate">{item.name}</h3>
-                    <p className="text-neon-cyan font-display font-bold text-base">{formatMoney(item.price)}</p>
+                    <p className="text-neon-cyan font-display font-bold text-base">{formatMoneyFull(item.price)}</p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between px-4 pb-4 gap-2">
@@ -294,19 +392,22 @@ const SpendBinod = () => {
             >
               <div className="text-5xl mb-4">🎉</div>
               <h2 className="font-display text-2xl font-black mb-2">You Spent It All!</h2>
-              <p className="text-muted-foreground text-sm mb-6">All $2,000,000,000 gone!</p>
+              <p className="text-muted-foreground text-sm mb-6">All {formatMoneyFull(startingBalance)} of {billionaire.name}'s money gone!</p>
               <div className="space-y-2 text-sm mb-6">
                 <p><span className="text-muted-foreground">Total Items: </span><span className="font-bold text-neon-cyan">{totalItems}</span></p>
                 {mostExpensiveBought && (
                   <p><span className="text-muted-foreground">Most Expensive: </span><span className="font-bold text-neon-pink">{mostExpensiveBought.name}</span></p>
                 )}
               </div>
-              <div className="flex gap-3 justify-center">
+              <div className="flex gap-3 justify-center flex-wrap">
                 <Button onClick={restart} className="font-display gap-2">
                   <RotateCcw className="w-4 h-4" /> Play Again
                 </Button>
+                <Button variant="outline" onClick={onBack} className="font-display">
+                  Choose Another
+                </Button>
                 <Link to="/">
-                  <Button variant="outline" className="font-display">Home</Button>
+                  <Button variant="ghost" className="font-display">Home</Button>
                 </Link>
               </div>
             </motion.div>
@@ -315,6 +416,17 @@ const SpendBinod = () => {
       </AnimatePresence>
     </div>
   );
+};
+
+// ─── Main Component ─────────────────────────────────────────────
+const SpendBinod = () => {
+  const [selected, setSelected] = useState<Billionaire | null>(null);
+
+  if (!selected) {
+    return <BillionaireSelector onSelect={setSelected} />;
+  }
+
+  return <SpendingGame billionaire={selected} onBack={() => setSelected(null)} />;
 };
 
 export default SpendBinod;
