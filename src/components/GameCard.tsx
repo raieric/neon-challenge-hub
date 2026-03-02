@@ -7,9 +7,10 @@ interface GameCardProps {
   to?: string;
   comingSoon?: boolean;
   delay?: number;
+  animation?: React.ReactNode;
 }
 
-const GameCard = ({ icon, title, description, to, comingSoon, delay = 0 }: GameCardProps) => {
+const GameCard = ({ icon, title, description, to, comingSoon, delay = 0, animation }: GameCardProps) => {
   const content = (
     <div
       className={`
@@ -29,7 +30,11 @@ const GameCard = ({ icon, title, description, to, comingSoon, delay = 0 }: GameC
       <div className="absolute -inset-1 bg-gradient-to-r from-neon-purple/0 via-neon-cyan/0 to-neon-pink/0 group-hover:from-neon-purple/10 group-hover:via-neon-cyan/10 group-hover:to-neon-pink/10 rounded-xl transition-all duration-500 blur-xl pointer-events-none" />
 
       <div className="relative z-10">
-        <span className="text-4xl sm:text-5xl block mb-4">{icon}</span>
+        {animation ? (
+          <div className="mb-3">{animation}</div>
+        ) : (
+          <span className="text-4xl sm:text-5xl block mb-4">{icon}</span>
+        )}
         <h3 className="font-display text-lg sm:text-xl font-bold text-foreground mb-2 group-hover:text-glow-purple transition-all duration-300">
           {title}
         </h3>

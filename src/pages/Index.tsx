@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { LogIn, LogOut } from "lucide-react";
 import Footer from "@/components/Footer";
+import SnakeEscapeAnimation from "@/components/SnakeEscapeAnimation";
 
 const games = [
   {
@@ -206,7 +207,12 @@ const Index = () => {
         {/* Game Cards Grid */}
         <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {games.map((game, i) => (
-            <GameCard key={game.title} {...game} delay={i * 150} />
+            <GameCard
+              key={game.title}
+              {...game}
+              delay={i * 150}
+              {...(game.to === "/loop-arcade" ? { animation: <SnakeEscapeAnimation /> } : {})}
+            />
           ))}
         </div>
 
