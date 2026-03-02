@@ -248,3 +248,24 @@
   83% { color: hsl(300, 100%, 70%); }
   100% { color: hsl(360, 100%, 70%); }
 }
+
+@keyframes shuffle-slide {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+
+.animate-shuffle-slide {
+  animation: shuffle-slide 0.12s cubic-bezier(0.22, 0.68, 0.36, 1) forwards;
+}

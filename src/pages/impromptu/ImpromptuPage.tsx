@@ -38,7 +38,9 @@ const ImpromptuPage = () => {
   const [isShuffling, setIsShuffling] = useState(false);
   const [shuffleDisplay, setShuffleDisplay] = useState<string>("");
   const [shuffleCat, setShuffleCat] = useState<string>("");
-  const shuffleRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [shuffleAnimKey, setShuffleAnimKey] = useState(0);
+  const shuffleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
 
   const [remaining, setRemaining] = useState(TOTAL_SECONDS);
   const [isRunning, setIsRunning] = useState(false);
@@ -101,72 +103,109 @@ const ImpromptuPage = () => {
     pausedRemainingRef.current = TOTAL_SECONDS;
   }, [clearTimer]);
 
+  const playTick = useCallback((pitch: number = 800, volume: number = 0.15) => {
+    try {
+      if (!audioCtxRef.current) audioCtxRef.current = new AudioContext();
+      const ctx = audioCtxRef.current;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = pitch;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(volume, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.06);
+    } catch {}
+  }, []);
+
+  const playFinalDing = useCallback(() => {
+    try {
+      if (!audioCtxRef.current) audioCtxRef.current = new AudioContext();
+      const ctx = audioCtxRef.current;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 1200;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.4);
+    } catch {}
+  }, []);
+
   const generateTopic = useCallback(() => {
-    // Start shuffle animation
     setIsShuffling(true);
     setIsDone(false);
     clearTimer();
     setRemaining(TOTAL_SECONDS);
     pausedRemainingRef.current = TOTAL_SECONDS;
 
-    // Clear any existing shuffle
-    if (shuffleRef.current) clearInterval(shuffleRef.current);
+    if (shuffleRef.current) clearTimeout(shuffleRef.current);
 
     let count = 0;
-    const totalFlips = 15;
-    const baseInterval = 60;
+    const totalFlips = 18;
+    const baseInterval = 50;
 
     const doFlip = () => {
       const r = getRandomTopic(selectedFilter || undefined);
       setShuffleDisplay(r.topic);
       setShuffleCat(r.category);
+      setShuffleAnimKey((k) => k + 1);
+      playTick(600 + count * 30, 0.12);
       count++;
 
       if (count >= totalFlips) {
-        if (shuffleRef.current) clearInterval(shuffleRef.current);
         shuffleRef.current = null;
 
         // Final pick
         const final = getRandomTopic(selectedFilter || undefined, topic || undefined);
-        setTopic(final.topic);
-        setTopicCategory(final.category);
-        setShuffleDisplay(final.topic);
-        setShuffleCat(final.category);
-        setAccentColor(ACCENT_COLORS[Math.floor(Math.random() * ACCENT_COLORS.length)]);
-        setTopicKey((k) => k + 1);
-        setIsShuffling(false);
-
-        // Auto-start timer after shuffle
         setTimeout(() => {
-          startTimeRef.current = Date.now();
-          pausedRemainingRef.current = TOTAL_SECONDS;
-          setIsRunning(true);
-          intervalRef.current = setInterval(() => {
-            const elapsed = (Date.now() - startTimeRef.current) / 1000;
-            const newRemaining = Math.max(0, Math.round(pausedRemainingRef.current - elapsed));
-            setRemaining(newRemaining);
-            if (newRemaining <= 0) {
-              if (intervalRef.current) clearInterval(intervalRef.current);
-              intervalRef.current = null;
-              setIsRunning(false);
-              setIsDone(true);
-              setSessions((s) => s + 1);
-              setShowConfetti(true);
-              setQuote(MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)]);
-              setTimeout(() => setShowConfetti(false), 4000);
-            }
-          }, 100);
-        }, 300);
+          setTopic(final.topic);
+          setTopicCategory(final.category);
+          setShuffleDisplay(final.topic);
+          setShuffleCat(final.category);
+          setShuffleAnimKey((k) => k + 1);
+          setAccentColor(ACCENT_COLORS[Math.floor(Math.random() * ACCENT_COLORS.length)]);
+          setTopicKey((k) => k + 1);
+          setIsShuffling(false);
+          playFinalDing();
+
+          // Auto-start timer
+          setTimeout(() => {
+            startTimeRef.current = Date.now();
+            pausedRemainingRef.current = TOTAL_SECONDS;
+            setIsRunning(true);
+            intervalRef.current = setInterval(() => {
+              const elapsed = (Date.now() - startTimeRef.current) / 1000;
+              const newRemaining = Math.max(0, Math.round(pausedRemainingRef.current - elapsed));
+              setRemaining(newRemaining);
+              if (newRemaining <= 0) {
+                if (intervalRef.current) clearInterval(intervalRef.current);
+                intervalRef.current = null;
+                setIsRunning(false);
+                setIsDone(true);
+                setSessions((s) => s + 1);
+                setShowConfetti(true);
+                setQuote(MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)]);
+                setTimeout(() => setShowConfetti(false), 4000);
+              }
+            }, 100);
+          }, 300);
+        }, 200);
         return;
       }
 
-      // Slow down towards the end
-      const nextDelay = baseInterval + count * 30;
-      shuffleRef.current = setTimeout(doFlip, nextDelay) as any;
+      // Ease out: progressively slower
+      const nextDelay = baseInterval + Math.pow(count, 1.6) * 8;
+      shuffleRef.current = setTimeout(doFlip, nextDelay);
     };
 
-    shuffleRef.current = setTimeout(doFlip, baseInterval) as any;
-  }, [selectedFilter, topic, clearTimer]);
+    shuffleRef.current = setTimeout(doFlip, baseInterval);
+  }, [selectedFilter, topic, clearTimer, playTick, playFinalDing]);
 
   const minutes = Math.floor(remaining / 60);
   const seconds = remaining % 60;
@@ -245,14 +284,19 @@ const ImpromptuPage = () => {
           }}
         >
           {isShuffling ? (
-            <>
-              <span className="inline-block px-3 py-1 text-xs font-display font-bold tracking-wider uppercase bg-neon-purple/15 text-neon-purple border border-neon-purple/30 rounded-full mb-4 animate-pulse">
-                {shuffleCat || "Shuffling..."}
-              </span>
-              <p className="font-display text-xl sm:text-2xl md:text-3xl font-black text-foreground leading-snug transition-all duration-75">
-                "{shuffleDisplay}"
-              </p>
-            </>
+            <div className="overflow-hidden relative" style={{ minHeight: '100px' }}>
+              <div
+                key={shuffleAnimKey}
+                className="animate-shuffle-slide"
+              >
+                <span className="inline-block px-3 py-1 text-xs font-display font-bold tracking-wider uppercase bg-neon-purple/15 text-neon-purple border border-neon-purple/30 rounded-full mb-4">
+                  {shuffleCat || "Shuffling..."}
+                </span>
+                <p className="font-display text-xl sm:text-2xl md:text-3xl font-black text-foreground leading-snug">
+                  "{shuffleDisplay}"
+                </p>
+              </div>
+            </div>
           ) : topic ? (
             <>
               <span className="inline-block px-3 py-1 text-xs font-display font-bold tracking-wider uppercase bg-neon-cyan/15 text-neon-cyan border border-neon-cyan/30 rounded-full mb-4">
