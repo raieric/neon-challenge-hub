@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Edit3, ChevronRight, Users, Layers, HelpCircle, Clock, RotateCcw, Monitor, Trophy, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,9 @@ export default function HostPanel({ state }: HostPanelProps) {
   const [showAddQuestion, setShowAddQuestion] = useState(false);
   const [newQ, setNewQ] = useState({ text: '', answer: '', category: 'Programming' as string, difficulty: 'medium' as const });
   const [importJson, setImportJson] = useState('');
+  const [showImport, setShowImport] = useState(false);
+  const [importStatus, setImportStatus] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [customCategory, setCustomCategory] = useState('');
   const [allCategories, setAllCategories] = useState<string[]>([...categories]);
 
@@ -225,16 +228,62 @@ export default function HostPanel({ state }: HostPanelProps) {
 
             {/* Add question / import */}
             <div className="flex gap-2">
-              <Button size="sm" variant="secondary" className="gap-1 text-xs" onClick={() => setShowAddQuestion(!showAddQuestion)}>
+              <Button size="sm" variant="secondary" className="gap-1 text-xs" onClick={() => { setShowAddQuestion(!showAddQuestion); setShowImport(false); }}>
                 <Plus size={12} /> Add Question
               </Button>
-              <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={() => {
-                const result = state.importQuestions(importJson);
-                if (result) setImportJson('');
-              }}>
+              <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={() => { setShowImport(!showImport); setShowAddQuestion(false); setImportStatus(null); }}>
                 <Upload size={12} /> Import JSON
               </Button>
             </div>
+
+            {/* Import JSON panel */}
+            {showImport && (
+              <div className="glass-panel p-3 space-y-2">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Import questions from JSON</p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".json"
+                  className="hidden"
+                  onChange={e => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = ev => {
+                      const text = ev.target?.result as string;
+                      const result = state.importQuestions(text);
+                      setImportStatus(result ? `✅ Imported successfully from ${file.name}` : '❌ Invalid JSON format');
+                    };
+                    reader.readAsText(file);
+                    e.target.value = '';
+                  }}
+                />
+                <Button size="sm" variant="secondary" className="w-full gap-1 text-xs" onClick={() => fileInputRef.current?.click()}>
+                  <Upload size={12} /> Choose .json File
+                </Button>
+                <div className="relative">
+                  <p className="text-[10px] text-muted-foreground mb-1">Or paste JSON below:</p>
+                  <textarea
+                    value={importJson}
+                    onChange={e => setImportJson(e.target.value)}
+                    placeholder={'[\n  { "text": "Question?", "answer": "Answer", "category": "Programming", "difficulty": "easy" }\n]'}
+                    rows={5}
+                    className="w-full px-3 py-2 rounded-lg bg-muted/30 border border-white/10 text-xs text-foreground placeholder:text-muted-foreground/40 outline-none focus:border-neon-cyan/50 font-mono resize-none"
+                  />
+                </div>
+                <Button size="sm" className="w-full text-xs" onClick={() => {
+                  if (!importJson.trim()) return;
+                  const result = state.importQuestions(importJson);
+                  setImportStatus(result ? '✅ Imported successfully!' : '❌ Invalid JSON format. Expected an array of {text, answer, category, difficulty}');
+                  if (result) setImportJson('');
+                }}>
+                  Import Pasted JSON
+                </Button>
+                {importStatus && (
+                  <p className={`text-xs ${importStatus.startsWith('✅') ? 'text-green-400' : 'text-red-400'}`}>{importStatus}</p>
+                )}
+              </div>
+            )}
 
             {showAddQuestion && (
               <div className="glass-panel p-3 space-y-2">
