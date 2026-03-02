@@ -416,6 +416,14 @@ const ImpromptuPage = () => {
               ▶ Resume
             </button>
           )}
+          {topic && !isRunning && !isDone && remaining === timerDuration && (
+            <button
+              onClick={startTimer}
+              className="px-6 py-2.5 font-display text-sm font-bold tracking-widest uppercase rounded-lg border border-neon-green/50 text-neon-green hover:bg-neon-green/10 transition-all"
+            >
+              ▶ Start Timer
+            </button>
+          )}
           {(topic || isDone) && (
             <button
               onClick={resetTimer}
