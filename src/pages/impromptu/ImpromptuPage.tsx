@@ -5,7 +5,7 @@ import Confetti from "@/components/Confetti";
 import ParticleBackground from "@/components/ParticleBackground";
 import ThemeToggle from "@/components/ThemeToggle";
 
-const TOTAL_SECONDS = 60;
+const DURATION_OPTIONS = [60, 90, 120] as const;
 
 const MOTIVATIONAL_QUOTES = [
   "Every expert was once a beginner.",
@@ -42,7 +42,8 @@ const ImpromptuPage = () => {
   const shuffleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
 
-  const [remaining, setRemaining] = useState(TOTAL_SECONDS);
+  const [timerDuration, setTimerDuration] = useState(60);
+  const [remaining, setRemaining] = useState(60);
   const [isRunning, setIsRunning] = useState(false);
   const [isDone, setIsDone] = useState(false);
 
@@ -56,7 +57,7 @@ const ImpromptuPage = () => {
 
   // Accurate timer using refs
   const startTimeRef = useRef<number>(0);
-  const pausedRemainingRef = useRef<number>(TOTAL_SECONDS);
+  const pausedRemainingRef = useRef<number>(60);
 
   const clearTimer = useCallback(() => {
     if (intervalRef.current) {
@@ -97,11 +98,11 @@ const ImpromptuPage = () => {
 
   const resetTimer = useCallback(() => {
     clearTimer();
-    setRemaining(TOTAL_SECONDS);
+    setRemaining(timerDuration);
     setIsRunning(false);
     setIsDone(false);
-    pausedRemainingRef.current = TOTAL_SECONDS;
-  }, [clearTimer]);
+    pausedRemainingRef.current = timerDuration;
+  }, [clearTimer, timerDuration]);
 
   const playTick = useCallback((pitch: number = 800, volume: number = 0.15) => {
     try {
@@ -141,8 +142,8 @@ const ImpromptuPage = () => {
     setIsShuffling(true);
     setIsDone(false);
     clearTimer();
-    setRemaining(TOTAL_SECONDS);
-    pausedRemainingRef.current = TOTAL_SECONDS;
+    setRemaining(timerDuration);
+    pausedRemainingRef.current = timerDuration;
 
     if (shuffleRef.current) clearTimeout(shuffleRef.current);
 
@@ -177,7 +178,7 @@ const ImpromptuPage = () => {
           // Auto-start timer
           setTimeout(() => {
             startTimeRef.current = Date.now();
-            pausedRemainingRef.current = TOTAL_SECONDS;
+            pausedRemainingRef.current = timerDuration;
             setIsRunning(true);
             intervalRef.current = setInterval(() => {
               const elapsed = (Date.now() - startTimeRef.current) / 1000;
@@ -205,13 +206,13 @@ const ImpromptuPage = () => {
     };
 
     shuffleRef.current = setTimeout(doFlip, baseInterval);
-  }, [selectedFilter, topic, clearTimer, playTick, playFinalDing]);
+  }, [selectedFilter, topic, clearTimer, playTick, playFinalDing, timerDuration]);
 
   const minutes = Math.floor(remaining / 60);
   const seconds = remaining % 60;
   const timeStr = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
-  const progress = remaining / TOTAL_SECONDS;
+  const progress = remaining / timerDuration;
   const size = 220;
   const strokeWidth = 7;
   const r = size / 2 - strokeWidth - 4;
@@ -273,6 +274,30 @@ const ImpromptuPage = () => {
               <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
+        </div>
+
+        {/* Duration Selector */}
+        <div className="mb-6 flex items-center gap-2 animate-fade-in" style={{ animationDelay: "200ms" }}>
+          <span className="font-body text-xs text-muted-foreground uppercase tracking-wider mr-1">Timer:</span>
+          {DURATION_OPTIONS.map((d) => (
+            <button
+              key={d}
+              onClick={() => {
+                setTimerDuration(d);
+                setRemaining(d);
+                pausedRemainingRef.current = d;
+                clearTimer();
+                setIsRunning(false);
+                setIsDone(false);
+              }}
+              className={`px-3 py-1.5 rounded-lg font-display text-xs font-bold tracking-wider transition-all duration-200 hover:scale-105
+                ${timerDuration === d
+                  ? 'bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/40'
+                  : 'bg-muted/20 text-muted-foreground border border-transparent hover:bg-muted/40'}`}
+            >
+              {d === 60 ? '1 min' : d === 90 ? '1:30' : '2 min'}
+            </button>
+          ))}
         </div>
 
         {/* Topic Display */}
@@ -383,7 +408,7 @@ const ImpromptuPage = () => {
               ⏸ Pause
             </button>
           )}
-          {!isRunning && !isDone && remaining < TOTAL_SECONDS && remaining > 0 && (
+          {!isRunning && !isDone && remaining < timerDuration && remaining > 0 && (
             <button
               onClick={startTimer}
               className="px-6 py-2.5 font-display text-sm font-bold tracking-widest uppercase rounded-lg border border-neon-green/50 text-neon-green hover:bg-neon-green/10 transition-all"
