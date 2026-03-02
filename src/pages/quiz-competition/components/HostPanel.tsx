@@ -187,7 +187,7 @@ export default function HostPanel({ state }: HostPanelProps) {
             <div className="flex flex-wrap gap-1.5">
               <button
                 onClick={() => state.setCategory('All')}
-                className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors
+                className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-200 hover:scale-110
                   ${state.selectedCategory === 'All' ? 'bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/30' : 'bg-muted/20 text-muted-foreground hover:bg-muted/40'}`}
               >
                 All
@@ -196,7 +196,7 @@ export default function HostPanel({ state }: HostPanelProps) {
                 <button
                   key={cat}
                   onClick={() => state.setCategory(cat as any)}
-                  className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors
+                  className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-200 hover:scale-110
                     ${state.selectedCategory === cat ? 'bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/30' : 'bg-muted/20 text-muted-foreground hover:bg-muted/40'}`}
                 >
                   {cat}
