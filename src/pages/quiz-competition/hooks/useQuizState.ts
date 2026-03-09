@@ -59,7 +59,18 @@ function loadState(): QuizState {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      return { ...defaultState, ...parsed, timerRunning: false };
+      // Merge any new questions from sampleQuestions that aren't in saved state
+      const savedQuestions: Question[] = parsed.questions || [];
+      const savedIds = new Set(savedQuestions.map((q: Question) => q.id));
+      const freshQuestions = sampleQuestions
+        .filter(q => !savedIds.has(q.id))
+        .map(q => ({ ...q, used: false }));
+      return {
+        ...defaultState,
+        ...parsed,
+        questions: [...savedQuestions, ...freshQuestions],
+        timerRunning: false,
+      };
     }
   } catch {}
   return defaultState;
