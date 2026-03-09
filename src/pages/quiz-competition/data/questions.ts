@@ -12,6 +12,7 @@ export const categories = [
   'World History',
   'Nepalese History',
   'Nepal General Knowledge',
+  'Nepal Election 2082',
   'Programming',
   'Coding',
   'Robotics',
