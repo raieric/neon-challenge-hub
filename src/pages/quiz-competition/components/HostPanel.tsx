@@ -56,7 +56,18 @@ export default function HostPanel({ state }: HostPanelProps) {
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Host-only answer preview */}
+      {state.currentQuestionIndex >= 0 && state.filteredQuestions[state.currentQuestionIndex] && (
+        <div className="px-4 py-2.5 border-b border-white/10 bg-neon-cyan/5">
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1 flex items-center gap-1">
+            <Eye size={10} /> Host Answer Preview
+          </p>
+          <p className="text-xs text-muted-foreground mb-0.5">{state.filteredQuestions[state.currentQuestionIndex].text}</p>
+          <p className="text-sm font-bold text-neon-cyan">{state.filteredQuestions[state.currentQuestionIndex].answer}</p>
+        </div>
+      )}
+
+
       <div className="flex border-b border-white/10">
         {tabs.map(tab => (
           <button
