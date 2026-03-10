@@ -166,9 +166,29 @@ export const sampleQuestions: Question[] = [
   { id: 'nh-24', text: 'Which king overthrew the Rana regime to establish democracy?', answer: 'King Tribhuvan', category: 'Nepalese History', difficulty: 'medium' },
   { id: 'nh-25', text: 'What year did the devastating earthquake strike Nepal?', answer: '2015', category: 'Nepalese History', difficulty: 'easy' },
   { id: 'nh-26', text: 'Who was Nepal\'s first powerful prime minister (Mukhtiyar)?', answer: 'Bhimsen Thapa', category: 'Nepalese History', difficulty: 'hard' },
+  { id: 'nh-27', text: 'Who founded the Nepali Congress party?', answer: 'B.P. Koirala', category: 'Nepalese History', difficulty: 'medium' },
+  { id: 'nh-28', text: 'Who was the first elected Prime Minister of Nepal?', answer: 'B.P. Koirala', category: 'Nepalese History', difficulty: 'medium' },
+  { id: 'nh-29', text: 'What was the Panchayat system in Nepal?', answer: 'Partyless system', category: 'Nepalese History', difficulty: 'medium' },
+  { id: 'nh-30', text: 'Which king introduced the Panchayat system?', answer: 'King Mahendra', category: 'Nepalese History', difficulty: 'medium' },
+  { id: 'nh-31', text: 'The Bhanubhakta Ramayana was written by whom?', answer: 'Bhanubhakta Acharya', category: 'Nepalese History', difficulty: 'easy' },
+  { id: 'nh-32', text: 'Who is known as the Iron Man of Nepal?', answer: 'Bhimsen Thapa', category: 'Nepalese History', difficulty: 'medium' },
+  { id: 'nh-33', text: 'What treaty ended the Anglo-Nepal War?', answer: 'Sugauli Treaty', category: 'Nepalese History', difficulty: 'medium' },
+  { id: 'nh-34', text: 'Laxmi Prasad Devkota is famous for which literary work?', answer: 'Muna Madan', category: 'Nepalese History', difficulty: 'easy' },
+  { id: 'nh-35', text: 'Which battle led to the unification of Kathmandu Valley?', answer: 'Battle of Kirtipur', category: 'Nepalese History', difficulty: 'hard' },
+  { id: 'nh-36', text: 'The Kot Massacre happened in which Nepali year (BS)?', answer: '1903 BS', category: 'Nepalese History', difficulty: 'hard' },
+  { id: 'nh-37', text: 'Who was the first woman martyr of Nepal?', answer: 'Yogmaya Neupane', category: 'Nepalese History', difficulty: 'hard' },
+  { id: 'nh-38', text: 'Prithvi Narayan Shah conquered Kathmandu in which year?', answer: '1768', category: 'Nepalese History', difficulty: 'medium' },
+  { id: 'nh-39', text: 'What was Nepal\'s capital during the Licchavi period?', answer: 'Deopatan', category: 'Nepalese History', difficulty: 'hard' },
+  { id: 'nh-40', text: 'Who built the Krishna Mandir in Patan?', answer: 'Siddhi Narsingh Malla', category: 'Nepalese History', difficulty: 'hard' },
+  { id: 'nh-41', text: 'The first newspaper of Nepal was called?', answer: 'Gorkhapatra', category: 'Nepalese History', difficulty: 'medium' },
+  { id: 'nh-42', text: 'Which Rana PM opened Nepal to the outside world?', answer: 'Jung Bahadur Rana', category: 'Nepalese History', difficulty: 'medium' },
+  { id: 'nh-43', text: 'When was slavery abolished in Nepal?', answer: '1925', category: 'Nepalese History', difficulty: 'hard' },
+  { id: 'nh-44', text: 'The four Malla kingdoms were Kathmandu, Patan, Bhaktapur and?', answer: 'Only three', category: 'Nepalese History', difficulty: 'medium' },
+  { id: 'nh-45', text: 'Who introduced the Bikram Sambat calendar?', answer: 'King Vikramaditya', category: 'Nepalese History', difficulty: 'hard' },
+  { id: 'nh-46', text: 'Dashrath Chand was a famous martyr executed in which year?', answer: '1941', category: 'Nepalese History', difficulty: 'hard' },
 
   // ═══════════════════════════════════
-  // NEPAL GENERAL KNOWLEDGE (26 questions)
+  // NEPAL GENERAL KNOWLEDGE (26+20 questions)
   // ═══════════════════════════════════
   { id: 'ngk-1', text: 'What is the national flower of Nepal?', answer: 'Rhododendron', category: 'Nepal General Knowledge', difficulty: 'easy' },
   { id: 'ngk-2', text: 'How many provinces does Nepal have?', answer: '7', category: 'Nepal General Knowledge', difficulty: 'easy' },
