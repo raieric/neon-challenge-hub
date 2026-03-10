@@ -473,9 +473,29 @@ export const sampleQuestions: Question[] = [
   { id: 'st-23', text: 'A pH of 7 indicates what?', answer: 'Neutral', category: 'Science & Technology', difficulty: 'medium' },
   { id: 'st-24', text: 'Invisible matter that exerts gravitational effects is called?', answer: 'Dark matter', category: 'Science & Technology', difficulty: 'hard' },
   { id: 'st-25', text: 'A biological preparation that stimulates immunity is called?', answer: 'Vaccine', category: 'Science & Technology', difficulty: 'easy' },
+  { id: 'st-26', text: 'What gas do humans exhale?', answer: 'Carbon dioxide', category: 'Science & Technology', difficulty: 'easy' },
+  { id: 'st-27', text: 'How many bones are in the adult human body?', answer: '206', category: 'Science & Technology', difficulty: 'medium' },
+  { id: 'st-28', text: 'What is the largest organ in the human body?', answer: 'Skin', category: 'Science & Technology', difficulty: 'easy' },
+  { id: 'st-29', text: 'What planet has the most moons?', answer: 'Saturn', category: 'Science & Technology', difficulty: 'medium' },
+  { id: 'st-30', text: 'What is the chemical symbol for gold?', answer: 'Au', category: 'Science & Technology', difficulty: 'medium' },
+  { id: 'st-31', text: 'What type of blood cells fight infection?', answer: 'White blood cells', category: 'Science & Technology', difficulty: 'easy' },
+  { id: 'st-32', text: 'What is the closest star to Earth?', answer: 'Sun', category: 'Science & Technology', difficulty: 'easy' },
+  { id: 'st-33', text: 'How many planets are in our solar system?', answer: 'Eight', category: 'Science & Technology', difficulty: 'easy' },
+  { id: 'st-34', text: 'What is the boiling point of water in Celsius?', answer: '100°C', category: 'Science & Technology', difficulty: 'easy' },
+  { id: 'st-35', text: 'What is the largest planet in our solar system?', answer: 'Jupiter', category: 'Science & Technology', difficulty: 'easy' },
+  { id: 'st-36', text: 'What vitamin does the Sun help our body produce?', answer: 'Vitamin D', category: 'Science & Technology', difficulty: 'easy' },
+  { id: 'st-37', text: 'What is the smallest unit of matter?', answer: 'Atom', category: 'Science & Technology', difficulty: 'easy' },
+  { id: 'st-38', text: 'What device measures earthquakes?', answer: 'Seismograph', category: 'Science & Technology', difficulty: 'medium' },
+  { id: 'st-39', text: 'What is the most abundant gas in Earth\'s atmosphere?', answer: 'Nitrogen', category: 'Science & Technology', difficulty: 'medium' },
+  { id: 'st-40', text: 'What is the unit of electric current?', answer: 'Ampere', category: 'Science & Technology', difficulty: 'medium' },
+  { id: 'st-41', text: 'Sound travels fastest through which medium?', answer: 'Solids', category: 'Science & Technology', difficulty: 'medium' },
+  { id: 'st-42', text: 'What is the center of an atom called?', answer: 'Nucleus', category: 'Science & Technology', difficulty: 'easy' },
+  { id: 'st-43', text: 'Who invented the telephone?', answer: 'Alexander Graham Bell', category: 'Science & Technology', difficulty: 'easy' },
+  { id: 'st-44', text: 'What is the freezing point of water in Fahrenheit?', answer: '32°F', category: 'Science & Technology', difficulty: 'medium' },
+  { id: 'st-45', text: 'What force opposes motion between surfaces?', answer: 'Friction', category: 'Science & Technology', difficulty: 'easy' },
 
   // ═══════════════════════════════════
-  // CURRENT AFFAIRS (25 questions)
+  // CURRENT AFFAIRS (25+20 questions)
   // ═══════════════════════════════════
   { id: 'ca-1', text: 'Which country hosted the 2022 FIFA World Cup?', answer: 'Qatar', category: 'Current Affairs', difficulty: 'easy' },
   { id: 'ca-2', text: 'What does UNESCO stand for?', answer: 'UN Educational Scientific Cultural Organization', category: 'Current Affairs', difficulty: 'medium' },
