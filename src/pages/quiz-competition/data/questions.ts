@@ -116,9 +116,29 @@ export const sampleQuestions: Question[] = [
   { id: 'wh-24', text: 'What empire was known as the "Sick Man of Europe"?', answer: 'Ottoman Empire', category: 'World History', difficulty: 'hard' },
   { id: 'wh-25', text: 'When was the United Nations founded?', answer: '1945', category: 'World History', difficulty: 'medium' },
   { id: 'wh-26', text: 'In which country did apartheid take place?', answer: 'South Africa', category: 'World History', difficulty: 'medium' },
+  { id: 'wh-27', text: 'Who was the first President of the United States?', answer: 'George Washington', category: 'World History', difficulty: 'easy' },
+  { id: 'wh-28', text: 'The Magna Carta was signed in which year?', answer: '1215', category: 'World History', difficulty: 'hard' },
+  { id: 'wh-29', text: 'Which war was fought between the North and South of the US?', answer: 'Civil War', category: 'World History', difficulty: 'easy' },
+  { id: 'wh-30', text: 'Who painted the Mona Lisa?', answer: 'Leonardo da Vinci', category: 'World History', difficulty: 'easy' },
+  { id: 'wh-31', text: 'The Titanic sank in which year?', answer: '1912', category: 'World History', difficulty: 'easy' },
+  { id: 'wh-32', text: 'Which civilization built Machu Picchu?', answer: 'Inca', category: 'World History', difficulty: 'medium' },
+  { id: 'wh-33', text: 'Who was the leader of the Soviet Union during WWII?', answer: 'Joseph Stalin', category: 'World History', difficulty: 'medium' },
+  { id: 'wh-34', text: 'The Hundred Years War was between which two countries?', answer: 'England and France', category: 'World History', difficulty: 'medium' },
+  { id: 'wh-35', text: 'Who wrote "The Art of War"?', answer: 'Sun Tzu', category: 'World History', difficulty: 'medium' },
+  { id: 'wh-36', text: 'What was the name of the ship that brought Pilgrims to America?', answer: 'Mayflower', category: 'World History', difficulty: 'easy' },
+  { id: 'wh-37', text: 'Nelson Mandela was imprisoned for how many years?', answer: '27 years', category: 'World History', difficulty: 'medium' },
+  { id: 'wh-38', text: 'Which empire was the largest in history by land area?', answer: 'British Empire', category: 'World History', difficulty: 'medium' },
+  { id: 'wh-39', text: 'The Great Wall of China was built to protect against whom?', answer: 'Mongol invaders', category: 'World History', difficulty: 'medium' },
+  { id: 'wh-40', text: 'Who was assassinated in Dallas, Texas in 1963?', answer: 'John F. Kennedy', category: 'World History', difficulty: 'easy' },
+  { id: 'wh-41', text: 'The Reformation was started by whom in 1517?', answer: 'Martin Luther', category: 'World History', difficulty: 'medium' },
+  { id: 'wh-42', text: 'Which ancient city had the famous Hanging Gardens?', answer: 'Babylon', category: 'World History', difficulty: 'medium' },
+  { id: 'wh-43', text: 'Who was the first woman to fly solo across the Atlantic?', answer: 'Amelia Earhart', category: 'World History', difficulty: 'medium' },
+  { id: 'wh-44', text: 'The Black Death killed roughly what fraction of Europe\'s population?', answer: 'One-third', category: 'World History', difficulty: 'hard' },
+  { id: 'wh-45', text: 'What year did the Soviet Union collapse?', answer: '1991', category: 'World History', difficulty: 'medium' },
+  { id: 'wh-46', text: 'Who discovered America before Columbus, from Scandinavia?', answer: 'Leif Erikson', category: 'World History', difficulty: 'hard' },
 
   // ═══════════════════════════════════
-  // NEPALESE HISTORY (26 questions)
+  // NEPALESE HISTORY (26+20 questions)
   // ═══════════════════════════════════
   { id: 'nh-1', text: 'Who unified modern Nepal?', answer: 'Prithvi Narayan Shah', category: 'Nepalese History', difficulty: 'easy' },
   { id: 'nh-2', text: 'In which year was Nepal declared a federal democratic republic?', answer: '2008', category: 'Nepalese History', difficulty: 'easy' },
