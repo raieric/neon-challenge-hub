@@ -77,7 +77,7 @@ function loadState(): QuizState {
       return {
         ...defaultState,
         ...parsed,
-        questions: [...savedQuestions, ...freshQuestions],
+        questions: shuffleArray([...savedQuestions, ...freshQuestions]),
         timerRunning: false,
       };
     }
