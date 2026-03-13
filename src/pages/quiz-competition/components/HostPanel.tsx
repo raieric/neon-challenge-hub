@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Edit3, ChevronRight, Users, Layers, HelpCircle, Clock, RotateCcw, Monitor, Trophy, Upload, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
