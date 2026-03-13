@@ -41,7 +41,7 @@ const defaultState: QuizState = {
   rounds: [
     { id: 'r1', name: 'General Knowledge Round', type: 'General Knowledge Round' },
   ],
-  questions: sampleQuestions.map(q => ({ ...q, used: false })),
+  questions: shuffleArray(sampleQuestions.map(q => ({ ...q, used: false }))),
   currentRoundIndex: 0,
   currentTeamIndex: 0,
   currentQuestionIndex: -1,

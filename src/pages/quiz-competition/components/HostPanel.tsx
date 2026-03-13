@@ -336,32 +336,38 @@ export default function HostPanel({ state }: HostPanelProps) {
               </div>
             )}
 
-            {/* Questions list */}
-            <div className="space-y-1.5 max-h-[50vh] overflow-auto">
-              {state.filteredQuestions.map((q: any, i: number) => (
-                <div
-                  key={q.id}
-                  className={`p-2.5 rounded-lg border cursor-pointer transition-all text-left w-full
-                    ${q.used ? 'opacity-40 border-white/5 bg-muted/10' : 'border-white/10 bg-muted/20 hover:bg-muted/40 hover:border-neon-cyan/20'}
-                    ${i === state.currentQuestionIndex ? 'border-neon-cyan/50 bg-neon-cyan/10' : ''}`}
-                  onClick={() => { state.selectQuestion(i); state.markQuestionUsed(q.id); }}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="text-xs text-foreground flex-1">{q.text}</p>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase
-                        ${q.difficulty === 'easy' ? 'bg-green-500/20 text-green-400' : q.difficulty === 'medium' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}`}>
-                        {q.difficulty}
-                      </span>
-                      <Button size="sm" variant="ghost" className="h-5 w-5 p-0 text-destructive" onClick={e => { e.stopPropagation(); state.deleteQuestion(q.id); }}>
+            {/* Category question count summary */}
+            <div className="glass-panel p-3 space-y-1.5">
+              <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-2">Questions per Category</p>
+              {allCategories.map(cat => {
+                const catQuestions = state.questions?.filter((q: any) => q.category === cat) || [];
+                const usedCount = catQuestions.filter((q: any) => q.used).length;
+                return (
+                  <div key={cat} className="flex items-center justify-between text-xs py-1 border-b border-white/5 last:border-0">
+                    <span className="text-foreground">{cat}</span>
+                    <span className="text-muted-foreground font-mono">{usedCount}/{catQuestions.length} used</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Recently added questions this session */}
+            {recentlyAdded.length > 0 && (
+              <div className="space-y-1.5">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Recently Added (this session)</p>
+                {recentlyAdded.map((q: any) => (
+                  <div key={q.id} className="p-2.5 rounded-lg border border-white/10 bg-muted/20">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-xs text-foreground flex-1">{q.text}</p>
+                      <Button size="sm" variant="ghost" className="h-5 w-5 p-0 text-destructive" onClick={() => state.deleteQuestion(q.id)}>
                         <Trash2 size={10} />
                       </Button>
                     </div>
+                    <p className="text-[10px] text-muted-foreground mt-1">{q.category} · {q.answer}</p>
                   </div>
-                  <p className="text-[10px] text-muted-foreground mt-1">{q.category}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
