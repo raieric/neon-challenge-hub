@@ -331,7 +331,7 @@ export default function HostPanel({ state }: HostPanelProps) {
                     <option value="medium">Medium</option>
                     <option value="hard">Hard</option>
                   </select>
-                  <Button size="sm" onClick={() => { state.addQuestion(newQ); setNewQ({ text: '', answer: '', category: 'Programming', difficulty: 'medium' }); setShowAddQuestion(false); }}>Save</Button>
+                  <Button size="sm" onClick={() => { handleAddQuestion(newQ); setNewQ({ text: '', answer: '', category: 'Programming', difficulty: 'medium' }); setShowAddQuestion(false); }}>Save</Button>
                 </div>
               </div>
             )}
