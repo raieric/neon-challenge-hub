@@ -191,8 +191,7 @@ const DisplayView = ({ state }: DisplayViewProps) => {
                   disabled={q.used}
                 >
                   <span className="text-lg text-foreground">{i + 1}</span>
-                  <span className={`mt-0.5 w-2 h-2 rounded-full
-                    ${q.difficulty === 'easy' ? 'bg-green-400' : q.difficulty === 'medium' ? 'bg-amber-400' : 'bg-red-400'}`} />
+                  <span className={`mt-0.5 w-2 h-2 rounded-full bg-green-400`} />
                 </button>
               ))}
             </div>
