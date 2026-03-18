@@ -910,10 +910,11 @@ class JavaScriptInterpreter {
         if (!line.includes('{')) j++;
         let d = 1;
         while (j < lines.length && d > 0) {
-          if (lines[j].includes('{')) d++;
           if (lines[j].includes('}')) d--;
-          if (d > 0) { blockLines.push(lines[j]); j++; }
-          else j++;
+          if (d <= 0) { j++; break; }
+          if (lines[j].includes('{')) d++;
+          blockLines.push(lines[j]);
+          j++;
         }
       } else {
         blockLines = [lines[j] ?? ''];
@@ -931,24 +932,31 @@ class JavaScriptInterpreter {
       if (j < lines.length) {
         const nextLine = lines[j]?.trim() ?? '';
         if (nextLine.startsWith('} else if') || nextLine.startsWith('else if')) {
-          if (!val) return this.executeLine(nextLine.replace(/^\}\s*/, ''), j, lines, scope);
-          // skip else if block
+          const cleanLine = nextLine.replace(/^\}\s*/, '');
+          if (!val) return this.executeLine(cleanLine, j, lines, scope);
+          // skip else if + trailing else blocks
           let d = nextLine.includes('{') ? 1 : 0;
           j++;
           while (j < lines.length && d > 0) {
-            if (lines[j].includes('{')) d++;
             if (lines[j].includes('}')) d--;
+            if (d <= 0) { j++; break; }
+            if (lines[j].includes('{')) d++;
             j++;
           }
-          // might have more else
-          if (j < lines.length && (lines[j]?.trim().startsWith('} else') || lines[j]?.trim().startsWith('else'))) {
-            let d2 = lines[j].includes('{') ? 1 : 0;
-            j++;
-            while (j < lines.length && d2 > 0) {
-              if (lines[j].includes('{')) d2++;
-              if (lines[j].includes('}')) d2--;
+          // skip trailing else
+          while (j < lines.length) {
+            const nl = lines[j]?.trim() ?? '';
+            if (nl.startsWith('} else') || nl.startsWith('else')) {
+              d = nl.includes('{') ? 1 : 0;
               j++;
-            }
+              if (d === 0) { j++; break; }
+              while (j < lines.length && d > 0) {
+                if (lines[j].includes('}')) d--;
+                if (d <= 0) { j++; break; }
+                if (lines[j].includes('{')) d++;
+                j++;
+              }
+            } else break;
           }
           return j;
         }
@@ -959,10 +967,11 @@ class JavaScriptInterpreter {
             if (!nextLine.includes('{')) k++;
             let d = 1;
             while (k < lines.length && d > 0) {
-              if (lines[k].includes('{')) d++;
               if (lines[k].includes('}')) d--;
-              if (d > 0) { elseLines.push(lines[k]); k++; }
-              else k++;
+              if (d <= 0) { k++; break; }
+              if (lines[k].includes('{')) d++;
+              elseLines.push(lines[k]);
+              k++;
             }
           } else {
             elseLines = [lines[k] ?? ''];
