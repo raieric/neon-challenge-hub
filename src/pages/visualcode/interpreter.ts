@@ -685,6 +685,7 @@ class CInterpreter {
     return j;
   }
 
+  private evalC(expr: string, scope: Record<string, any>): any {
     expr = expr.trim().replace(/;$/, '');
     if (!expr) return 0;
     if (/^-?\d+(\.\d+)?$/.test(expr)) return Number(expr);
