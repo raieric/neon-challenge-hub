@@ -103,6 +103,8 @@ const AuctionChallenge = () => {
   const [gameOver, setGameOver] = useState(false);
   const [imageHover, setImageHover] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
+  const [resolvedImageUrl, setResolvedImageUrl] = useState("");
+  const imageObjectUrlRef = useRef<string | null>(null);
 
   const ITEMS_PER_SESSION = 7;
 
@@ -123,6 +125,64 @@ const AuctionChallenge = () => {
   }, []);
 
   const currentItem = items[currentIdx];
+
+  useEffect(() => {
+    if (imageObjectUrlRef.current) {
+      URL.revokeObjectURL(imageObjectUrlRef.current);
+      imageObjectUrlRef.current = null;
+    }
+
+    setResolvedImageUrl("");
+    setImageFailed(false);
+
+    if (!currentItem?.image) return;
+
+    let cancelled = false;
+    const controller = new AbortController();
+
+    const loadAuctionImage = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/image-proxy`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ imageUrl: currentItem.image }),
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Image proxy failed with status ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        if (cancelled) return;
+
+        const objectUrl = URL.createObjectURL(blob);
+        imageObjectUrlRef.current = objectUrl;
+        setResolvedImageUrl(objectUrl);
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Failed to load auction image:", error);
+          setImageFailed(true);
+        }
+      }
+    };
+
+    loadAuctionImage();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+
+      if (imageObjectUrlRef.current) {
+        URL.revokeObjectURL(imageObjectUrlRef.current);
+        imageObjectUrlRef.current = null;
+      }
+    };
+  }, [currentItem?.image]);
 
   const handleGuessChange = (value: string) => {
     const numeric = value.replace(/[^0-9]/g, "");
@@ -162,11 +222,17 @@ const AuctionChallenge = () => {
       setCurrentIdx((i) => i + 1);
       setGuess("");
       setResult(null);
-      setImageFailed(false);
     }
   };
 
   const playAgain = () => {
+    if (imageObjectUrlRef.current) {
+      URL.revokeObjectURL(imageObjectUrlRef.current);
+      imageObjectUrlRef.current = null;
+    }
+
+    setResolvedImageUrl("");
+    setImageFailed(false);
     setCurrentIdx(0);
     setGuess("");
     setResult(null);
@@ -341,18 +407,20 @@ const AuctionChallenge = () => {
                   <span className="text-white/70 text-lg font-bold text-center">{currentItem.name}</span>
                   <span className="text-white/30 text-sm mt-1">{currentItem.year}</span>
                 </div>
-              ) : (
+              ) : resolvedImageUrl ? (
                 <motion.img
-                  src={currentItem.image}
+                  src={resolvedImageUrl}
                   alt={currentItem.name}
                   className="w-full h-full object-cover"
                   animate={{ scale: imageHover ? 1.05 : 1 }}
                   transition={{ duration: 0.4 }}
                   loading="eager"
-                  referrerPolicy="no-referrer"
-                  crossOrigin="anonymous"
                   onError={() => setImageFailed(true)}
                 />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-950/40 to-black/70 text-amber-200/70 text-sm font-semibold tracking-wide uppercase">
+                  Loading artwork...
+                </div>
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4">
