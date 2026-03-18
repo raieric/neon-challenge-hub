@@ -212,7 +212,7 @@ const items: AuctionItem[] = [
     id: 25,
     name: "Interchange",
     description: "By Willem de Kooning, 1955. Sold privately for a record price in 2015.",
-    image: "https://upload.wikimedia.org/wikipedia/en/4/48/Willem_de_Kooning_Interchange.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Willem_de_Kooning_in_his_studio.jpg/800px-Willem_de_Kooning_in_his_studio.jpg",
     actual_price: 300000000,
     year: "1955",
   },
