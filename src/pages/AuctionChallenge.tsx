@@ -103,6 +103,8 @@ const AuctionChallenge = () => {
   const [gameOver, setGameOver] = useState(false);
   const [imageHover, setImageHover] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
+  const [resolvedImageUrl, setResolvedImageUrl] = useState("");
+  const imageObjectUrlRef = useRef<string | null>(null);
 
   const ITEMS_PER_SESSION = 7;
 
@@ -123,6 +125,64 @@ const AuctionChallenge = () => {
   }, []);
 
   const currentItem = items[currentIdx];
+
+  useEffect(() => {
+    if (imageObjectUrlRef.current) {
+      URL.revokeObjectURL(imageObjectUrlRef.current);
+      imageObjectUrlRef.current = null;
+    }
+
+    setResolvedImageUrl("");
+    setImageFailed(false);
+
+    if (!currentItem?.image) return;
+
+    let cancelled = false;
+    const controller = new AbortController();
+
+    const loadAuctionImage = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/image-proxy`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ imageUrl: currentItem.image }),
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Image proxy failed with status ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        if (cancelled) return;
+
+        const objectUrl = URL.createObjectURL(blob);
+        imageObjectUrlRef.current = objectUrl;
+        setResolvedImageUrl(objectUrl);
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Failed to load auction image:", error);
+          setImageFailed(true);
+        }
+      }
+    };
+
+    loadAuctionImage();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+
+      if (imageObjectUrlRef.current) {
+        URL.revokeObjectURL(imageObjectUrlRef.current);
+        imageObjectUrlRef.current = null;
+      }
+    };
+  }, [currentItem?.image]);
 
   const handleGuessChange = (value: string) => {
     const numeric = value.replace(/[^0-9]/g, "");
@@ -162,11 +222,17 @@ const AuctionChallenge = () => {
       setCurrentIdx((i) => i + 1);
       setGuess("");
       setResult(null);
-      setImageFailed(false);
     }
   };
 
   const playAgain = () => {
+    if (imageObjectUrlRef.current) {
+      URL.revokeObjectURL(imageObjectUrlRef.current);
+      imageObjectUrlRef.current = null;
+    }
+
+    setResolvedImageUrl("");
+    setImageFailed(false);
     setCurrentIdx(0);
     setGuess("");
     setResult(null);
@@ -335,25 +401,26 @@ const AuctionChallenge = () => {
               onMouseEnter={() => setImageHover(true)}
               onMouseLeave={() => setImageHover(false)}
             >
-              {imageFailed ? (
-                <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-amber-900/30 to-black/60 p-6">
-                  <span className="text-5xl mb-3">🖼️</span>
-                  <span className="text-white/70 text-lg font-bold text-center">{currentItem.name}</span>
-                  <span className="text-white/30 text-sm mt-1">{currentItem.year}</span>
-                </div>
-              ) : (
-                <motion.img
-                  src={currentItem.image}
-                  alt={currentItem.name}
-                  className="w-full h-full object-cover"
-                  animate={{ scale: imageHover ? 1.05 : 1 }}
-                  transition={{ duration: 0.4 }}
-                  loading="eager"
-                  referrerPolicy="no-referrer"
-                  crossOrigin="anonymous"
-                  onError={() => setImageFailed(true)}
-                />
-              )}
+              <motion.img
+                src={imageFailed
+                  ? `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b1d10"/><stop offset="55%" stop-color="#120909"/><stop offset="100%" stop-color="#060607"/></linearGradient></defs><rect width="600" height="800" fill="url(#g)" rx="32"/><circle cx="300" cy="270" r="120" fill="rgba(245,158,11,0.16)"/><rect x="185" y="155" width="230" height="230" rx="26" fill="rgba(255,255,255,0.06)" stroke="rgba(245,158,11,0.38)"/><text x="300" y="275" text-anchor="middle" font-size="84">🏛️</text><text x="300" y="470" text-anchor="middle" fill="#f5f5f5" font-size="34" font-family="Arial, sans-serif" font-weight="700">${currentItem.name}</text><text x="300" y="520" text-anchor="middle" fill="rgba(255,255,255,0.58)" font-size="24" font-family="Arial, sans-serif">${currentItem.year}</text></svg>`)}`
+                  : (resolvedImageUrl || {
+                      1: "/auction-images/mona-lisa.jpg",
+                      2: "/auction-images/the-scream.jpg",
+                      3: "/auction-images/salvator-mundi.jpg",
+                      5: "/auction-images/no-5-1948.jpg",
+                      6: "/auction-images/starry-night.jpg",
+                      7: "/auction-images/girl-with-pearl-earring.jpg",
+                      10: "/auction-images/action-comics-1.jpg",
+                      11: "/auction-images/persistence-of-memory.jpg",
+                    }[currentItem.id] || `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b1d10"/><stop offset="55%" stop-color="#120909"/><stop offset="100%" stop-color="#060607"/></linearGradient></defs><rect width="600" height="800" fill="url(#g)" rx="32"/><circle cx="300" cy="270" r="120" fill="rgba(245,158,11,0.16)"/><rect x="185" y="155" width="230" height="230" rx="26" fill="rgba(255,255,255,0.06)" stroke="rgba(245,158,11,0.38)"/><text x="300" y="275" text-anchor="middle" font-size="84">🏛️</text><text x="300" y="470" text-anchor="middle" fill="#f5f5f5" font-size="34" font-family="Arial, sans-serif" font-weight="700">${currentItem.name}</text><text x="300" y="520" text-anchor="middle" fill="rgba(255,255,255,0.58)" font-size="24" font-family="Arial, sans-serif">${currentItem.year}</text></svg>`)}`)}
+                alt={currentItem.name}
+                className="w-full h-full object-cover"
+                animate={{ scale: imageHover ? 1.05 : 1 }}
+                transition={{ duration: 0.4 }}
+                loading="eager"
+                onError={() => setImageFailed(true)}
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4">
                 <span className="text-xs bg-amber-500/80 text-black font-bold px-2 py-0.5 rounded">
