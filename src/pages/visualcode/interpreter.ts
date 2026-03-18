@@ -703,7 +703,12 @@ class CInterpreter {
       this.callStack.push({ functionName: fm[1], args: { ...local } });
       this.record(func.startLine, 'function_call', `Call ${fm[1]}(${args.join(', ')})`, local);
       try {
-        for (const bl of func.body) this.executeCLine(bl, func.startLine, func.body, local);
+        let bi = 0;
+        while (bi < func.body.length && this.stepCount < this.maxSteps) {
+          const bodyLine = func.body[bi].replace(/;$/, '').trim();
+          if (!bodyLine || bodyLine === '{' || bodyLine === '}') { bi++; continue; }
+          bi = this.executeCLine(bodyLine, bi, func.body, local);
+        }
         this.callStack.pop();
         return 0;
       } catch (e) {
@@ -1155,7 +1160,12 @@ class JavaScriptInterpreter {
     this.record(func.startLine, 'function_call', `Call ${name}(${args.map(a => JSON.stringify(a)).join(', ')})`, local);
 
     try {
-      for (const bl of func.body) this.executeLine(bl, func.startLine, func.body, local);
+      let bi = 0;
+      while (bi < func.body.length && this.stepCount < this.maxSteps) {
+        const bodyLine = func.body[bi].replace(/;$/, '').trim();
+        if (!bodyLine || bodyLine === '{' || bodyLine === '}') { bi++; continue; }
+        bi = this.executeLine(bodyLine, bi, func.body, local);
+      }
       this.callStack.pop();
       return undefined;
     } catch (e) {
