@@ -693,36 +693,65 @@ class CInterpreter {
     if (expr.startsWith("'") && expr.endsWith("'")) return expr.charCodeAt(1);
     if (/^\w+$/.test(expr) && expr in scope) return scope[expr];
 
-    // Function call
+    // Direct function call: factorial(5)
     const fm = expr.match(/^(\w+)\s*\(([^()]*)\)$/);
     if (fm && fm[1] in this.functions) {
-      const func = this.functions[fm[1]];
       const args = fm[2].trim() ? this.parseCComma(fm[2]).map(a => this.evalC(a, scope)) : [];
-      const local: Record<string, any> = {};
-      func.params.forEach((p, i) => { local[p.name] = args[i]; });
-      this.callStack.push({ functionName: fm[1], args: { ...local } });
-      this.record(func.startLine, 'function_call', `Call ${fm[1]}(${args.join(', ')})`, local);
-      try {
-        let bi = 0;
-        while (bi < func.body.length && this.stepCount < this.maxSteps) {
-          const bodyLine = func.body[bi].replace(/;$/, '').trim();
-          if (!bodyLine || bodyLine === '{' || bodyLine === '}') { bi++; continue; }
-          bi = this.executeCLine(bodyLine, bi, func.body, local);
-        }
-        this.callStack.pop();
-        return 0;
-      } catch (e) {
-        if (e instanceof ReturnValue) { this.callStack.pop(); return e.value; }
-        this.callStack.pop(); throw e;
-      }
+      return this.callCFunction(fm[1], args);
     }
 
-    // JS eval fallback
+    // Function calls inside expressions: n * factorial(n - 1)
+    const processed = this.preprocessCFuncs(expr, scope);
+    if (processed !== expr) return this.evalC(processed, scope);
+
+    // JS eval fallback for arithmetic/comparisons
     const keys = Object.keys(scope);
     const vals = Object.values(scope);
     try {
       return new Function(...keys, `"use strict"; return (${expr})`)(...vals);
     } catch { return 0; }
+  }
+
+  private preprocessCFuncs(expr: string, scope: Record<string, any>): string {
+    let result = expr;
+    let safety = 30;
+    while (safety-- > 0) {
+      const m = result.match(/\b(\w+)\s*\(([^()]*)\)/);
+      if (!m) break;
+      const name = m[1];
+      if (!(name in this.functions)) break;
+
+      const args = m[2].trim() ? this.parseCComma(m[2]).map(a => this.evalC(a, scope)) : [];
+      const ret = this.callCFunction(name, args);
+      const replacement = typeof ret === 'string' ? JSON.stringify(ret) : String(ret ?? 0);
+      result = result.replace(m[0], replacement);
+    }
+    return result;
+  }
+
+  private callCFunction(name: string, args: any[]): any {
+    const func = this.functions[name];
+    if (!func) return 0;
+
+    const local: Record<string, any> = {};
+    func.params.forEach((p, i) => { local[p.name] = args[i]; });
+    this.callStack.push({ functionName: name, args: { ...local } });
+    this.record(func.startLine, 'function_call', `Call ${name}(${args.map(a => JSON.stringify(a)).join(', ')})`, local);
+
+    try {
+      let bi = 0;
+      while (bi < func.body.length && this.stepCount < this.maxSteps) {
+        const bodyLine = func.body[bi].replace(/;$/, '').trim();
+        if (!bodyLine || bodyLine === '{' || bodyLine === '}') { bi++; continue; }
+        bi = this.executeCLine(bodyLine, bi, func.body, local);
+      }
+      this.callStack.pop();
+      return 0;
+    } catch (e) {
+      if (e instanceof ReturnValue) { this.callStack.pop(); return e.value; }
+      this.callStack.pop();
+      throw e;
+    }
   }
 
   private parseCComma(str: string): string[] {
