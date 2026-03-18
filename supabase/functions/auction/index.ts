@@ -100,7 +100,7 @@ const items: AuctionItem[] = [
     id: 11,
     name: "The Persistence of Memory",
     description: "By Salvador Dalí, 1931. The iconic melting clocks painting.",
-    image: "https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Salvador_Dal%C3%AD_1939.jpg/800px-Salvador_Dal%C3%AD_1939.jpg",
     actual_price: 150000000,
     year: "1931",
   },
