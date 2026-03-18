@@ -102,6 +102,7 @@ const AuctionChallenge = () => {
   const [history, setHistory] = useState<SessionRecord[]>([]);
   const [gameOver, setGameOver] = useState(false);
   const [imageHover, setImageHover] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
 
   const ITEMS_PER_SESSION = 7;
 
