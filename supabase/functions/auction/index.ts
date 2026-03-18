@@ -196,7 +196,7 @@ const items: AuctionItem[] = [
     id: 23,
     name: "Honus Wagner Baseball Card",
     description: "The T206 card from 1909. The most valuable baseball card in history.",
-    image: "https://upload.wikimedia.org/wikipedia/en/e/e5/T206_Honus_Wagner.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Honus_Wagner%2C_Pittsburgh_Pirates%2C_baseball_card_portrait_LCCN2007685756.tif/lossy-page1-800px-Honus_Wagner%2C_Pittsburgh_Pirates%2C_baseball_card_portrait_LCCN2007685756.tif.jpg",
     actual_price: 7250000,
     year: "1909",
   },
