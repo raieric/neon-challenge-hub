@@ -156,7 +156,7 @@ const items: AuctionItem[] = [
     id: 18,
     name: "1963 Ferrari 250 GT Lusso",
     description: "A rare classic Ferrari. Only 350 were ever produced.",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/1963_Ferrari_250_GT_Lusso.jpg/1280px-1963_Ferrari_250_GT_Lusso.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Ferrari_250_GT_Lusso_%2814229198819%29.jpg/1280px-Ferrari_250_GT_Lusso_%2814229198819%29.jpg",
     actual_price: 2300000,
     year: "1963",
   },
