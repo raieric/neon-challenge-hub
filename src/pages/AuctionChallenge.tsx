@@ -349,6 +349,8 @@ const AuctionChallenge = () => {
                   animate={{ scale: imageHover ? 1.05 : 1 }}
                   transition={{ duration: 0.4 }}
                   loading="eager"
+                  referrerPolicy="no-referrer"
+                  crossOrigin="anonymous"
                   onError={() => setImageFailed(true)}
                 />
               )}
