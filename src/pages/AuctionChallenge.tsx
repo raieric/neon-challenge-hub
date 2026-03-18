@@ -102,6 +102,7 @@ const AuctionChallenge = () => {
   const [history, setHistory] = useState<SessionRecord[]>([]);
   const [gameOver, setGameOver] = useState(false);
   const [imageHover, setImageHover] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
 
   const ITEMS_PER_SESSION = 7;
 
@@ -161,6 +162,7 @@ const AuctionChallenge = () => {
       setCurrentIdx((i) => i + 1);
       setGuess("");
       setResult(null);
+      setImageFailed(false);
     }
   };
 
@@ -333,14 +335,23 @@ const AuctionChallenge = () => {
               onMouseEnter={() => setImageHover(true)}
               onMouseLeave={() => setImageHover(false)}
             >
-              <motion.img
-                src={currentItem.image}
-                alt={currentItem.name}
-                className="w-full h-full object-cover"
-                animate={{ scale: imageHover ? 1.05 : 1 }}
-                transition={{ duration: 0.4 }}
-                loading="eager"
-              />
+              {imageFailed ? (
+                <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-amber-900/30 to-black/60 p-6">
+                  <span className="text-5xl mb-3">🖼️</span>
+                  <span className="text-white/70 text-lg font-bold text-center">{currentItem.name}</span>
+                  <span className="text-white/30 text-sm mt-1">{currentItem.year}</span>
+                </div>
+              ) : (
+                <motion.img
+                  src={currentItem.image}
+                  alt={currentItem.name}
+                  className="w-full h-full object-cover"
+                  animate={{ scale: imageHover ? 1.05 : 1 }}
+                  transition={{ duration: 0.4 }}
+                  loading="eager"
+                  onError={() => setImageFailed(true)}
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4">
                 <span className="text-xs bg-amber-500/80 text-black font-bold px-2 py-0.5 rounded">
