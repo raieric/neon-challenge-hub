@@ -162,6 +162,7 @@ const AuctionChallenge = () => {
       setCurrentIdx((i) => i + 1);
       setGuess("");
       setResult(null);
+      setImageFailed(false);
     }
   };
 
