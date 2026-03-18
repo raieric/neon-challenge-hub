@@ -401,27 +401,26 @@ const AuctionChallenge = () => {
               onMouseEnter={() => setImageHover(true)}
               onMouseLeave={() => setImageHover(false)}
             >
-              {imageFailed ? (
-                <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-amber-900/30 to-black/60 p-6">
-                  <span className="text-5xl mb-3">🖼️</span>
-                  <span className="text-white/70 text-lg font-bold text-center">{currentItem.name}</span>
-                  <span className="text-white/30 text-sm mt-1">{currentItem.year}</span>
-                </div>
-              ) : resolvedImageUrl ? (
-                <motion.img
-                  src={resolvedImageUrl}
-                  alt={currentItem.name}
-                  className="w-full h-full object-cover"
-                  animate={{ scale: imageHover ? 1.05 : 1 }}
-                  transition={{ duration: 0.4 }}
-                  loading="eager"
-                  onError={() => setImageFailed(true)}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-950/40 to-black/70 text-amber-200/70 text-sm font-semibold tracking-wide uppercase">
-                  Loading artwork...
-                </div>
-              )}
+              <motion.img
+                src={imageFailed
+                  ? `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b1d10"/><stop offset="55%" stop-color="#120909"/><stop offset="100%" stop-color="#060607"/></linearGradient></defs><rect width="600" height="800" fill="url(#g)" rx="32"/><circle cx="300" cy="270" r="120" fill="rgba(245,158,11,0.16)"/><rect x="185" y="155" width="230" height="230" rx="26" fill="rgba(255,255,255,0.06)" stroke="rgba(245,158,11,0.38)"/><text x="300" y="275" text-anchor="middle" font-size="84">🏛️</text><text x="300" y="470" text-anchor="middle" fill="#f5f5f5" font-size="34" font-family="Arial, sans-serif" font-weight="700">${currentItem.name}</text><text x="300" y="520" text-anchor="middle" fill="rgba(255,255,255,0.58)" font-size="24" font-family="Arial, sans-serif">${currentItem.year}</text></svg>`)}`
+                  : resolvedImageUrl || ({
+                      1: "/auction-images/mona-lisa.jpg",
+                      2: "/auction-images/the-scream.jpg",
+                      3: "/auction-images/salvator-mundi.jpg",
+                      5: "/auction-images/no-5-1948.jpg",
+                      6: "/auction-images/starry-night.jpg",
+                      7: "/auction-images/girl-with-pearl-earring.jpg",
+                      10: "/auction-images/action-comics-1.jpg",
+                      11: "/auction-images/persistence-of-memory.jpg",
+                    }[currentItem.id] ?? `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b1d10"/><stop offset="55%" stop-color="#120909"/><stop offset="100%" stop-color="#060607"/></linearGradient></defs><rect width="600" height="800" fill="url(#g)" rx="32"/><circle cx="300" cy="270" r="120" fill="rgba(245,158,11,0.16)"/><rect x="185" y="155" width="230" height="230" rx="26" fill="rgba(255,255,255,0.06)" stroke="rgba(245,158,11,0.38)"/><text x="300" y="275" text-anchor="middle" font-size="84">🏛️</text><text x="300" y="470" text-anchor="middle" fill="#f5f5f5" font-size="34" font-family="Arial, sans-serif" font-weight="700">${currentItem.name}</text><text x="300" y="520" text-anchor="middle" fill="rgba(255,255,255,0.58)" font-size="24" font-family="Arial, sans-serif">${currentItem.year}</text></svg>`)}`}
+                alt={currentItem.name}
+                className="w-full h-full object-cover"
+                animate={{ scale: imageHover ? 1.05 : 1 }}
+                transition={{ duration: 0.4 }}
+                loading="eager"
+                onError={() => setImageFailed(true)}
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4">
                 <span className="text-xs bg-amber-500/80 text-black font-bold px-2 py-0.5 rounded">
