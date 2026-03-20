@@ -4,6 +4,13 @@ import { ArrowLeft, ShoppingCart, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import binodPhoto from "@/assets/binod-chaudhary.jpg";
+import mukeshPhoto from "/billionaire-photos/mukesh-ambani.jpg";
+import elonPhoto from "/billionaire-photos/elon-musk.jpg";
+import zuckPhoto from "/billionaire-photos/mark-zuckerberg.jpg";
+import pavelPhoto from "/billionaire-photos/pavel-durov.jpg";
+import bezosPhoto from "/billionaire-photos/jeff-bezos.jpg";
+import gatesPhoto from "/billionaire-photos/bill-gates.jpg";
+import buffettPhoto from "/billionaire-photos/warren-buffett.jpg";
 import Confetti from "@/components/Confetti";
 
 interface Billionaire {
@@ -17,13 +24,13 @@ interface Billionaire {
 
 const billionaires: Billionaire[] = [
   { id: "binod", name: "Binod Chaudhary", netWorth: 2_000_000_000, photo: binodPhoto, emoji: "🇳🇵", description: "Nepal's only billionaire – Wai Wai king" },
-  { id: "mukesh", name: "Mukesh Ambani", netWorth: 116_000_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Mukesh_Ambani.jpg/440px-Mukesh_Ambani.jpg", emoji: "🇮🇳", description: "Chairman of Reliance Industries" },
-  { id: "elon", name: "Elon Musk", netWorth: 250_000_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/440px-Elon_Musk_Royal_Society_%28crop2%29.jpg", emoji: "🚀", description: "CEO of Tesla & SpaceX" },
-  { id: "zuck", name: "Mark Zuckerberg", netWorth: 177_000_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/440px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg", emoji: "👤", description: "CEO of Meta (Facebook)" },
-  { id: "pavel", name: "Pavel Durov", netWorth: 15_500_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Pavel_Durov_in_2024_%28cropped%29.jpg/440px-Pavel_Durov_in_2024_%28cropped%29.jpg", emoji: "✈️", description: "Founder of Telegram" },
-  { id: "bezos", name: "Jeff Bezos", netWorth: 200_000_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Jeff_Bezos_at_Amazon_Spheres_Grand_Opening_in_Seattle_-_2018_%2839074799225%29_%28cropped%29.jpg/440px-Jeff_Bezos_at_Amazon_Spheres_Grand_Opening_in_Seattle_-_2018_%2839074799225%29_%28cropped%29.jpg", emoji: "📦", description: "Founder of Amazon" },
-  { id: "gates", name: "Bill Gates", netWorth: 128_000_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Bill_Gates_2017_%28cropped%29.jpg/440px-Bill_Gates_2017_%28cropped%29.jpg", emoji: "💻", description: "Co-founder of Microsoft" },
-  { id: "buffett", name: "Warren Buffett", netWorth: 133_000_000_000, photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Warren_Buffett_KU_Visit.jpg/440px-Warren_Buffett_KU_Visit.jpg", emoji: "📈", description: "CEO of Berkshire Hathaway" },
+  { id: "mukesh", name: "Mukesh Ambani", netWorth: 116_000_000_000, photo: mukeshPhoto, emoji: "🇮🇳", description: "Chairman of Reliance Industries" },
+  { id: "elon", name: "Elon Musk", netWorth: 250_000_000_000, photo: elonPhoto, emoji: "🚀", description: "CEO of Tesla & SpaceX" },
+  { id: "zuck", name: "Mark Zuckerberg", netWorth: 177_000_000_000, photo: zuckPhoto, emoji: "👤", description: "CEO of Meta (Facebook)" },
+  { id: "pavel", name: "Pavel Durov", netWorth: 15_500_000_000, photo: pavelPhoto, emoji: "✈️", description: "Founder of Telegram" },
+  { id: "bezos", name: "Jeff Bezos", netWorth: 200_000_000_000, photo: bezosPhoto, emoji: "📦", description: "Founder of Amazon" },
+  { id: "gates", name: "Bill Gates", netWorth: 128_000_000_000, photo: gatesPhoto, emoji: "💻", description: "Co-founder of Microsoft" },
+  { id: "buffett", name: "Warren Buffett", netWorth: 133_000_000_000, photo: buffettPhoto, emoji: "📈", description: "CEO of Berkshire Hathaway" },
 ];
 
 interface Item {
