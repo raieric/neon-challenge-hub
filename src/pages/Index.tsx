@@ -18,41 +18,6 @@ import {
 
 const games = [
   {
-    icon: "🎡",
-    title: "Spin The Wheel",
-    description: "Let fate decide your classroom challenge.",
-    to: "/spin",
-    animation: <SpinWheelAnim />,
-  },
-  {
-    icon: "✊",
-    title: "Rock Paper Scissors",
-    description: "Play against the computer with animated battle effects!",
-    to: "/rps",
-    animation: <RPSAnim />,
-  },
-  {
-    icon: "🎤",
-    title: "Spin The Wheel 2 – Personality Arena",
-    description: "Step into the spotlight. Express, perform, and impress.",
-    to: "/spin2",
-    animation: <SpotlightAnim />,
-  },
-  {
-    icon: "🎯",
-    title: "Social Arena – Group Dynamics",
-    description: "Collaboration. Pressure. Interaction.",
-    to: "/social",
-    animation: <NetworkAnim />,
-  },
-  {
-    icon: "🚀",
-    title: "Visionary Arena – Big Ideas Lab",
-    description: "Think beyond code. Lead the future.",
-    to: "/visionary",
-    animation: <RocketAnim />,
-  },
-  {
     icon: "🚂",
     title: "Trolley Simulator",
     description: "25 moral dilemmas. No right answers.",
@@ -191,6 +156,41 @@ const games = [
     description: "Click speed, color tap, memory & target shoot mini games.",
     to: "/loop-arcade",
     animation: <SnakeEscapeAnimation />,
+  },
+  {
+    icon: "🎡",
+    title: "Spin The Wheel",
+    description: "Let fate decide your classroom challenge.",
+    to: "/spin",
+    animation: <SpinWheelAnim />,
+  },
+  {
+    icon: "✊",
+    title: "Rock Paper Scissors",
+    description: "Play against the computer with animated battle effects!",
+    to: "/rps",
+    animation: <RPSAnim />,
+  },
+  {
+    icon: "🎤",
+    title: "Spin The Wheel 2 – Personality Arena",
+    description: "Step into the spotlight. Express, perform, and impress.",
+    to: "/spin2",
+    animation: <SpotlightAnim />,
+  },
+  {
+    icon: "🎯",
+    title: "Social Arena – Group Dynamics",
+    description: "Collaboration. Pressure. Interaction.",
+    to: "/social",
+    animation: <NetworkAnim />,
+  },
+  {
+    icon: "🚀",
+    title: "Visionary Arena – Big Ideas Lab",
+    description: "Think beyond code. Lead the future.",
+    to: "/visionary",
+    animation: <RocketAnim />,
   },
 ];
 
