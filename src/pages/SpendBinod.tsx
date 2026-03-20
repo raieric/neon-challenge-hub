@@ -4,6 +4,13 @@ import { ArrowLeft, ShoppingCart, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import binodPhoto from "@/assets/binod-chaudhary.jpg";
+import mukeshPhoto from "/billionaire-photos/mukesh-ambani.jpg";
+import elonPhoto from "/billionaire-photos/elon-musk.jpg";
+import zuckPhoto from "/billionaire-photos/mark-zuckerberg.jpg";
+import pavelPhoto from "/billionaire-photos/pavel-durov.jpg";
+import bezosPhoto from "/billionaire-photos/jeff-bezos.jpg";
+import gatesPhoto from "/billionaire-photos/bill-gates.jpg";
+import buffettPhoto from "/billionaire-photos/warren-buffett.jpg";
 import Confetti from "@/components/Confetti";
 
 interface Billionaire {
